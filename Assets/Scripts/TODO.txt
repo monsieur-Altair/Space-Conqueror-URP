@@ -1,0 +1,3 @@
+﻿1. fix no cooldown bug
+2. change list from buttons to abstract skills
+3. 
