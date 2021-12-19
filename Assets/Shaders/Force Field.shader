@@ -30,12 +30,12 @@ Shader "Space Conqueror/Force Field"
             #pragma vertex vert
             #pragma fragment frag
 
-            struct appdata {
+            struct Attributes {
                 float4 vertex : POSITION;
                 float3 normal : NORMAL;
             };
 
-            struct v2f{
+            struct Varyings{
                 float4 pos : SV_POSITION;
                 float3 normal : NORMAL;
             };
@@ -43,10 +43,10 @@ Shader "Space Conqueror/Force Field"
             fixed4 _OutlineColor;
             half _OutlineWidth;
 
-            v2f vert(appdata input){
+            Varyings vert(Attributes input){
                 input.vertex += float4(input.normal * _OutlineWidth, 1);
 
-                v2f output;
+                Varyings output;
 
                 output.pos = UnityObjectToClipPos(input.vertex);
                 output.normal = mul(unity_ObjectToWorld, input.normal);
@@ -54,7 +54,7 @@ Shader "Space Conqueror/Force Field"
                 return output;
             }
 
-            fixed4 frag(v2f input) : SV_Target
+            fixed4 frag(Varyings input) : SV_Target
             {
                 return _OutlineColor;
             }
@@ -79,14 +79,14 @@ Shader "Space Conqueror/Force Field"
                 #pragma target 4.0
             #endif
 
-            struct appdata
+            struct Attributes
             {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
                 fixed3 normal : NORMAL;
             };
 
-            struct v2f
+            struct Varyings
             {
                 float2 uv : TEXCOORD0;
                 float4 position : SV_POSITION;
@@ -102,9 +102,9 @@ Shader "Space Conqueror/Force Field"
                 // put more per-instance properties here
             UNITY_INSTANCING_BUFFER_END(Props)
             
-            v2f vert (appdata vert)
+            Varyings vert (Attributes vert)
             {
-                v2f output;
+                Varyings output;
 
                 output.position = UnityObjectToClipPos(vert.vertex);
                 output.uv = vert.uv;
@@ -112,7 +112,7 @@ Shader "Space Conqueror/Force Field"
                 return output;
             }
             
-            fixed4 frag (v2f input) : SV_Target
+            fixed4 frag (Varyings input) : SV_Target
             {
                 return tex2D(_MainTex,input.uv);
             }
@@ -142,14 +142,14 @@ Shader "Space Conqueror/Force Field"
                 #pragma target 4.0
             #endif
 
-            struct appdata
+            struct Attributes
             {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
                 fixed3 normal : NORMAL;
             };
 
-            struct v2f
+            struct Varyings
             {
                 float2 uv : TEXCOORD0;
                 float rim : TEXCOORD1;
@@ -168,9 +168,9 @@ Shader "Space Conqueror/Force Field"
             UNITY_INSTANCING_BUFFER_END(Props)*/
             
             fixed3 viewDir;
-            v2f vert (appdata vert)
+            Varyings vert (Attributes vert)
             {
-                v2f output;
+                Varyings output;
 
                 output.position = UnityObjectToClipPos(vert.vertex);
                 output.uv = vert.uv;
@@ -183,7 +183,7 @@ Shader "Space Conqueror/Force Field"
             }
             
             fixed4 pixel;
-            fixed4 frag (v2f input) : SV_Target
+            fixed4 frag (Varyings input) : SV_Target
             {
                 pixel = _Color * pow(_FresnelPower, input.rim);
                 pixel = lerp(0, pixel, input.rim);

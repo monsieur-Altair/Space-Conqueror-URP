@@ -2,95 +2,118 @@
 {
     Properties
     {
-        _Color ("Color", Color) = (1,1,1,1)
-        _MainTex ("Albedo (RGB)", 2D) = "white" {}
+        //_Color ("Color", Color) = (1,1,1,1)
+        _BaseMap ("Base Map", 2D) = "white" {}
 
         _OutlineColor ("Outline Color", Color) = (1,1,1,1)
         _OutlineWidth ("Outline Width", Range(0, 4)) = 0.25
         
-        [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull", Float) = 2
+        //[Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull", Float) = 2
     }
     SubShader
     {
-        Tags { "RenderType"="Geometry" "Queue"="Transparent" }
-        LOD 200
-        Cull [_Cull]
-
+        Tags { "RenderType" = "Opaque" "RenderPipeline" = "UniversalRenderPipeline" }
+        
         Pass{
-            ZWrite Off
-            CGPROGRAM
+            Tags { "LightMode"="UniversalForward" }
+            
+
+            ZWrite On
+            
+            HLSLPROGRAM
             
             #pragma vertex vert
             #pragma fragment frag
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
-            struct appdata {
-                float4 vertex : POSITION;
-                float4 tangent : TANGENT;
-                float3 normal : NORMAL;
-                float4 texcoord : TEXCOORD0;
-                fixed4 color : COLOR;
+            struct Attributes
+            {
+                float4 positionOS   : POSITION;
+                float2 uv           : TEXCOORD0;
             };
 
-            struct v2f{
+            struct Varyings
+            {
+                float4 positionHCS  : SV_POSITION;
+                float2 uv           : TEXCOORD0;
+            };
+
+            TEXTURE2D(_BaseMap);
+            SAMPLER(sampler_BaseMap);
+
+            CBUFFER_START(UnityPerMaterial)
+                float4 _BaseMap_ST;
+            CBUFFER_END
+
+            Varyings vert(Attributes IN)
+            {
+                Varyings OUT;
+                OUT.positionHCS = TransformObjectToHClip(IN.positionOS.xyz);
+                OUT.uv = TRANSFORM_TEX(IN.uv, _BaseMap);
+                return OUT;
+            }
+
+            half4 frag(Varyings IN) : SV_Target
+            {
+                half4 color = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv);
+                return color;
+            }
+            ENDHLSL
+        }
+        
+        
+        Tags { "RenderType"="Geometry" "Queue"="Transparent" "RenderPipeline" = "UniversalRenderPipeline"}
+        LOD 200
+        Cull back
+        //[_Cull]
+
+        Pass{
+            Tags { "LightMode"="SRPDefaultUnlit" }
+            ZWrite Off
+            //CGPROGRAM
+            HLSLPROGRAM
+            
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+
+            struct Attributes {
+                float4 vertex : POSITION;
+                //float4 tangent : TANGENT;
+                float3 normal : NORMAL;
+                //float4 texcoord : TEXCOORD0;
+                //float4 color : COLOR;
+            };
+
+            struct Varyings{
                 float4 pos : SV_POSITION;
                 float3 normal : NORMAL;
             };
 
-            fixed4 _OutlineColor;
-            half _OutlineWidth;
+            CBUFFER_START(UnityPerMaterial)
+                float4 _OutlineColor;
+                half _OutlineWidth;
+            CBUFFER_END            
 
-            v2f vert(appdata input){
+            Varyings vert(Attributes input){
                 input.vertex += float4(input.normal * _OutlineWidth, 1);
 
-                v2f output;
+                Varyings output;
 
-                output.pos = UnityObjectToClipPos(input.vertex);
+                output.pos = TransformObjectToHClip(input.vertex);
                 output.normal = mul(unity_ObjectToWorld, input.normal);
 
                 return output;
             }
 
-            fixed4 frag(v2f input) : SV_Target
+            float4 frag(Varyings input) : SV_Target
             {
                 return _OutlineColor;
             }
 
-            ENDCG
+            ENDHLSL
         }
-
-        ZWrite On
-        CGPROGRAM
-        // Physically based Standard lighting model, and enable shadows on all light types
-        #pragma surface surf Standard fullforwardshadows
-
-        #ifndef SHADER_API_D3D11
-            #pragma target 3.0
-        #else
-            #pragma target 4.0
-        #endif
-
-        // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
-        // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
-        // #pragma instancing_options assumeuniformscaling
-        UNITY_INSTANCING_BUFFER_START(Props)
-            // put more per-instance properties here
-        UNITY_INSTANCING_BUFFER_END(Props)
-
-        struct Input
-        {
-            float2 uv_MainTex;
-        };
-
-        fixed4 _Color;
-        sampler2D _MainTex;
-
-        fixed4 pixel;
-        void surf (Input IN, inout SurfaceOutputStandard o)
-        {
-            pixel = tex2D (_MainTex, IN.uv_MainTex) * _Color;
-            o.Albedo = pixel.rgb;
-        }
-        ENDCG
+        
     }
-    FallBack "Diffuse"
+    //FallBack "Diffuse"
 }

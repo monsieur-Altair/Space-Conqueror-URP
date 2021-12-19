@@ -46,21 +46,21 @@
 
 			#include "UnityCG.cginc"
 
-			struct appdata
+			struct Attributes
 			{
 				float4 vertex : POSITION;
 				float3 normal : NORMAL;
 			};
 
-			struct v2f
+			struct Varyings
 			{
 				float4 vertex : SV_POSITION;
 			};
 
 			float _OutlineSize;
-			v2f vert(appdata v)
+			Varyings vert(Attributes v)
 			{
-				v2f o;
+				Varyings o;
 				float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
 				half3 worldNormal = UnityObjectToWorldNormal(v.normal);
 				worldPos.xyz = worldPos.xyz + worldNormal * _OutlineSize * 0.001;
@@ -69,7 +69,7 @@
 			}
 
 			float4 _OutlineColor;
-			fixed4 frag(v2f input) : SV_Target
+			fixed4 frag(Varyings input) : SV_Target
 			{
 				return _OutlineColor;
 			}
@@ -98,7 +98,7 @@
 			#pragma multi_compile_fwdbase nolightmap nodirlightmap nodynlightmap novertexlight
 			#include "AutoLight.cginc"
 
-			struct v2f
+			struct Varyings
 			{
 				float2 uv : TEXCOORD0;
 				SHADOW_COORDS(1)
@@ -109,9 +109,9 @@
 				float4 pos : SV_POSITION;
 			};
 
-			v2f vert(appdata_tan v)
+			Varyings vert(appdata_tan v)
 			{
-				v2f o;
+				Varyings o;
 
 				// UV data
 				o.uv = v.texcoord;
@@ -153,7 +153,7 @@
 			float4    _FresnelColor;
 			float     _FresnelShadowDropoff;
 
-			fixed4 frag(v2f input) : SV_Target
+			fixed4 frag(Varyings input) : SV_Target
 			{
 				_RampLevels -= 1;
 

@@ -48,7 +48,7 @@
 			#pragma multi_compile_fwdbase nolightmap nodirlightmap nodynlightmap novertexlight
 			#include "AutoLight.cginc"
 
-			struct v2f
+			struct Varyings
 			{
 				float2 uv : TEXCOORD0;
 				SHADOW_COORDS(1)
@@ -59,9 +59,9 @@
 				float4 pos : SV_POSITION;
 			};
 
-			v2f vert(appdata_tan v)
+			Varyings vert(appdata_tan v)
 			{
-				v2f o;
+				Varyings o;
 
 				// UV data
 				o.uv = v.texcoord;
@@ -103,7 +103,7 @@
 			float4    _FresnelColor;
 			float     _FresnelShadowDropoff;
 
-			fixed4 frag(v2f i) : SV_Target
+			fixed4 frag(Varyings i) : SV_Target
 			{
 				_RampLevels -= 1;
 
