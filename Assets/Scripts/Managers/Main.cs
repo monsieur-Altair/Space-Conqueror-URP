@@ -10,8 +10,7 @@ namespace Managers
     [DefaultExecutionOrder(500)]
     public class Main : MonoBehaviour
     {
-        //one of them is neutral
-        private readonly int _teamNumber = Enum.GetNames(typeof(Planets.Team)).Length - 1;
+        private readonly int _teamNumber = Enum.GetNames(typeof(Planets.Team)).Length;
         public List<Planets.Base> AllPlanets { get; private set; }
         [SerializeField] private GameObject planetsLay;
         private List<int> _objectsCount;
@@ -23,7 +22,8 @@ namespace Managers
             {
                 Instance = this;
             }
-            
+
+            //Debug.Log(_teamNumber);
             _objectsCount=new List<int>(_teamNumber);
             for (int i = 0; i < _teamNumber;i++)
                 _objectsCount.Add(0);
@@ -40,6 +40,7 @@ namespace Managers
             foreach (var planet in AllPlanets)
             {
                 var team = (int) planet.Team;
+                //Debug.Log(team);
                 _objectsCount[team]++;
             }
         }

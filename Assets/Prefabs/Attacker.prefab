@@ -59,7 +59,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fdeead164c443959a6143901a456bc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 1
+  team: 2
   type: 2
   resourceUnit: {fileID: 11400000, guid: ef4201503508ce24eba422d5c1d0f314, type: 2}
   resourcePlanet: {fileID: 11400000, guid: face58731701fc1489033df9770fa002, type: 2}
@@ -145,7 +145,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 284d131b71e9d904bafaea3f4912e0a4, type: 3}
       propertyPath: m_Materials.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 284d131b71e9d904bafaea3f4912e0a4, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -154,7 +154,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 284d131b71e9d904bafaea3f4912e0a4, type: 3}
       propertyPath: m_Materials.Array.data[1]
       value: 
-      objectReference: {fileID: 2100000, guid: 7a7049f1bd51f7b4cbc632ebfe2048ba, type: 2}
+      objectReference: {fileID: 2100000, guid: b3cb278440d8b2940afd8271980669be, type: 2}
     - target: {fileID: 919132149155446097, guid: 284d131b71e9d904bafaea3f4912e0a4, type: 3}
       propertyPath: m_Name
       value: planet

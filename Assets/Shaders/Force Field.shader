@@ -4,7 +4,7 @@ Shader "Space Conqueror/Force Field"
     Properties
     {
         _FieldTex ("Field Texture", 2D) = "white" {}
-        _MainTex ("Main Texture", 2D) = "white" {}
+        //_MainTex ("Main Texture", 2D) = "white" {}
         [HDR] _Color ("Color", Color) = (1,1,1,1)
         _Percent("Field percent",Range(0.8,2))=1
         _FresnelPower("Fresnel Power", Range(0, 10)) = 3

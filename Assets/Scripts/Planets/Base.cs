@@ -6,7 +6,7 @@ namespace Planets
     {
         Blue=0,
         Red=1,
-        White=5
+        White=2,
     }
     public enum Type
     {
@@ -24,7 +24,6 @@ namespace Planets
 
         private const float LaunchCoefficient = 0.5f;
         
-
         protected Managers.Main Main;
         private Managers.Outlook _outlook;
         protected Managers.UI UI;
@@ -80,7 +79,8 @@ namespace Planets
         public void Update()
         {
             Move();
-            IncreaseResources();
+            if(Team!=Team.White)
+                IncreaseResources();
         }
 
         public void LateUpdate()
@@ -102,6 +102,9 @@ namespace Planets
             _unitInf.Speed = resourceUnit.speed;
             _unitInf.Damage = resourceUnit.damage;
             _unitInf.Team = Team;
+            
+            if(Team==Team.White)
+                _count = MaxCount;
         }
 
 
