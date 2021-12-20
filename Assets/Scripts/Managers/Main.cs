@@ -66,6 +66,5 @@ namespace Managers
                 Debug.Log("Win");
             }
         }
-        
     }
 }

@@ -8,7 +8,7 @@ namespace Managers
     [DefaultExecutionOrder(1000)]
     public class Outlook : MonoBehaviour
     {
-        private List<List<Texture>> _allTextures=new List<List<Texture>>();
+        private readonly List<List<Texture>> _allTextures=new List<List<Texture>>();
         
         [SerializeField] private List<Texture> scientificTextures;
         [SerializeField] private List<Texture> attackerTextures;
@@ -25,6 +25,9 @@ namespace Managers
         
         private readonly Dictionary<int, MeshRenderer> _planetsRenderer = new Dictionary<int, MeshRenderer>();
 
+        private const int MainTexIndex = 0;
+        private const int BuffTexIndex = 1;
+        
         private List<Planets.Base> _allPlanets => Main.Instance.AllPlanets;
         public static Outlook Instance { get; private set; }
 
@@ -42,11 +45,13 @@ namespace Managers
         
         public void Start()
         {
-            FillList();
-            SetAllOutlooks();
             _allTextures.Add(scientificTextures);
             _allTextures.Add(spawnerTextures);
             _allTextures.Add(attackerTextures);
+            
+            FillList();
+            SetAllOutlooks();
+            
         }
 
         private void SetAllOutlooks()
@@ -75,60 +80,49 @@ namespace Managers
         public void SetOutlook(Planets.Base planet)
         {
             var team = (int)planet.Team;
+            var type = (int) planet.Type;
             int index = planet.ID.GetHashCode();
-            var material = new Material(basePlanetMaterial);
-            
-            switch (planet.Type)
+            var mainMaterial = new Material(basePlanetMaterial)
             {
-                case Type.Scientific:
-                    material.mainTexture=scientificTextures[team];
-                    break;
-                case Type.Spawner:
-                    break;
-                case Type.Attacker:
-                    material.mainTexture = attackerTextures[team];
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            _planetsRenderer[index].material = material;
+                mainTexture = _allTextures[type][team]
+            };
+            
+            Material[] materials = {mainMaterial, null};
+            _planetsRenderer[index].materials = materials;
         }
 
         public void SetUnitOutlook(Planets.Base planet, Units.Base unit)
         {
             var team = (int) planet.Team;
             //also we can add all rockets materials to list 
-            var selected = planet.IsBuffed ? buffedRocketMaterial : baseRocketMaterial;
-            var material = new Material(selected)
+            var buffedMaterial = planet.IsBuffed ? buffedRocketMaterial : null;
+            
+            var mainMaterial = new Material(baseRocketMaterial)
             {
                 mainTexture = rocketsTextures[team]
             };
-            unit.transform.GetChild(0).GetComponent<MeshRenderer>().material = material;
+
+            Material[] materials = {mainMaterial, buffedMaterial};
+            unit.transform.GetChild(0).GetComponent<MeshRenderer>().materials = materials;
         }
 
         public void SetBuff(Planets.Base planet)
         {
             int index = planet.ID.GetHashCode();
-            var team = (int) planet.Team;
-            var type = (int) planet.Type;
-            var material = new Material(buffedPlanetMaterial)
-            {
-                mainTexture = _allTextures[type][team]
-            };
-            _planetsRenderer[index].material=material;
+            
+            var materials = _planetsRenderer[index].materials;
+            materials[BuffTexIndex] = buffedPlanetMaterial;
+            _planetsRenderer[index].materials = materials;
+            
         }
         
         public void UnSetBuff(Planets.Base planet)
         {
             int index = planet.ID.GetHashCode();
-            var team = (int) planet.Team;
-            var type = (int) planet.Type;
-            var material = new Material(basePlanetMaterial)
-            {
-                mainTexture = _allTextures[type][team]
-            };
-            _planetsRenderer[index].material = material;
+            
+            var materials = _planetsRenderer[index].materials;
+            materials[BuffTexIndex] = null;
+            _planetsRenderer[index].materials = materials;
         }
         
     }

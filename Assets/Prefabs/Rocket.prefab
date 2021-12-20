@@ -163,9 +163,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: d1436b645a42aeb4ca95e02650072224, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: d1436b645a42aeb4ca95e02650072224, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 6fd36513260401445a68b8872d4d2edd, type: 2}
+    - target: {fileID: -7511558181221131132, guid: d1436b645a42aeb4ca95e02650072224, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: d1436b645a42aeb4ca95e02650072224, type: 3}
       propertyPath: m_Name
       value: Rocket
