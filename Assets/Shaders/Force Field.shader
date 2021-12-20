@@ -3,150 +3,100 @@ Shader "Space Conqueror/Force Field"
 {
     Properties
     {
-        //base attributes
-        _MainTex ("Texture", 2D) = "white" {}
+        _FieldTex ("Field Texture", 2D) = "white" {}
+        _MainTex ("Main Texture", 2D) = "white" {}
         [HDR] _Color ("Color", Color) = (1,1,1,1)
-
-        //force field attributes
+        _Percent("Field percent",Range(0.8,2))=1
         _FresnelPower("Fresnel Power", Range(0, 10)) = 3
-        _ColoredPercent("Colored Percent", Range(0, 2.5)) = 1
-        
-        //outline attributes
-        _OutlineColor ("Outline Color", Color) = (1,1,1,1)
-        _OutlineWidth ("Outline Width", Range(0, 4)) = 0.25
-
+        //_ScrollDirection ("Scroll Direction", float) = (0, 0, 0, 0)
     }
     SubShader
-    {
-        // This Pass Renders the outline
-        Tags { "RenderType"="Geometry" "Queue"="Transparent" }
-        LOD 200
-        Cull back
-
+    {   
+         /*
+         Tags 
+        { 
+            "RenderType" = "Opaque" 
+            "RenderPipeline" = "UniversalRenderPipeline" 
+            //"Queue"="Geometry"
+        }
+        
         Pass{
-            ZWrite Off
-            CGPROGRAM
+            Tags { "LightMode"="UniversalForward" }
+            
+
+            ZWrite On
+            
+            HLSLPROGRAM
             
             #pragma vertex vert
             #pragma fragment frag
-
-            struct Attributes {
-                float4 vertex : POSITION;
-                float3 normal : NORMAL;
-            };
-
-            struct Varyings{
-                float4 pos : SV_POSITION;
-                float3 normal : NORMAL;
-            };
-
-            fixed4 _OutlineColor;
-            half _OutlineWidth;
-
-            Varyings vert(Attributes input){
-                input.vertex += float4(input.normal * _OutlineWidth, 1);
-
-                Varyings output;
-
-                output.pos = UnityObjectToClipPos(input.vertex);
-                output.normal = mul(unity_ObjectToWorld, input.normal);
-
-                return output;
-            }
-
-            fixed4 frag(Varyings input) : SV_Target
-            {
-                return _OutlineColor;
-            }
-
-            ENDCG
-        }
-        
-        
-        // This Pass Renders the main texture
-        Tags { "RenderType"="Opaque" }
-        Pass
-        {
-            CGPROGRAM
-            #pragma vertex vert
-            #pragma fragment frag
-
-            #include "UnityCG.cginc"
-
-            #ifndef SHADER_API_D3D11
-                #pragma target 3.0
-            #else
-                #pragma target 4.0
-            #endif
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
             struct Attributes
             {
-                float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
-                fixed3 normal : NORMAL;
+                float4 positionOS   : POSITION;
+                float2 uv           : TEXCOORD0;
             };
 
             struct Varyings
             {
-                float2 uv : TEXCOORD0;
-                float4 position : SV_POSITION;
+                float4 positionHCS  : SV_POSITION;
+                float2 uv           : TEXCOORD0;
             };
 
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
-            
-            // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
-            // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
-            // #pragma instancing_options assumeuniformscaling
-            UNITY_INSTANCING_BUFFER_START(Props)
-                // put more per-instance properties here
-            UNITY_INSTANCING_BUFFER_END(Props)
-            
-            Varyings vert (Attributes vert)
-            {
-                Varyings output;
+            TEXTURE2D(_MainTex);
+            SAMPLER(sampler_MainTex);
 
-                output.position = UnityObjectToClipPos(vert.vertex);
-                output.uv = vert.uv;
-                
-                return output;
-            }
-            
-            fixed4 frag (Varyings input) : SV_Target
+            CBUFFER_START(UnityPerMaterial)
+                float4 _MainTex_ST;
+            CBUFFER_END
+
+            Varyings vert(Attributes IN)
             {
-                return tex2D(_MainTex,input.uv);
+                Varyings OUT;
+                OUT.positionHCS = TransformObjectToHClip(IN.positionOS.xyz);
+                OUT.uv = TRANSFORM_TEX(IN.uv, _MainTex);
+                return OUT;
             }
-            ENDCG
+
+            half4 frag(Varyings IN) : SV_Target
+            {
+                half4 color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv);
+                return color;
+            }
+            ENDHLSL
         }
+*/
+
         
-        
-        // This Pass Renders the field
-	    Tags { "RenderType"="Transparent" "IgnoreProjector"="True" "Queue"="Transparent+1" }
-        Blend SrcAlpha OneMinusSrcAlpha
-        LOD 100
-        Cull Back
-        Lighting Off
-        ZWrite On
+        Tags { 
+            "RenderType"="Transparent" 
+            "IgnoreProjector"="True" 
+            "Queue"="Transparent+1" 
+            "RenderPipeline" = "UniversalRenderPipeline"
+        }
+       Blend SrcAlpha OneMinusSrcAlpha
+       LOD 100
+       Cull Back
+       Lighting Off
+       ZWrite On
 
         Pass
         {
-            CGPROGRAM
+            Tags { "LightMode"="SRPDefaultUnlit" }
+
+            HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
 
             #include "UnityCG.cginc"
-
-            #ifndef SHADER_API_D3D11
-                #pragma target 3.0
-            #else
-                #pragma target 4.0
-            #endif
+            //#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
             struct Attributes
             {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
-                fixed3 normal : NORMAL;
+                float4 normal : NORMAL;
             };
 
             struct Varyings
@@ -155,46 +105,48 @@ Shader "Space Conqueror/Force Field"
                 float rim : TEXCOORD1;
                 float4 position : SV_POSITION;
             };
+            
+            sampler2D _FieldTex;
 
-            fixed4 _Color;
-            half _FresnelPower;
-            half _ColoredPercent;
+            CBUFFER_START(UnityPerMaterial)
+                float4 _FieldTex_ST;
+                float4 _Color;
+                half _FresnelPower;
+                half2 _ScrollDirection;
+                float3 viewDir;
+                float4 pixel;
+                float _Percent;
+            CBUFFER_END
             
-            /*// Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
-            // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
-            // #pragma instancing_options assumeuniformscaling
-            UNITY_INSTANCING_BUFFER_START(Props)
-                // put more per-instance properties here
-            UNITY_INSTANCING_BUFFER_END(Props)*/
             
-            fixed3 viewDir;
+
+            
             Varyings vert (Attributes vert)
             {
                 Varyings output;
 
                 output.position = UnityObjectToClipPos(vert.vertex);
-                output.uv = vert.uv;
+                output.uv = TRANSFORM_TEX(vert.uv, _FieldTex);
 
                 viewDir = normalize(ObjSpaceViewDir(vert.vertex));
-                output.rim = 1.0 - _ColoredPercent*saturate(dot(viewDir, vert.normal));
-                //rim defines zone of colored pixels
+                output.rim = 1.0 - _Percent * saturate(dot(viewDir, vert.normal));
+
+                //output.uv += _ScrollDirection * _Time.y;
 
                 return output;
             }
-            
-            fixed4 pixel;
-            fixed4 frag (Varyings input) : SV_Target
+
+            float4 frag (Varyings input) : SV_Target
             {
-                pixel = _Color * pow(_FresnelPower, input.rim);
+                pixel = tex2D(_FieldTex, input.uv) * _Color * pow(_FresnelPower, input.rim);
                 pixel = lerp(0, pixel, input.rim);
+                
                 return clamp(pixel, 0, _Color);
+                //return float4(1,0,0,1);
             }
-            ENDCG
+            ENDHLSL
         }
-        // End Fields Pass
-    	
-        
-   
+
     }
-    FallBack "Diffuse"
+    //FallBack "Diffuse"
 }

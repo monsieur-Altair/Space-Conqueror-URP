@@ -13,7 +13,13 @@
     SubShader
     {
         
-        Tags { "RenderType"="Geometry" "Queue"="Transparent" "RenderPipeline" = "UniversalRenderPipeline"}
+        Tags 
+        { 
+            "RenderType"="Geometry" 
+            "Queue"="Transparent" 
+            "RenderPipeline" = "UniversalRenderPipeline"
+        }
+        
         LOD 200
         Cull back
         //[_Cull]
@@ -66,7 +72,11 @@
         }
         
         
-        Tags { "RenderType" = "Opaque" "RenderPipeline" = "UniversalRenderPipeline" }
+        Tags 
+        { 
+            "RenderType" = "Opaque" 
+            "RenderPipeline" = "UniversalRenderPipeline" 
+        }
         
         Pass{
             Tags { "LightMode"="UniversalForward" }

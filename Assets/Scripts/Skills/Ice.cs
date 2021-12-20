@@ -7,7 +7,8 @@ namespace Skills
 {
     public class Ice : Base
     {
-        [SerializeField] private GameObject actionZone;
+        [SerializeField] private GameObject icePrefab;
+        //[SerializeField] private GameObject icePrefab;
         
         //private const float Radius = 3.0f;
         private const float PlanetLayHeight = 0.66f;
@@ -27,7 +28,7 @@ namespace Skills
                 Duration = res.duration;
             }
 
-            _freezingObject = Instantiate(actionZone);
+            _freezingObject = Instantiate(icePrefab);
             
             _freezingZone = _freezingObject.GetComponent<Control.Zone>(); 
             _freezingZone.SetTriggerFunction(FreezingEnteredObjects);
@@ -55,7 +56,7 @@ namespace Skills
             var obj = other.gameObject.GetComponent<Skills.IFreezable>();
             if (obj != null)
             {
-                Debug.Log("trigger");
+                //Debug.Log("trigger");
                 obj.Freeze();
                 DeletingFreezingZone += obj.Unfreeze;
             }
