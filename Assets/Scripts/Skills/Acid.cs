@@ -1,11 +1,16 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.VFX;
 
 namespace Skills
 {
     public class Acid : Base
     {
+        [SerializeField] private VisualEffect vfxPrefab;
+        private VisualEffect _acidRainEffect;
+        private readonly Vector3 _offset = new Vector3(0, 1, 0);
         public float HitDuration { get; private set; }
+        public float Duration { get; private set; }
         public float HitDamage { get; private set; }
         public int HitCount { get; private set; }
         protected override void LoadResources()
@@ -14,19 +19,25 @@ namespace Skills
             var res = resource as Resources.Acid;
             if (res != null)
             {
+                Duration =res.duration;
                 HitCount = res.hitCount;
-                HitDuration = res.duration / HitCount;
+                HitDuration = Duration / HitCount;
                 HitDamage = res.damage / HitCount;
             }
+
+            _acidRainEffect = Instantiate(vfxPrefab);
+            _acidRainEffect.Stop();
         }
         
-        protected override void ApplySkill(Vector3 pos)
+        protected override void ApplySkill()
         {
-            ApplySkillToPlanet(pos,StartRain);
+            ApplySkillToPlanet(StartRain);
         }
 
         private void StartRain()
         {
+            _acidRainEffect.transform.position = SelectedPlanet.transform.position +_offset;
+            _acidRainEffect.Play();                                                                              
             StartCoroutine(nameof(DamagePlanetByRain));
         }
         
@@ -39,6 +50,7 @@ namespace Skills
                 yield return new WaitForSeconds(HitDuration);
                 count++;
             }
+            _acidRainEffect.Stop();
         }
 
         protected override void CancelSkill()

@@ -21,9 +21,9 @@ namespace Skills
             _indicator.SetActive(false);
         }
       
-        protected override void ApplySkill(Vector3 pos)
+        protected override void ApplySkill()
         {
-            ApplySkillToPlanet(pos, CallSupply);
+            ApplySkillToPlanet(CallSupply);
         }
 
         protected override void CancelSkill()

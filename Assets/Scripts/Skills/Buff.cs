@@ -15,9 +15,9 @@ namespace Skills
                 BuffPercent = res.buffPercent;
         }
 
-        protected override void ApplySkill(Vector3 pos)
+        protected override void ApplySkill()
         {
-            ApplySkillToPlanet(pos, BuffPlanet);
+            ApplySkillToPlanet(BuffPlanet);
         }
 
         private void BuffPlanet()

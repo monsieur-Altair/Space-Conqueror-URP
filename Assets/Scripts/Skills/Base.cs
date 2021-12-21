@@ -7,12 +7,12 @@ namespace Skills
     public abstract class Base : MonoBehaviour, ISkill
     {
         [SerializeField] protected Resources.Skill resource;
-        
+        protected Vector3 SelectedScreenPos { get; private set; }
         protected Control.SkillController SkillController;
         protected Camera MainCamera;
         protected Managers.ObjectPool ObjectPool;
         protected Planets.Base SelectedPlanet;
-        protected abstract void ApplySkill(Vector3 pos);
+        protected abstract void ApplySkill();
         protected abstract void CancelSkill();
         protected bool IsOnCooldown = false;
         protected delegate void UniqueActionToPlanet();
@@ -50,9 +50,10 @@ namespace Skills
 
         public void Execute(Vector3 pos)
         {
+            SelectedScreenPos = pos;
             if (Planets.Scientific.ScientificCount>Cost && !IsOnCooldown)
             {
-                ApplySkill(pos);
+                ApplySkill();
             }
             else
             {
@@ -60,9 +61,9 @@ namespace Skills
             }
         }
 
-        private Planets.Base RaycastForPlanet(Vector3 pos)
+        private Planets.Base RaycastForPlanet()
         {
-            var ray = MainCamera.ScreenPointToRay(pos);
+            var ray = MainCamera.ScreenPointToRay(SelectedScreenPos);
             return Physics.Raycast(ray, out var hit) ? hit.collider.GetComponent<Planets.Base>() : null;
         }
         
@@ -72,9 +73,9 @@ namespace Skills
                 _button.image.color=Color.white;
         }
 
-        protected void ApplySkillToPlanet(Vector3 pos, UniqueActionToPlanet action)
+        protected void ApplySkillToPlanet(UniqueActionToPlanet action)
         {
-            SelectedPlanet = RaycastForPlanet(pos);
+            SelectedPlanet = RaycastForPlanet();
             if (SelectedPlanet != null)
             {
                 IsOnCooldown = true;

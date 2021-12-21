@@ -62,10 +62,10 @@ namespace Skills
             }
         }
 
-        protected override void ApplySkill(Vector3 pos)
+        protected override void ApplySkill()
         {
             IsOnCooldown = true;
-            SpawnFreezingZone(pos);
+            SpawnFreezingZone(SelectedScreenPos);
             Planets.Scientific.DecreaseScientificCount(Cost);
             Invoke(nameof(CancelSkill), Cooldown);
         }
