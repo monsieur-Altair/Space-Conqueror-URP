@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Planets;
 using UnityEngine;
 
 namespace Skills
@@ -22,8 +23,10 @@ namespace Skills
         }
       
         protected override void ApplySkill()
-        {
-            ApplySkillToPlanet(CallSupply);
+        {            
+            SelectedPlanet = RaycastForPlanet();
+            if(SelectedPlanet.Team==Team.Blue)
+                ApplySkillToPlanet(CallSupply);
         }
 
         protected override void CancelSkill()

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine; 
 
 namespace Planets
@@ -43,6 +44,9 @@ namespace Planets
         protected float ProduceCount { get; private set; }
         protected float ProduceTime { get; private set; }
         protected float Defense { get; private set; }
+        protected float ReducingSpeed { get; private set; }
+        
+        
         public Team Team { get; private set; }
         public Type Type { get; private set; }
         
@@ -96,6 +100,7 @@ namespace Planets
             ProduceCount = resourcePlanet.produceCount;
             ProduceTime = resourcePlanet.produceTime;
             Defense = resourcePlanet.defense;
+            ReducingSpeed = resourcePlanet.reducingSpeed;
             Team = team;
             Type = type;
             
@@ -118,9 +123,14 @@ namespace Planets
         {
             if (!_isFrozen)
             {
-                _count += ProduceCount / ProduceTime * Time.deltaTime;
-                if (_count > MaxCount) 
-                    _count = MaxCount;
+                if(_count<MaxCount)
+                    _count += ProduceCount / ProduceTime * Time.deltaTime;
+                else if(_count>MaxCount + 0.1f)
+                {
+                    _count -= ReducingSpeed * Time.deltaTime;
+                }
+                /*if (_count > MaxCount) 
+                    _count = MaxCount;*/
             }
         }
 

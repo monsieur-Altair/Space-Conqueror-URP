@@ -108,6 +108,19 @@ namespace Control
             }
         }
 
+        public void HandleClick()
+        {
+            if (Input.GetMouseButtonUp(0))
+            {
+                if (IsSelectedSkill)
+                {
+                    var skill= ChooseSkill();
+                    skill.Execute(Input.mousePosition);
+                    OnCanceledSelection();
+                }
+            }
+        }
+
         private void HandleRelease()
         {
             //if doesn't work after canceling button, will add yield return
@@ -136,6 +149,7 @@ namespace Control
         {
             if (!IsSelectedSkill)
             {
+                //Debug.Log("skill selected");
                 BlockButton(button);
                 StartCoroutine(nameof(SwitchWithWaiting));
             }

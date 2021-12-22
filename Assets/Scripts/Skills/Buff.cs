@@ -1,4 +1,5 @@
 ﻿
+using Planets;
 using UnityEngine;
 
 namespace Skills
@@ -17,7 +18,9 @@ namespace Skills
 
         protected override void ApplySkill()
         {
-            ApplySkillToPlanet(BuffPlanet);
+            SelectedPlanet = RaycastForPlanet();
+            if(SelectedPlanet.Team==Team.Blue)
+                ApplySkillToPlanet(BuffPlanet);
         }
 
         private void BuffPlanet()

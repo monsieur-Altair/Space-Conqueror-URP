@@ -61,7 +61,7 @@ namespace Skills
             }
         }
 
-        private Planets.Base RaycastForPlanet()
+        protected Planets.Base RaycastForPlanet()
         {
             var ray = MainCamera.ScreenPointToRay(SelectedScreenPos);
             return Physics.Raycast(ray, out var hit) ? hit.collider.GetComponent<Planets.Base>() : null;
@@ -75,7 +75,6 @@ namespace Skills
 
         protected void ApplySkillToPlanet(UniqueActionToPlanet action)
         {
-            SelectedPlanet = RaycastForPlanet();
             if (SelectedPlanet != null)
             {
                 IsOnCooldown = true;
