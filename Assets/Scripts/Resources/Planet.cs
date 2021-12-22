@@ -9,5 +9,6 @@ namespace Resources
         public float produceCount;
         public float produceTime;
         public float defense;
+        public float reducingSpeed;
     }
 }

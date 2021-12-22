@@ -149,7 +149,7 @@ namespace Control
         {
             if (!IsSelectedSkill)
             {
-                Debug.Log("skill selected");
+                //Debug.Log("skill selected");
                 BlockButton(button);
                 StartCoroutine(nameof(SwitchWithWaiting));
             }

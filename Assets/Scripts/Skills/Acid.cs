@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using System.IO;
+using Planets;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -31,7 +33,9 @@ namespace Skills
         
         protected override void ApplySkill()
         {
-            ApplySkillToPlanet(StartRain);
+            SelectedPlanet = RaycastForPlanet();
+            if(SelectedPlanet.Team!=Team.Blue)
+                ApplySkillToPlanet(StartRain);
         }
 
         private void StartRain()

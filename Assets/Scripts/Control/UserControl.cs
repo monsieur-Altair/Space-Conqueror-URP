@@ -1,14 +1,16 @@
-﻿using UnityEditor;
+﻿//#define TOUCH
+
 using UnityEngine;
 
-//#define TOUCH
 
 
 namespace Control
 {
     public class UserControl : MonoBehaviour
     {
+#if TOUCH
         private Touch _touch;
+#endif
         private PlanetController _planetController;
         private SkillController _skillController;
     

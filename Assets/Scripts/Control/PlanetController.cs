@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using Planets;
+using UnityEditor.Experimental;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -57,7 +61,7 @@ namespace Control
             var pos = Input.mousePosition;
             if (Input.GetMouseButtonUp(0))
             {
-                Debug.Log("release");
+                //Debug.Log("release");
                 HandleRelease(pos);
             }
             else if (Input.GetMouseButtonDown(0))
@@ -77,7 +81,7 @@ namespace Control
             var planet = RaycastForPlanet(pos);
             if (planet != null)
             {
-                if (_selectablePlanets.Contains(planet) == false)
+                if (_selectablePlanets.Contains(planet) == false && planet.Team == Team.Blue)
                 {
                     OnSelecting(planet);
                 }
@@ -108,6 +112,7 @@ namespace Control
 
         private void OnSelecting(Planets.Base planet)
         {
+            //Debug.Log("increase");
             Selecting?.Invoke(this, planet);
         }
     
@@ -127,16 +132,81 @@ namespace Control
             var planet = RaycastForPlanet(pos);
             if (planet != null)
             {
-                if (_selectablePlanets.Contains(planet))
+                //1 - empty: only blue,
+                //2 - not empty: if user has selected blue, check container + if the last isn't blue, delete them 
+
+                var team = planet.Team;
+                var count = _selectablePlanets.Count;
+                if (team == Team.Blue)
                 {
-                    _selectablePlanets.Remove(planet);
-                    _selectablePlanets.Add(planet);
+                    
+                    if(count==0)
+                        OnSelecting(planet);
+                    else
+                    {
+                        var lastPlanet = _selectablePlanets.Last();
+                        if (planet == lastPlanet)
+                            return;
+                        if (lastPlanet.Team != Team.Blue)
+                        {
+                            OnCancelingSelection(lastPlanet);
+                            _selectablePlanets.RemoveAt(count-1);
+                        }
+                        if (_selectablePlanets.Contains(planet))
+                        {
+                            _selectablePlanets.Remove(planet);
+                            _selectablePlanets.Add(planet);
+                        }
+                        else
+                        {
+                            //Debug.Log("last case");
+                            OnSelecting(planet);
+                        }
+                    }
                 }
                 else
                 {
-                    OnSelecting(planet);
+                    if (count > 0)
+                    {
+                        var lastPlanet = _selectablePlanets.Last();
+                        if (planet == lastPlanet)
+                            return;
+                        
+                        if (lastPlanet.Team != Team.Blue)
+                        {
+                            OnCancelingSelection(lastPlanet);
+                            _selectablePlanets.RemoveAt(count-1);
+                        }
+                        OnSelecting(planet);
+                    }
                 }
 
+                /*var count = _selectablePlanets.Count;
+                if (count == 0 && planet.Team != Team.Blue)
+                {
+                    return;
+                }
+                else
+                {
+                    var lastPlanet = _selectablePlanets.Last();
+                    if (count != 0 && lastPlanet.Team != Team.Blue)
+                    {
+                        OnCancelingSelection(lastPlanet);
+                        _selectablePlanets.RemoveAt(count-1);
+                    }
+                    if (_selectablePlanets.Contains(planet))
+                    {
+                        _selectablePlanets.Remove(planet);
+                        _selectablePlanets.Add(planet);
+                        //return;
+                    }
+                    else
+                    {
+                        Debug.Log("last case");
+                        OnSelecting(planet);
+                    }
+                    
+                }*/
             }
         }
 
