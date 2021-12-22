@@ -196,11 +196,12 @@ namespace Planets
         public void AttackedByUnit(Units.Base unit)
         {
             var unitTeam = unit.GETTeam();
-            var attack=unit.CalculateAttack();
-            attack *= this.Team == unitTeam ? 1 : -1;
+            var attack=unit.CalculateAttack(Team);
             _count += attack;
             if (_count < 0)
             {
+                _count *= -1.0f;
+                _count = unit.GetActualCount(_count);
                 Main.UpdateObjectsCount(Team,unitTeam);
                 SwitchTeam(unitTeam);
                 Main.CheckGameOver();
@@ -216,7 +217,6 @@ namespace Planets
 
             _outlook.SetOutlook(this);
             UI.SetUnitCounterColor(this);
-            _count *= -1;
         }
 
         public void Buff(float percent)
