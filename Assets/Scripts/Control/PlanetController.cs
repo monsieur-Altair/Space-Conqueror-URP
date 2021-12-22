@@ -31,30 +31,50 @@ namespace Control
             _touch = touch;
         
             //Debug.Log("handle planet touch\n");
-
+            var pos = _touch.position;
             switch (_touch.phase)
             {
                 case TouchPhase.Began:
                 {
-                    HandleClick();
+                    HandleClick(pos);
                     break;
                 }
                 case TouchPhase.Ended:
                 {
-                    HandleRelease();
+                    HandleRelease(pos);
                     break;
                 }
                 case TouchPhase.Moved:
                 {
-                    HandleMultipleSelection();
+                    HandleMultipleSelection(pos);
                     break;
                 }
             }
         }
-    
-        private void HandleClick()
+
+        public void HandleMouseClick()
         {
-            var planet = RaycastForPlanet();
+            var pos = Input.mousePosition;
+            if (Input.GetMouseButtonUp(0))
+            {
+                Debug.Log("release");
+                HandleRelease(pos);
+            }
+            else if (Input.GetMouseButtonDown(0))
+            {
+                HandleClick(pos);
+            }
+            else if(Input.GetMouseButton(0))
+            {
+                HandleMultipleSelection(pos);
+            }
+        }
+        
+        
+    
+        private void HandleClick(Vector3 pos)
+        {
+            var planet = RaycastForPlanet(pos);
             if (planet != null)
             {
                 if (_selectablePlanets.Contains(planet) == false)
@@ -64,9 +84,9 @@ namespace Control
             }
         }
 
-        private void HandleRelease()
+        private void HandleRelease(Vector3 pos)
         {
-            if (RaycastForPlanet() == null)
+            if (RaycastForPlanet(pos) == null)
             {
                 foreach (var planet in _selectablePlanets)
                 {
@@ -96,15 +116,15 @@ namespace Control
             CancelingSelection?.Invoke(this, planet);
         }
 
-        private Planets.Base RaycastForPlanet()
+        private Planets.Base RaycastForPlanet(Vector3 pos)
         {
-            var ray = _mainCamera.ScreenPointToRay(_touch.position);
+            var ray = _mainCamera.ScreenPointToRay(pos);
             return Physics.Raycast(ray, out var hit) ? hit.collider.GetComponent<Planets.Base>() : null;
         }
 
-        private void HandleMultipleSelection()
+        private void HandleMultipleSelection(Vector3 pos)
         {
-            var planet = RaycastForPlanet();
+            var planet = RaycastForPlanet(pos);
             if (planet != null)
             {
                 if (_selectablePlanets.Contains(planet))

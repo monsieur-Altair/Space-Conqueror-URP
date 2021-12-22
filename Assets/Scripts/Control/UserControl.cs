@@ -1,6 +1,9 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
+//#define TOUCH
+
+
 namespace Control
 {
     public class UserControl : MonoBehaviour
@@ -17,7 +20,8 @@ namespace Control
 
         public void Update()
         {
-            if (Input.touchCount > 0)
+#if TOUCH
+          if (Input.touchCount > 0)
             {
 
                 //Debug.Log("touch screen\n");
@@ -27,7 +31,14 @@ namespace Control
                     _skillController.HandleTouch(_touch);
                 else
                     _planetController.HandleTouch(_touch); 
-            }
+            }  
+#endif
+            if(_skillController.IsSelectedSkill)
+                _skillController.HandleClick();
+            else 
+                _planetController.HandleMouseClick(); 
+            
+            
         }
     }
 }
