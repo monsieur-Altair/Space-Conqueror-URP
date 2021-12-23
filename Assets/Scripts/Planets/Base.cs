@@ -35,6 +35,7 @@ namespace Planets
         private UnitInf _unitInf;
         private bool _isFrozen=false;
 
+        public static event Action<Planets.Base, Team, Team> Conquered;
         private static int _id = 0;
         
         public int ID { get; private set; }
@@ -59,7 +60,6 @@ namespace Planets
             public float Damage { get; internal set;}
             public float UnitCount { get; internal set; }
             public Team Team { get; internal set; }
-            public bool IsBuffed { get; private set; }
         }
         
 
@@ -200,6 +200,9 @@ namespace Planets
             _count += attack;
             if (_count < 0)
             {
+                var oldTeam = Team;
+                var newTeam = unitTeam;
+                OnConquered(oldTeam,newTeam);
                 _count *= -1.0f;
                 _count = unit.GetActualCount(_count);
                 Main.UpdateObjectsCount(Team,unitTeam);
@@ -241,6 +244,11 @@ namespace Planets
         public void Unfreeze()
         {
             _isFrozen = false;
+        }
+
+        protected void OnConquered(Team oldTeam, Team newTeam)
+        {
+            Conquered?.Invoke(this, oldTeam, newTeam);
         }
     }
 }

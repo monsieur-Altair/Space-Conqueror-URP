@@ -32,7 +32,7 @@ namespace Control
         public static float MinDepth { get; private set; }
         public static float MaxDepth { get; private set; }
         public bool IsSelectedSkill { get; private set; }
-        public event Action CanceledSelection; 
+        public event Action CanceledSelection;
         
         public void Awake()
         {
@@ -173,8 +173,8 @@ namespace Control
             
             button.image.color=Color.red;
         }
-       
-        protected virtual void OnCanceledSelection()
+
+        private void OnCanceledSelection()
         {
             CanceledSelection?.Invoke();
             _selectedSkillName = SkillName.None;
