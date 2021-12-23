@@ -16,4 +16,4 @@ MonoBehaviour:
   cost: 10
   duration: 4
   damage: 50
-  hitCount: 5
+  hitCount: 17
