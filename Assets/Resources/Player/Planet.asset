@@ -16,3 +16,4 @@ MonoBehaviour:
   produceCount: 7
   produceTime: 1
   defense: 1
+  reducingSpeed: 3
