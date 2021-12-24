@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -9,44 +10,93 @@ namespace AI
     public class AttackSomePlanet : MonoBehaviour, IAction
     {
         private List<List<Planets.Base>> _allPlanets;
-        private AI _ai;
+        private Core _core;
         private Planets.Base _target;
         private readonly List<Planets.Base> _planetsForLaunch = new List<Planets.Base>();
         private Vector3 _mainPos;
         private int _countForLaunch;
         private const int MINCountForLaunch = 1;//inclusive
-        private const int MAXCountForLaunch = 4;//exclusive
+        private const int MAXCountForLaunch = 3;//inclusive
+        private bool _isCastedSkill;
+        private SkillController _skillController;
+        
+        
+        private const float DelayAfterCasting = 2.0f;
+        
+        [SerializeField]private int buffProbability = 40;
+        [SerializeField]private int acidProbability = 40;
+        [SerializeField]private int callProbability = 40;
+
         
         public void InitAction()
         {
-            _ai = AI.Instance;
-            _allPlanets = _ai.AllPlanets;
-            _mainPos = _ai.MainPos;
+            _core = Core.Instance;
+            _allPlanets = _core.AllPlanets;
+            _mainPos = _core.MainPos;
+            _isCastedSkill = false;
+            
+            
+            _skillController = _core.GetComponent<SkillController>();
+            _skillController.InitSkills();
+            if (_skillController==null)
+            {
+                throw new MyException("skill controller = null");
+            }
+            
         }
 
         public void Execute()
         {
             _planetsForLaunch.Clear();
-            _countForLaunch = Random.Range(MINCountForLaunch, MAXCountForLaunch);
+            _countForLaunch = Random.Range(MINCountForLaunch, MAXCountForLaunch+1);
             
-            StartCoroutine(LaunchToTarget());
+            TryToCall();
+            if(!_isCastedSkill)
+                StartCoroutine(LaunchToTarget());
+            
+            _isCastedSkill = false;
+
         }
+
+       
 
         private IEnumerator LaunchToTarget()
         {
-            yield return StartCoroutine(FindTargetForLaunch());
-            
+            yield return StartCoroutine(FindAllPlanetsToAttack());
+            //Debug.Log("count for launch = "+_planetsForLaunch.Count);
             foreach (var planet in _planetsForLaunch)
             {
+                //Debug.Log("launch");
                 planet.LaunchUnit(_target);
+                yield return null;
             }
+
+        }
+
+        private int FindTargetTeam()
+        {
+            var enemyCount = _allPlanets[Core.Enemy].Count;
+            var neutralCount = _allPlanets[Core.Neutral].Count;
+            var hundredPercent = enemyCount + neutralCount;
+            var randomType = Random.Range(1, hundredPercent + 1);
+            return (randomType <= enemyCount) ? Core.Enemy : Core.Neutral;
+        }
+
+        private bool ApplyDecision(float probability)
+        {
+            var result = Random.Range(1, 101);
+            return result <= probability;
         }
         
-        private IEnumerator FindTargetForLaunch()
+        private IEnumerator FindTarget()
         {
-            var minDistance = float.PositiveInfinity;
+            var teamForAttack = FindTargetTeam();
+            //Debug.Log("team="+teamForAttack);
+            yield return null;
             
-            foreach (var possibleTarget in _allPlanets[AI.Neutral])
+            var minDistance = float.PositiveInfinity;
+
+            foreach (var possibleTarget in _allPlanets[teamForAttack])
             {
                 var distance = Vector3.Distance(_mainPos, possibleTarget.transform.position);
                 if (distance < minDistance)
@@ -58,32 +108,95 @@ namespace AI
                 yield return null;
             }
 
+            TryToAcid();
+
+            //Debug.Log("target="+_target.Team+_target.ID);
+            yield return null;
+        }
+
+        private void TryToAcid()
+        {
+            if (!_isCastedSkill)
+            {
+                var isAttackedByAcid = ApplyDecision(acidProbability);
+                if (isAttackedByAcid)
+                {
+                    _skillController.AttackByAcid(_target);
+                    _isCastedSkill = true;
+                } 
+            }
+        }
+        
+        private void TryToCall()
+        {
+            if (!_isCastedSkill)
+            {
+                var isCalled = ApplyDecision(callProbability);
+                if (isCalled)
+                {
+                    var randomIndex = Random.Range(0, _allPlanets[Core.Own].Count);
+                    _target = _allPlanets[Core.Own][randomIndex];
+                    _skillController.Call(_target);
+                    _isCastedSkill = true;
+                } 
+            } 
+        }
+
+        private void TryToBuff()
+        {
+            if (!_isCastedSkill)
+            {
+                var isBuffedRandomPlanet = ApplyDecision(buffProbability);
+                if (isBuffedRandomPlanet)
+                {
+                    var randomIndex = Random.Range(0, _planetsForLaunch.Count);
+                    _skillController.BuffPlanet(_planetsForLaunch[randomIndex]);
+                    _isCastedSkill = true;
+                }
+            }
+        }
+        
+        private IEnumerator FindAllPlanetsToAttack()
+        {
+            yield return StartCoroutine(FindTarget());
+
             
+            //Debug.Log("try to find planet to launch");
             var launchPos = _target.transform.position;
-            //Dictionary<int,float> dataForLaunch = new Dictionary<int, float>();
             List<KeyValuePair<Planets.Base, float>> dataForLaunch = new List<KeyValuePair<Planets.Base, float>>();
-            foreach (var planetForLaunch in _allPlanets[AI.Own])
+            foreach (var planetForLaunch in _allPlanets[Core.Own])
             {
                 var distance = Vector3.Distance(launchPos, planetForLaunch.transform.position);
                 dataForLaunch.Add(new KeyValuePair<Planets.Base, float>(planetForLaunch,distance));
                 yield return null;
             }
-            
-            
-            //sort list by ascending
-            dataForLaunch.Sort((pair1,pair2)=>pair1.Value.CompareTo(pair2.Value));
-            yield return null;
 
+            var allPossibleLaunchCount = dataForLaunch.Count;
+            //sort list by ascending
+            if (allPossibleLaunchCount >= 2)
+            {
+                dataForLaunch.Sort((pair1,pair2)=>pair1.Value.CompareTo(pair2.Value));
+                yield return null;
+            }
             
-            if (_countForLaunch > dataForLaunch.Count)
-                _countForLaunch = dataForLaunch.Count;
+            
+            //Debug.Log("all poss count "+allPossibleLaunchCount);
+            if (_countForLaunch > allPossibleLaunchCount)
+                _countForLaunch = allPossibleLaunchCount;
             for (var i = 0; i < _countForLaunch; i++)
             {
                 _planetsForLaunch.Add(dataForLaunch[i].Key);
                 yield return null;
             }
-            
 
+            TryToBuff();
+
+            if (_isCastedSkill)
+            {
+                yield return new WaitForSeconds(DelayAfterCasting);
+            }
+            //yield return StartCoroutine(FindAllPlanetsToLaunch());
         }
+
     }
 }

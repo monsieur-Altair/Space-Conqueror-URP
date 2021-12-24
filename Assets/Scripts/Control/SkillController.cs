@@ -47,8 +47,18 @@ namespace Control
             _selectedSkillName = SkillName.None;
             
             _call = buttons[Call].GetComponent<Skills.Call>();
+            _call.SetTeamConstraint(Planets.Team.Blue);
+            _call.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
+            
             _buff = buttons[Buff].GetComponent<Skills.Buff>();
+            _buff.SetTeamConstraint(Planets.Team.Blue);
+            _buff.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
+            
             _acid = buttons[Acid].GetComponent<Skills.Acid>();
+            _acid.SetTeamConstraint(Planets.Team.Blue);
+            _acid.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
+
+            
             _ice = buttons[Ice].GetComponent<Skills.Ice>();
             
             MinDepth = MaxDepth = 0.0f;
@@ -57,6 +67,11 @@ namespace Control
             MinDepth = min;
             MaxDepth = max;
         }
+
+        /*private void DecreasePlayerSciCounter(float value)
+        {
+            Planets.Scientific.ScientificCount -= value;
+        }*/
 
         public static void GetCameraDepths(out float min, out float max)
         {
@@ -115,7 +130,7 @@ namespace Control
                 if (IsSelectedSkill)
                 {
                     var skill= ChooseSkill();
-                    skill.Execute(Input.mousePosition);
+                    skill.ExecuteForPlayer(Input.mousePosition);
                     OnCanceledSelection();
                 }
             }
@@ -123,16 +138,16 @@ namespace Control
 
         private void HandleRelease()
         {
-            //if doesn't work after canceling button, will add yield return
+            //if doesn't work after canceling button, add yield return
             if (IsSelectedSkill)
             {
                 var skill= ChooseSkill();
-                skill.Execute(_touch.position);
+                skill.ExecuteForPlayer(_touch.position);
                 OnCanceledSelection();
             }
         }
 
-        private Skills.ISkill ChooseSkill()
+        public Skills.ISkill ChooseSkill()
         {
             return _selectedSkillName switch
             {

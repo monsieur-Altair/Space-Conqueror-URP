@@ -23,14 +23,17 @@ namespace Skills
         }
       
         protected override void ApplySkill()
-        {            
-            SelectedPlanet = RaycastForPlanet();
-            if(SelectedPlanet.Team==Team.Blue)
+        {
+            //Debug.Log("call");
+            if (SelectedPlanet == null)
+                SelectedPlanet = RaycastForPlanet();
+            if(SelectedPlanet.Team==teamConstraint)
                 ApplySkillToPlanet(CallSupply);
         }
 
         protected override void CancelSkill()
         {
+            SelectedPlanet = null;
             IsOnCooldown = false;
             UnblockButton();
         }

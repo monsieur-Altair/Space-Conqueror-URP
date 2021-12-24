@@ -16,7 +16,7 @@ namespace Managers
     public class Main : MonoBehaviour
     {
         private readonly int _teamNumber = Enum.GetNames(typeof(Planets.Team)).Length;
-        [SerializeField] private AI.AI AI;
+        [SerializeField] private AI.Core core;
         //private AI.AI _ai;
         public List<Planets.Base> AllPlanets { get; private set; }
         [SerializeField] private GameObject planetsLay;
@@ -43,8 +43,8 @@ namespace Managers
         {
             AllPlanets = planetsLay.GetComponentsInChildren<Planets.Base>().ToList();
             FillTeamCount();
-            AI = AI.GetComponent<AI.AI>();
-            if (AI==null)
+            core = core.GetComponent<AI.Core>();
+            if (core==null)
             {
                 throw new MyException("cannot get ai component");
             }
@@ -62,8 +62,8 @@ namespace Managers
                 }
                 case GameStates.Gameplay:
                 {
-                    AI.Init(AllPlanets);
-                    AI.Enable();
+                    core.Init(AllPlanets);
+                    core.Enable();
                     break;
                 }
                 case GameStates.GameOver:

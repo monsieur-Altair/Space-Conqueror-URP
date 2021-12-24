@@ -38,11 +38,23 @@ namespace Planets
 
         private void IncreaseScientificRes()
         {
+            
             //CHANGE FOR EVERY TEAM
-            if(Team==Team.Blue)
+            if (Team == Team.Blue)
+            {
                 ScientificCount += ProduceCountScientific / ProduceTimeScientific * Time.deltaTime;
-            if (ScientificCount > MaxCountScientific)
-                ScientificCount = MaxCountScientific;
+                if (ScientificCount > MaxCountScientific)
+                    ScientificCount = MaxCountScientific;
+            }
+
+            if (Team == Team.Red)
+            {
+                AI.Core.ScientificCount+=ProduceCountScientific / ProduceTimeScientific * Time.deltaTime;
+                if (AI.Core.ScientificCount > MaxCountScientific)
+                    AI.Core.ScientificCount = MaxCountScientific;
+            }
+                
+           
         }
         
         protected override void DisplayUI()

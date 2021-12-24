@@ -4,6 +4,7 @@ namespace Skills
 {
     public interface ISkill
     {
-        void Execute(Vector3 pos);
+        void ExecuteForPlayer(Vector3 pos);
+        void ExecuteForAI(Planets.Base planet);
     }
 }
