@@ -18,8 +18,10 @@ namespace Skills
 
         protected override void ApplySkill()
         {
-            SelectedPlanet = RaycastForPlanet();
-            if(SelectedPlanet.Team==Team.Blue)
+            //Debug.Log("buff");
+            if (SelectedPlanet==null)
+                SelectedPlanet = RaycastForPlanet();
+            if(SelectedPlanet.Team==teamConstraint)
                 ApplySkillToPlanet(BuffPlanet);
         }
 
@@ -32,6 +34,7 @@ namespace Skills
         {
             IsOnCooldown = false;
             SelectedPlanet.UnBuff(BuffPercent);
+            SelectedPlanet = null;
             UnblockButton();
         }
     }

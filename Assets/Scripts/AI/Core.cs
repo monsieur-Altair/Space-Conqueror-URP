@@ -1,25 +1,29 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
+
 
 namespace AI
 { 
-    public class AI : MonoBehaviour
+    public class Core : MonoBehaviour
     {
-        //private List<Planets.Base> _ownPlanets=new List<Planets.Base>();
-        //private List<Planets.Base> _enemyPlanets=new List<Planets.Base>();
-        //private List<Planets.Base> _neutralPlanets=new List<Planets.Base>();
         [SerializeField] private Planets.Base mainPlanet;
         [SerializeField] private GameObject allActions;
         
         public Vector3 MainPos { get; private set; }
-        public List<List<Planets.Base>> AllPlanets { get; private set; }// = new List<List<Planets.Base>>();
+        public List<List<Planets.Base>> AllPlanets { get; private set; }
         public static int Own, Enemy, Neutral;
         private bool _isActive = false;
-        public static AI Instance { get; private set; }
+        public static Core Instance { get; private set; }
 
-        private IAction _action; 
-       
+        private IAction _attackByRocket;
+        public static float ScientificCount;
+
+        private const float MinDelay = 4.0f;
+        private const float MaxDelay = 7.0f;
+
+        //[SerializeField]private int actionSkillPercent = 25;
         
         
         public void Awake()
@@ -46,20 +50,19 @@ namespace AI
             {
                 AllPlanets[(int)planet.Team].Add(planet);
             }
-            
 
 
 
-            _action = allActions.GetComponent<AttackSomePlanet>();
-            _action.InitAction();
-            if (_action==null)
+            _attackByRocket = allActions.GetComponent<AttackSomePlanet>();
+            _attackByRocket.InitAction();
+            if (_attackByRocket==null)
             {
-                throw new MyException("action = null");
+                throw new MyException("attack by rocket = null");
             }
-        }
 
-        //attack one to one
-        //attack many to one
+            ScientificCount = 50.0f;
+        }
+        
         //attack after lost
         //firstly attack neutral
         //attack immediately 
@@ -69,25 +72,42 @@ namespace AI
         public void Enable()
         {
             _isActive = true;
-            //DoSomeAction();
-            InvokeRepeating(nameof(DoSomeAction),2,2);
+            StartCoroutine(DoSomeAction());
         }
 
-        private void DoSomeAction()
+        public void Disable()
         {
-            FindAction().Execute();
+            _isActive = false;
         }
 
-        private IAction FindAction()
+        private IEnumerator DoSomeAction()
         {
-            return _action;
+            while (_isActive)
+            {
+                var delay = Random.Range(MinDelay, MaxDelay);
+                yield return new WaitForSeconds(delay);
+                _attackByRocket.Execute();
+            }
         }
+
+        /*private IAction FindAction()
+        {
+            var decisionValue = Random.Range(1,101);//1-100
+            if (decisionValue <= actionSkillPercent)
+                return _attackBySkill;
+            return _attackByRocket;
+        }*/
 
         private void AdjustPlanetsList(Planets.Base planet, Planets.Team oldTeam, Planets.Team newTeam)
         {
             AllPlanets[(int) oldTeam].Remove(planet);
             AllPlanets[(int) newTeam].Add(planet);
         }
+
+        /*public void IncreaseScientificCount(float value)
+        {
+            
+        }*/
         
     }
 }

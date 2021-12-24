@@ -33,8 +33,10 @@ namespace Skills
         
         protected override void ApplySkill()
         {
-            SelectedPlanet = RaycastForPlanet();
-            if(SelectedPlanet.Team!=Team.Blue)
+            //Debug.Log("acid");
+            if(SelectedPlanet==null)
+                SelectedPlanet = RaycastForPlanet();
+            if(SelectedPlanet.Team!=teamConstraint)
                 ApplySkillToPlanet(StartRain);
         }
 
@@ -55,11 +57,13 @@ namespace Skills
                 count++;
             }
             _acidRainEffect.Stop();
+            SelectedPlanet = null;
         }
 
         protected override void CancelSkill()
         {
             IsOnCooldown = false;
+            
             UnblockButton();
         }
     }

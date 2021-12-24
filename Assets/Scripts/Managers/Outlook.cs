@@ -22,6 +22,8 @@ namespace Managers
         
         [SerializeField] private Material basePlanetMaterial;
         [SerializeField] private Material baseRocketMaterial;
+
+        [SerializeField] private Material glassMaterial;
         
         private readonly Dictionary<int, MeshRenderer> _planetsRenderer = new Dictionary<int, MeshRenderer>();
 
@@ -74,7 +76,7 @@ namespace Managers
         {
             var index = planet.ID.GetHashCode();
             var circle = planet.transform.GetChild(0);
-            _planetsRenderer.Add(index,circle.GetComponent<MeshRenderer>());
+            _planetsRenderer.Add(index, circle.GetComponent<MeshRenderer>());
         }
         
         public void SetOutlook(Planets.Base planet)
@@ -86,8 +88,8 @@ namespace Managers
             {
                 mainTexture = _allTextures[type][team]
             };
-            
-            Material[] materials = {mainMaterial, null};
+            Material secondMaterial = (type == (int)Type.Spawner) ? glassMaterial : null;
+            Material[] materials = {mainMaterial, secondMaterial};
             _planetsRenderer[index].materials = materials;
         }
 
@@ -121,7 +123,7 @@ namespace Managers
             int index = planet.ID.GetHashCode();
             
             var materials = _planetsRenderer[index].materials;
-            materials[BuffTexIndex] = null;
+            materials[BuffTexIndex] = (planet.Type == Type.Spawner) ? glassMaterial : null;
             _planetsRenderer[index].materials = materials;
         }
         

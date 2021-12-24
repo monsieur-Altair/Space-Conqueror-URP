@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Skills
@@ -15,7 +16,12 @@ namespace Skills
         protected abstract void ApplySkill();
         protected abstract void CancelSkill();
         protected bool IsOnCooldown = false;
+
+        protected Planets.Team teamConstraint; 
         protected delegate void UniqueActionToPlanet();
+        public delegate void DecreasingCounter(float count);
+
+        private DecreasingCounter _decreasingCounter;
         public float Cooldown { get; private set; }
         public int Cost { get; private set; }
 
@@ -34,8 +40,12 @@ namespace Skills
             if (ObjectPool == null)
                 throw new MyException("can't get object pool");
             _button = GetComponent<Button>();
-            
-            _button.onClick.AddListener(() => { SkillController.PressHandler(_button);});
+            /*if (_button==null)
+            {
+                throw new MyException("cannot get button component");
+            }*/
+            if(_button!=null)
+                _button.onClick.AddListener(() => { SkillController.PressHandler(_button);});
             
             SkillController.CanceledSelection += UnblockButton;
             
@@ -48,7 +58,12 @@ namespace Skills
             Cost = resource.cost;
         }
 
-        public void Execute(Vector3 pos)
+        public void SetDecreasingFunction(DecreasingCounter function)
+        {
+            _decreasingCounter = function;
+        }
+        
+        public void ExecuteForPlayer(Vector3 pos)
         {
             SelectedScreenPos = pos;
             if (Planets.Scientific.ScientificCount>Cost && !IsOnCooldown)
@@ -61,6 +76,21 @@ namespace Skills
             }
         }
 
+        public void SetTeamConstraint(Planets.Team team)
+        {
+            teamConstraint = team;
+        }
+
+        public void ExecuteForAI(Planets.Base planet)
+        {
+            SelectedPlanet = planet;
+            if (AI.Core.ScientificCount > Cost && !IsOnCooldown)
+            {
+                //Debug.Log("try skill");
+                ApplySkill();
+            }
+        }
+
         protected Planets.Base RaycastForPlanet()
         {
             var ray = MainCamera.ScreenPointToRay(SelectedScreenPos);
@@ -69,16 +99,18 @@ namespace Skills
         
         protected void UnblockButton()
         {
-            if(!IsOnCooldown)
+            if(!IsOnCooldown && _button!=null)
                 _button.image.color=Color.white;
         }
 
         protected void ApplySkillToPlanet(UniqueActionToPlanet action)
         {
+            //Debug.Log("apply skill to planet");
             if (SelectedPlanet != null)
             {
                 IsOnCooldown = true;
-                Planets.Scientific.DecreaseScientificCount(Cost);
+                //Planets.Scientific.DecreaseScientificCount(Cost);
+                _decreasingCounter(Cost);
                 action();
                 Invoke(nameof(CancelSkill), Cooldown);
             }
