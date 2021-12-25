@@ -1,4 +1,4 @@
-﻿//#define TOUCH
+﻿#define TOUCH
 
 using UnityEngine;
 
@@ -33,13 +33,14 @@ namespace Control
                     _skillController.HandleTouch(_touch);
                 else
                     _planetController.HandleTouch(_touch); 
-            }  
-#endif
+            } 
+ #else
             if(_skillController.IsSelectedSkill)
                 _skillController.HandleClick();
             else 
                 _planetController.HandleMouseClick(); 
-            
+#endif
+       
             
         }
     }

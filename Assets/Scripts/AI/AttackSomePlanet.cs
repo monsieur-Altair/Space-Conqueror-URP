@@ -36,12 +36,13 @@ namespace AI
             _isCastedSkill = false;
             
             
-            _skillController = _core.GetComponent<SkillController>();
-            _skillController.InitSkills();
+            _skillController = GetComponent<SkillController>();
             if (_skillController==null)
             {
                 throw new MyException("skill controller = null");
             }
+            _skillController.InitSkills();
+            
             
         }
 
