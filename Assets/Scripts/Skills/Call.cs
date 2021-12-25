@@ -25,8 +25,10 @@ namespace Skills
         protected override void ApplySkill()
         {
             //Debug.Log("call");
-            if (SelectedPlanet == null)
+            //if (SelectedPlanet == null)
+            if(!IsForAI)
                 SelectedPlanet = RaycastForPlanet();
+           // Debug.Log("Selected team="+SelectedPlanet.Team);
             if(SelectedPlanet.Team==teamConstraint)
                 ApplySkillToPlanet(CallSupply);
         }

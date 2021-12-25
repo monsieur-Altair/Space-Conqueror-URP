@@ -52,6 +52,7 @@ namespace Planets
         public Type Type { get; private set; }
         
         public bool IsBuffed { get; private set; }
+        //public bool isSelected = false;
 
 
         public struct UnitInf
@@ -208,6 +209,7 @@ namespace Planets
                 Main.UpdateObjectsCount(Team,unitTeam);
                 SwitchTeam(unitTeam);
                 Main.CheckGameOver();
+                //IsBuffed = false;
             }
         }
 

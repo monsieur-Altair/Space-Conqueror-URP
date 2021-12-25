@@ -1,4 +1,5 @@
 ﻿using System;
+using Planets;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,7 +17,7 @@ namespace Skills
         protected abstract void ApplySkill();
         protected abstract void CancelSkill();
         protected bool IsOnCooldown = false;
-
+        protected bool IsForAI = false;
         protected Planets.Team teamConstraint; 
         protected delegate void UniqueActionToPlanet();
         public delegate void DecreasingCounter(float count);
@@ -27,9 +28,11 @@ namespace Skills
 
         private Button _button;
 
+        private static int ii = 0;
         
         public void Start()
         {
+            Debug.Log(ii++);
             SkillController = Control.SkillController.Instance;
             if (SkillController == null)
                 throw new MyException("can't get skill controller");
@@ -78,7 +81,9 @@ namespace Skills
 
         public void SetTeamConstraint(Planets.Team team)
         {
+            IsForAI = (team == Team.Red);
             teamConstraint = team;
+            Debug.Log(IsForAI);
         }
 
         public void ExecuteForAI(Planets.Base planet)
@@ -93,8 +98,11 @@ namespace Skills
 
         protected Planets.Base RaycastForPlanet()
         {
+//            Debug.Log("Raycast done");
+            int layerMask = 1 << 0;
+            layerMask = ~layerMask;
             var ray = MainCamera.ScreenPointToRay(SelectedScreenPos);
-            return Physics.Raycast(ray, out var hit) ? hit.collider.GetComponent<Planets.Base>() : null;
+            return Physics.Raycast(ray, out var hit,Mathf.Infinity, layerMask) ? hit.collider.GetComponent<Planets.Base>() : null;
         }
         
         protected void UnblockButton()

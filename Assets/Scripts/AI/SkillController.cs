@@ -47,17 +47,20 @@ namespace AI
 
         public void AttackByAcid(Planets.Base target)
         {
+//            Debug.Log("AI Acid");
             _acid.ExecuteForAI(target);
         }
 
         public void BuffPlanet(Planets.Base target)
         {
+//            Debug.Log("AI BUff");
             _buff.ExecuteForAI(target);
         }
         
         
         public void Call(Planets.Base target)
         {
+           // Debug.Log("AI Call");
             _call.ExecuteForAI(target);
         }
         

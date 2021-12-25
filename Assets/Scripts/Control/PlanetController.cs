@@ -29,7 +29,13 @@ namespace Control
             Selecting += IncreaseScale;
             Selecting += AddToList;
         }
-    
+
+        public void DeleteFromList(Planets.Base planet)
+        {
+            _selectablePlanets.Remove(planet);
+            OnCancelingSelection(planet);
+        }
+        
         public void HandleTouch(Touch touch)
         {
             _touch = touch;
@@ -123,8 +129,10 @@ namespace Control
 
         private Planets.Base RaycastForPlanet(Vector3 pos)
         {
+            int layerMask = 1 << 0;
+            layerMask = ~layerMask;
             var ray = _mainCamera.ScreenPointToRay(pos);
-            return Physics.Raycast(ray, out var hit) ? hit.collider.GetComponent<Planets.Base>() : null;
+            return Physics.Raycast(ray, out var hit,Mathf.Infinity, layerMask) ? hit.collider.GetComponent<Planets.Base>() : null;
         }
 
         private void HandleMultipleSelection(Vector3 pos)
@@ -222,11 +230,13 @@ namespace Control
 
         private void DecreaseScale(Object sender, Planets.Base planet)
         {
+            //planet.isSelected = false;
             planet.transform.localScale /= 1.5f;
         }
     
         private void IncreaseScale(Object sender, Planets.Base planet)
         {
+            //planet.isSelected = true;
             planet.transform.localScale *= 1.5f;
         }
     

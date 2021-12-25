@@ -149,6 +149,7 @@ namespace Control
 
         public Skills.ISkill ChooseSkill()
         {
+//            Debug.Log(_selectedSkillName);
             return _selectedSkillName switch
             {
                 SkillName.Buff => _buff,
