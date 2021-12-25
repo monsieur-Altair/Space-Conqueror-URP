@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using System.IO;
+using Planets;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -6,8 +8,8 @@ namespace Skills
 {
     public class Acid : Base
     {
-        [SerializeField] private VisualEffect vfxPrefab;
-        private VisualEffect _acidRainEffect;
+        /*[SerializeField] private VisualEffect vfxPrefab;
+        private VisualEffect _acidRainEffect;*/
         private readonly Vector3 _offset = new Vector3(0, 1, 0);
         public float HitDuration { get; private set; }
         public float Duration { get; private set; }
@@ -25,19 +27,23 @@ namespace Skills
                 HitDamage = res.damage / HitCount;
             }
 
-            _acidRainEffect = Instantiate(vfxPrefab);
-            _acidRainEffect.Stop();
+            /*_acidRainEffect = Instantiate(vfxPrefab);
+            _acidRainEffect.Stop();*/
         }
         
         protected override void ApplySkill()
         {
-            ApplySkillToPlanet(StartRain);
+            //Debug.Log("acid");
+            if(SelectedPlanet==null)
+                SelectedPlanet = RaycastForPlanet();
+            if(SelectedPlanet.Team!=teamConstraint)
+                ApplySkillToPlanet(StartRain);
         }
 
         private void StartRain()
         {
-            _acidRainEffect.transform.position = SelectedPlanet.transform.position +_offset;
-            _acidRainEffect.Play();                                                                              
+            /*_acidRainEffect.transform.position = SelectedPlanet.transform.position +_offset;
+            _acidRainEffect.Play(); */                                                                             
             StartCoroutine(nameof(DamagePlanetByRain));
         }
         
@@ -50,12 +56,14 @@ namespace Skills
                 yield return new WaitForSeconds(HitDuration);
                 count++;
             }
-            _acidRainEffect.Stop();
+            /*_acidRainEffect.Stop();*/
+            SelectedPlanet = null;
         }
 
         protected override void CancelSkill()
         {
             IsOnCooldown = false;
+            
             UnblockButton();
         }
     }

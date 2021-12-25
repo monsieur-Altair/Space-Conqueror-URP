@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8198880750d404cb58a07d9e9b963d4, type: 3}
   m_Name: Scientific
   m_EditorClassIdentifier: 
-  name: mana
   maxCount: 100
-  produceCount: 1
+  produceCount: 3
   produceTime: 1

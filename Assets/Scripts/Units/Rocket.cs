@@ -33,12 +33,19 @@ namespace Units
             Agent.speed = _unitInf.Speed;
         }
 
-        public override float CalculateAttack()
+        public override float CalculateAttack(Planets.Team planetTeam)
         {
             //damage in percent
-            return _unitInf.Damage / 100.0f* _unitInf.UnitCount;
+            if (_unitInf.Team == planetTeam)
+                return _unitInf.UnitCount;
+            return -1.0f*_unitInf.Damage / 100.0f* _unitInf.UnitCount;
         }
-        
+
+        public override float GetActualCount(float countAfterAttack)
+        {
+            return countAfterAttack / (_unitInf.Damage/100.0f);
+        }
+
         public void Freeze()
         {
             Agent.isStopped = true;

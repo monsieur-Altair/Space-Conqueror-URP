@@ -1,6 +1,8 @@
-﻿using TMPro;
+﻿using Planets;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.EventSystems;
 
 namespace Units
 {
@@ -23,7 +25,7 @@ namespace Units
 
         public abstract Planets.Team GETTeam();
         protected abstract void SetSpeed();
-        public abstract float CalculateAttack();
+        public abstract float CalculateAttack(Team planetTeam);
         
         private const float MinDistance = 1.0f;
 
@@ -71,6 +73,7 @@ namespace Units
             GoTo(destinationPos);
         }
 
-       
+        public abstract float GetActualCount(float countAfterAttack);
+
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine; 
 
 namespace Planets
@@ -34,6 +35,7 @@ namespace Planets
         private UnitInf _unitInf;
         private bool _isFrozen=false;
 
+        public static event Action<Planets.Base, Team, Team> Conquered;
         private static int _id = 0;
         
         public int ID { get; private set; }
@@ -43,6 +45,9 @@ namespace Planets
         protected float ProduceCount { get; private set; }
         protected float ProduceTime { get; private set; }
         protected float Defense { get; private set; }
+        protected float ReducingSpeed { get; private set; }
+        
+        
         public Team Team { get; private set; }
         public Type Type { get; private set; }
         
@@ -55,7 +60,6 @@ namespace Planets
             public float Damage { get; internal set;}
             public float UnitCount { get; internal set; }
             public Team Team { get; internal set; }
-            public bool IsBuffed { get; private set; }
         }
         
 
@@ -96,6 +100,7 @@ namespace Planets
             ProduceCount = resourcePlanet.produceCount;
             ProduceTime = resourcePlanet.produceTime;
             Defense = resourcePlanet.defense;
+            ReducingSpeed = resourcePlanet.reducingSpeed;
             Team = team;
             Type = type;
             
@@ -118,9 +123,14 @@ namespace Planets
         {
             if (!_isFrozen)
             {
-                _count += ProduceCount / ProduceTime * Time.deltaTime;
-                if (_count > MaxCount) 
-                    _count = MaxCount;
+                if(_count<MaxCount)
+                    _count += ProduceCount / ProduceTime * Time.deltaTime;
+                else if(_count>MaxCount + 0.1f)
+                {
+                    _count -= ReducingSpeed * Time.deltaTime;
+                }
+                /*if (_count > MaxCount) 
+                    _count = MaxCount;*/
             }
         }
 
@@ -186,11 +196,15 @@ namespace Planets
         public void AttackedByUnit(Units.Base unit)
         {
             var unitTeam = unit.GETTeam();
-            var attack=unit.CalculateAttack();
-            attack *= this.Team == unitTeam ? 1 : -1;
+            var attack=unit.CalculateAttack(Team);
             _count += attack;
             if (_count < 0)
             {
+                var oldTeam = Team;
+                var newTeam = unitTeam;
+                OnConquered(oldTeam,newTeam);
+                _count *= -1.0f;
+                _count = unit.GetActualCount(_count);
                 Main.UpdateObjectsCount(Team,unitTeam);
                 SwitchTeam(unitTeam);
                 Main.CheckGameOver();
@@ -206,7 +220,6 @@ namespace Planets
 
             _outlook.SetOutlook(this);
             UI.SetUnitCounterColor(this);
-            _count *= -1;
         }
 
         public void Buff(float percent)
@@ -231,6 +244,11 @@ namespace Planets
         public void Unfreeze()
         {
             _isFrozen = false;
+        }
+
+        protected void OnConquered(Team oldTeam, Team newTeam)
+        {
+            Conquered?.Invoke(this, oldTeam, newTeam);
         }
     }
 }

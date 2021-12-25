@@ -32,7 +32,7 @@ namespace Control
         public static float MinDepth { get; private set; }
         public static float MaxDepth { get; private set; }
         public bool IsSelectedSkill { get; private set; }
-        public event Action CanceledSelection; 
+        public event Action CanceledSelection;
         
         public void Awake()
         {
@@ -47,8 +47,18 @@ namespace Control
             _selectedSkillName = SkillName.None;
             
             _call = buttons[Call].GetComponent<Skills.Call>();
+            _call.SetTeamConstraint(Planets.Team.Blue);
+            _call.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
+            
             _buff = buttons[Buff].GetComponent<Skills.Buff>();
+            _buff.SetTeamConstraint(Planets.Team.Blue);
+            _buff.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
+            
             _acid = buttons[Acid].GetComponent<Skills.Acid>();
+            _acid.SetTeamConstraint(Planets.Team.Blue);
+            _acid.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
+
+            
             _ice = buttons[Ice].GetComponent<Skills.Ice>();
             
             MinDepth = MaxDepth = 0.0f;
@@ -57,6 +67,11 @@ namespace Control
             MinDepth = min;
             MaxDepth = max;
         }
+
+        /*private void DecreasePlayerSciCounter(float value)
+        {
+            Planets.Scientific.ScientificCount -= value;
+        }*/
 
         public static void GetCameraDepths(out float min, out float max)
         {
@@ -108,18 +123,31 @@ namespace Control
             }
         }
 
+        public void HandleClick()
+        {
+            if (Input.GetMouseButtonUp(0))
+            {
+                if (IsSelectedSkill)
+                {
+                    var skill= ChooseSkill();
+                    skill.ExecuteForPlayer(Input.mousePosition);
+                    OnCanceledSelection();
+                }
+            }
+        }
+
         private void HandleRelease()
         {
-            //if doesn't work after canceling button, will add yield return
+            //if doesn't work after canceling button, add yield return
             if (IsSelectedSkill)
             {
                 var skill= ChooseSkill();
-                skill.Execute(_touch.position);
+                skill.ExecuteForPlayer(_touch.position);
                 OnCanceledSelection();
             }
         }
 
-        private Skills.ISkill ChooseSkill()
+        public Skills.ISkill ChooseSkill()
         {
             return _selectedSkillName switch
             {
@@ -136,6 +164,7 @@ namespace Control
         {
             if (!IsSelectedSkill)
             {
+                //Debug.Log("skill selected");
                 BlockButton(button);
                 StartCoroutine(nameof(SwitchWithWaiting));
             }
@@ -159,8 +188,8 @@ namespace Control
             
             button.image.color=Color.red;
         }
-       
-        protected virtual void OnCanceledSelection()
+
+        private void OnCanceledSelection()
         {
             CanceledSelection?.Invoke();
             _selectedSkillName = SkillName.None;

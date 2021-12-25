@@ -1,4 +1,5 @@
 ﻿
+using Planets;
 using UnityEngine;
 
 namespace Skills
@@ -17,7 +18,11 @@ namespace Skills
 
         protected override void ApplySkill()
         {
-            ApplySkillToPlanet(BuffPlanet);
+            //Debug.Log("buff");
+            if (SelectedPlanet==null)
+                SelectedPlanet = RaycastForPlanet();
+            if(SelectedPlanet.Team==teamConstraint)
+                ApplySkillToPlanet(BuffPlanet);
         }
 
         private void BuffPlanet()
@@ -29,6 +34,7 @@ namespace Skills
         {
             IsOnCooldown = false;
             SelectedPlanet.UnBuff(BuffPercent);
+            SelectedPlanet = null;
             UnblockButton();
         }
     }

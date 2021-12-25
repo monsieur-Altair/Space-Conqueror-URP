@@ -1,19 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
-using TMPro;
 using UnityEngine;
 
 namespace Managers
 {
+    public enum GameStates
+    {
+        Opening,
+        Gameplay,
+        GameOver
+    }
+    
     [DefaultExecutionOrder(500)]
     public class Main : MonoBehaviour
     {
         private readonly int _teamNumber = Enum.GetNames(typeof(Planets.Team)).Length;
+        [SerializeField] private AI.Core core;
+        //private AI.AI _ai;
         public List<Planets.Base> AllPlanets { get; private set; }
         [SerializeField] private GameObject planetsLay;
         private List<int> _objectsCount;
+
+        public GameStates GameState { get; private set; }
+
 
         public static Main Instance;
         public void Awake()
@@ -33,8 +43,36 @@ namespace Managers
         {
             AllPlanets = planetsLay.GetComponentsInChildren<Planets.Base>().ToList();
             FillTeamCount();
+            core = core.GetComponent<AI.Core>();
+            if (core==null)
+            {
+                throw new MyException("cannot get ai component");
+            }
+            GameState = GameStates.Gameplay;
+            UpdateState();
         }
 
+        public void UpdateState()
+        {
+            switch (GameState)
+            {
+                case GameStates.Opening:
+                {
+                    break;
+                }
+                case GameStates.Gameplay:
+                {
+                    core.Init(AllPlanets);
+                    core.Enable();
+                    break;
+                }
+                case GameStates.GameOver:
+                {
+                    break;
+                }
+            }
+        }
+        
         private void FillTeamCount()
         {
             foreach (var planet in AllPlanets)

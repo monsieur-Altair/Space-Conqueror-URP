@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Planets;
 using UnityEngine;
 
 namespace Skills
@@ -23,11 +24,16 @@ namespace Skills
       
         protected override void ApplySkill()
         {
-            ApplySkillToPlanet(CallSupply);
+            //Debug.Log("call");
+            if (SelectedPlanet == null)
+                SelectedPlanet = RaycastForPlanet();
+            if(SelectedPlanet.Team==teamConstraint)
+                ApplySkillToPlanet(CallSupply);
         }
 
         protected override void CancelSkill()
         {
+            SelectedPlanet = null;
             IsOnCooldown = false;
             UnblockButton();
         }
