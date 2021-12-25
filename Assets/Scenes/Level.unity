@@ -170,7 +170,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resource: {fileID: 11400000, guid: 26417f3deaa21bf45b591976381e00d2, type: 2}
-  vfxPrefab: {fileID: 3211099365002650472, guid: 5c72433290f5d6d42959155b42752644, type: 3}
 --- !u!114 &58708431
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -545,7 +544,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!23 &166446628
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -639,7 +638,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7b1485d7e1743489397aeb8408d23d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buffProbability: 40
+  buffProbability: 100
   acidProbability: 40
   callProbability: 40
 --- !u!4 &219657233
@@ -2615,7 +2614,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resource: {fileID: 11400000, guid: 26417f3deaa21bf45b591976381e00d2, type: 2}
-  vfxPrefab: {fileID: 3211099365002650472, guid: 5c72433290f5d6d42959155b42752644, type: 3}
 --- !u!114 &1773924965
 MonoBehaviour:
   m_ObjectHideFlags: 0
