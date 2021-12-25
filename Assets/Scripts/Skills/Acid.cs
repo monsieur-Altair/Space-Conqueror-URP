@@ -34,9 +34,12 @@ namespace Skills
         protected override void ApplySkill()
         {
             //Debug.Log("acid");
-            if(SelectedPlanet==null)
+            //if(SelectedPlanet==null)
+            if(!IsForAI)
                 SelectedPlanet = RaycastForPlanet();
-            if(SelectedPlanet.Team!=teamConstraint)
+            
+           //Debug.Log("Selected team="+SelectedPlanet.Team);
+            if (SelectedPlanet.Team != teamConstraint)
                 ApplySkillToPlanet(StartRain);
         }
 

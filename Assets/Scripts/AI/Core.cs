@@ -86,7 +86,8 @@ namespace AI
             {
                 var delay = Random.Range(MinDelay, MaxDelay);
                 yield return new WaitForSeconds(delay);
-                _attackByRocket.Execute();
+                if(_isActive)
+                    _attackByRocket.Execute();
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Planets;
 using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -68,7 +69,8 @@ namespace AI
             foreach (var planet in _planetsForLaunch)
             {
                 //Debug.Log("launch");
-                planet.LaunchUnit(_target);
+                if((int)planet.Team==Core.Own)
+                    planet.LaunchUnit(_target);
                 yield return null;
             }
 
@@ -85,6 +87,7 @@ namespace AI
 
         private bool ApplyDecision(float probability)
         {
+            //Debug.Log("probab="+probability);
             var result = Random.Range(1, 101);
             return result <= probability;
         }

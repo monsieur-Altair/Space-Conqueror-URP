@@ -65,7 +65,8 @@ namespace Planets
 
         private void DisplayScientificBar()
         {
-            UI.SetScientificCounter((int)ScientificCount);
+//            UI.SetScientificCounter((int)ScientificCount);
+            UI.SetScientificCounter((int)AI.Core.ScientificCount);
         }
     }
 }

@@ -97,11 +97,13 @@ namespace Managers
             if (noneBlue)
             {
                 Debug.Log("Game over");
+                core.Disable();
             }
 
             if (noneRed)
             {
                 Debug.Log("Win");
+                core.Disable();
             }
         }
     }
