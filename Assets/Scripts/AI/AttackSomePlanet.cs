@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using Planets;
-using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -31,19 +28,23 @@ namespace AI
         
         public void InitAction()
         {
-            _core = Core.Instance;
+            if (_core==null)
+            {
+                _core = Core.Instance;
+            }
             _allPlanets = _core.AllPlanets;
             _mainPos = _core.MainPos;
             _isCastedSkill = false;
-            
-            
-            _skillController = GetComponent<SkillController>();
+
             if (_skillController==null)
             {
-                throw new MyException("skill controller = null");
+                _skillController = GetComponent<SkillController>();
+                if (_skillController==null)
+                {
+                    throw new MyException("skill controller = null");
+                }
+                _skillController.InitSkills();
             }
-            _skillController.InitSkills();
-            
             
         }
 
@@ -82,6 +83,10 @@ namespace AI
             var neutralCount = _allPlanets[Core.Neutral].Count;
             var hundredPercent = enemyCount + neutralCount;
             var randomType = Random.Range(1, hundredPercent + 1);
+            
+            if (enemyCount <= 2 && neutralCount != 0)
+                return Core.Neutral;
+            
             return (randomType <= enemyCount) ? Core.Enemy : Core.Neutral;
         }
 
