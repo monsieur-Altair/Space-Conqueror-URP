@@ -8,7 +8,7 @@ namespace AI
 { 
     public class Core : MonoBehaviour
     {
-        [SerializeField] private Planets.Base mainPlanet;
+        private Planets.Base mainPlanet;
         [SerializeField] private GameObject allActions;
         
         public Vector3 MainPos { get; private set; }
@@ -32,7 +32,7 @@ namespace AI
                 Instance = this;
             
             AllPlanets = new List<List<Planets.Base>>();
-            MainPos = mainPlanet.transform.position;
+            
 
             Own = (int) Planets.Team.Red;
             Enemy = (int) Planets.Team.Blue;
@@ -43,15 +43,22 @@ namespace AI
 
         public void Init(List<Planets.Base> planets)
         {
+            AllPlanets.Clear();
+            
             for (var i = 0; i < 3; i++)
                 AllPlanets.Add(new List<Planets.Base>());
-            
+
+
+            int ii = 0;
             foreach (var planet in planets)
             {
                 AllPlanets[(int)planet.Team].Add(planet);
+                Debug.Log(ii++ +"team="+planet.Team);
             }
 
-
+            Debug.Log("Own="+ AllPlanets[Own].Count);
+            mainPlanet = AllPlanets[Own][0];
+            MainPos = mainPlanet.transform.position;
 
             _attackByRocket = allActions.GetComponent<AttackSomePlanet>();
             _attackByRocket.InitAction();
@@ -60,7 +67,8 @@ namespace AI
                 throw new MyException("attack by rocket = null");
             }
 
-            ScientificCount = 50.0f;
+            ScientificCount = 50.0f;/////////////////////////////////////////////
+            Debug.Log("Init is ended");
         }
         
         //attack after lost

@@ -21,12 +21,12 @@ namespace Managers
         {
             if (Instance == null)
                 Instance = this;
+            _poolDictionary = new Dictionary<int, Queue<GameObject>>();
         }
 
         public void Start()
         {
-            _poolDictionary = new Dictionary<int, Queue<GameObject>>();
-            
+            Debug.Log("start pool");
             foreach (var pool in pools)
             {
                 Queue<GameObject> objectPool = new Queue<GameObject>(); 
@@ -56,6 +56,19 @@ namespace Managers
             _poolDictionary[hash].Enqueue(obj);
 
             return obj;
+        }
+
+        public bool DisableAllUnitsInScene()
+        {
+            foreach (var pair in _poolDictionary)
+            {
+                foreach (var unit in pair.Value)
+                {
+                    if(unit.activeSelf)
+                        unit.SetActive(false);
+                }
+            }
+            return false;
         }
     }
 }

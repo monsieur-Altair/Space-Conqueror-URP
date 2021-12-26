@@ -30,13 +30,12 @@ namespace Skills
                 HitDamage = res.damage / HitCount;
             }
 
-            _acidRain = Instantiate(acidPrefab);
+            _acidRain = Instantiate(acidPrefab,transform.parent);
             if (_acidRain == null)
                 throw new MyException("cannot instantiate acid prefab");
             _acidParticles = _acidRain.transform.GetChild(0).GetComponent<ParticleSystem>();
             if (_acidParticles == null)
                 throw new MyException("cannot get particle system");
-
         }
         
         protected override void ApplySkill()
