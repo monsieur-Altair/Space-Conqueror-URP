@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -89,6 +90,7 @@ namespace Managers
             
             foreach (var planet in AllPlanets)
             {
+                planet.gameObject.SetActive(true);
                 planet.Init();
             }
             
@@ -111,7 +113,8 @@ namespace Managers
                     
                     nextLevelButton.SetActive(false);
                     retryLevelButton.SetActive(false);
-                    _levelsManager.LoadCurrentLevel();
+                    StartCoroutine(StartGameplay());
+                    /*_levelsManager.LoadCurrentLevel();
                     _planetsLay = _levelsManager.GetCurrentLay();
                     this.PrepareLevel();
                     core.Init(AllPlanets);
@@ -119,7 +122,7 @@ namespace Managers
                     Outlook.Instance.PrepareLevel();
                     UI.Instance.PrepareLevel();
                     Planets.Scientific.DischargeScientificCount();
-                    Control.UserControl.Instance.isActive = true;
+                    Control.UserControl.Instance.isActive = true;*/
                    // _levelsManager.BakeNavMesh();
                     break;
                 }
@@ -138,6 +141,19 @@ namespace Managers
             }
         }
 
+        private IEnumerator StartGameplay()
+        {
+            yield return StartCoroutine(_levelsManager.InstantiateLevel());
+            _planetsLay = _levelsManager.GetCurrentLay();
+            this.PrepareLevel();
+            core.Init(AllPlanets);
+            core.Enable();
+            Outlook.Instance.PrepareLevel();
+            UI.Instance.PrepareLevel();
+            Planets.Scientific.DischargeScientificCount();
+            Control.UserControl.Instance.isActive = true;
+        }
+        
         public void LoadNextLevel()
         {
             _levelsManager.SwitchToNextLevel();

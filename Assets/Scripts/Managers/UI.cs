@@ -77,6 +77,7 @@ namespace Managers
                 throw new MyException("main camera = null");
             foreach (var planet in _allPlanets)
             {
+                Debug.Log("set ui manager");
                 planet.SetUIManager();
                 var pos = planet.transform.position;
                 var counter = Instantiate(counterPrefab, canvas.transform);

@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Linq.Expressions;
 using Planets;
 using UnityEngine;
 
@@ -19,7 +20,11 @@ namespace Units
             gameObject.SetActive(false);
             Target = null;
         }
-        
+
+        public void OnDisable()
+        {
+            Skills.Ice.DeletingFreezingZone -= Unfreeze;
+        }
 
         public override void SetData(in Planets.Base.UnitInf unitInf)
         {

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.AI;
+using Buildeerrr= UnityEditor.AI.NavMeshBuilder;
 
 namespace Managers
 {
@@ -11,8 +13,10 @@ namespace Managers
         public int currentLevelNumber;
         private readonly Vector3 _instantiatePos = new Vector3(0,0,0);
         [SerializeField] private GameObject navMeshSurfaceObj;
+        //[SerializeField] private NavMeshData Data;
         private NavMeshSurface _navMeshSurface;
         private GameObject _currentLevel;
+        private bool _isDeleted=true;
         public static Levels Instance { get; private set; }
 
         public void Awake()
@@ -24,19 +28,25 @@ namespace Managers
             {
                 throw new MyException("cannot get nav mesh surface");
             }
+
+            /*Data = GetComponent<NavMeshData>();
+            if (Data == null)
+                throw new MyException("cannot get data");*/
         }
 
         public void SwitchToNextLevel()
         {
-            Destroy(_currentLevel.gameObject);
-            //_navMeshSurface.BuildNavMesh();
+            StartCoroutine(DeleteAllNahui());
             currentLevelNumber++;
             if (currentLevelNumber == levels.Length)
                 currentLevelNumber--;
-            /*if (currentLevelNumber <= levels.Length)
-            {
-                InstantiateLevel();
-            }*/
+        }
+
+
+        private IEnumerator DeleteAllNahui()
+        {
+            Destroy(_currentLevel.gameObject);
+            yield break;
         }
 
         public void RestartLevel()
@@ -48,7 +58,7 @@ namespace Managers
 
         public void LoadCurrentLevel()
         {
-            InstantiateLevel();
+            StartCoroutine(InstantiateLevel()) ;
         }
 
         public GameObject GetCurrentLay()
@@ -56,23 +66,18 @@ namespace Managers
             return _currentLevel;
         }
 
-        private void InstantiateLevel()
+        private static int callCount = 0;
+        
+        public IEnumerator InstantiateLevel()
         {
+            if(callCount!=0)
+                yield return StartCoroutine(DeleteAllNahui());
             _currentLevel = Instantiate(levels[currentLevelNumber], _instantiatePos, Quaternion.identity);
             _currentLevel.SetActive(true);
+             Debug.Log("BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKE");
             _navMeshSurface.BuildNavMesh();
             _currentLevel.gameObject.transform.SetParent(gameObject.transform.parent);
+            callCount ++;
         }
-
-        public void BakeNavMesh()
-        {
-            _navMeshSurface.BuildNavMesh();
-        }
-        
-        /*public void OnEnable()
-        {
-            Debug.Log("enable lvls");
-            
-        }*/
     }
 }
