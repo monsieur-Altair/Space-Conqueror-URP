@@ -22,8 +22,8 @@ namespace Managers
         [SerializeField] private GameObject butObj;
         private Button _buttonToNext;
         //private AI.AI _ai;
-        public List<Planets.Base> AllPlanets { get; private set; }
-        [SerializeField] private GameObject planetsLay;
+        public List<Planets.Base> AllPlanets { get; private set; } 
+        private GameObject _planetsLay;
         public static List<int> _objectsCount { get; private set; }
 
         public GameStates GameState { get; private set; }
@@ -83,7 +83,7 @@ namespace Managers
 
         private void PrepareLevel()
         {
-            AllPlanets = planetsLay.GetComponentsInChildren<Planets.Base>().ToList();
+            AllPlanets = _planetsLay.GetComponentsInChildren<Planets.Base>().ToList();
             
             foreach (var planet in AllPlanets)
             {
@@ -108,7 +108,7 @@ namespace Managers
                 {
                     butObj.SetActive(false);
                     _levelsManager.LoadCurrentLevel();
-                    planetsLay = _levelsManager.GetCurrentLay();
+                    _planetsLay = _levelsManager.GetCurrentLay();
                     this.PrepareLevel();
                     core.Init(AllPlanets);
                     core.Enable();
