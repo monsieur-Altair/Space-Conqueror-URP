@@ -19,11 +19,17 @@ namespace Managers
         {
             if (Instance == null)
                 Instance = this;
+            _navMeshSurface = navMeshSurfaceObj.GetComponent<NavMeshSurface>();
+            if (navMeshSurfaceObj==null)
+            {
+                throw new MyException("cannot get nav mesh surface");
+            }
         }
 
         public void SwitchToNextLevel()
         {
-            Destroy(_currentLevel);
+            Destroy(_currentLevel.gameObject);
+            //_navMeshSurface.BuildNavMesh();
             currentLevelNumber++;
             if (currentLevelNumber == levels.Length)
                 currentLevelNumber--;
@@ -57,15 +63,16 @@ namespace Managers
             _navMeshSurface.BuildNavMesh();
             _currentLevel.gameObject.transform.SetParent(gameObject.transform.parent);
         }
+
+        public void BakeNavMesh()
+        {
+            _navMeshSurface.BuildNavMesh();
+        }
         
-        public void OnEnable()
+        /*public void OnEnable()
         {
             Debug.Log("enable lvls");
-            _navMeshSurface = navMeshSurfaceObj.GetComponent<NavMeshSurface>();
-            if (navMeshSurfaceObj==null)
-            {
-                throw new MyException("cannot get nav mesh surface");
-            }
-        }
+            
+        }*/
     }
 }

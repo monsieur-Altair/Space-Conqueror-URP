@@ -1,5 +1,6 @@
 ﻿//#define TOUCH
 
+using System;
 using UnityEngine;
 
 
@@ -13,7 +14,16 @@ namespace Control
 #endif
         private PlanetController _planetController;
         private SkillController _skillController;
-    
+        public bool isActive=false;
+        public static UserControl Instance;
+        public void Awake()
+        {
+            if (Instance==null)
+            {
+                Instance = this;
+            }
+        }
+
         public void Start()
         {
             _planetController = GetComponent<PlanetController>();
@@ -22,6 +32,8 @@ namespace Control
 
         public void Update()
         {
+            if(!isActive)
+                return;
 #if TOUCH
           if (Input.touchCount > 0)
             {
