@@ -23,8 +23,8 @@ namespace Managers
         private Button _buttonToNext;
         //private AI.AI _ai;
         public List<Planets.Base> AllPlanets { get; private set; }
-        private GameObject planetsLay;
-        public List<int> ObjectsCount { get; private set; }
+        [SerializeField] private GameObject planetsLay;
+        public static List<int> _objectsCount { get; private set; }
 
         public GameStates GameState { get; private set; }
         private ObjectPool _objectPool;
