@@ -6,7 +6,7 @@ namespace Planets
     {
         [SerializeField] private Resources.Scientific scientific;
 
-        private int MaxCountScientific { get; set; }
+        public static int MaxCountScientific { get; set; }
         private float ProduceCountScientific { get; set; }
         private float ProduceTimeScientific { get; set; }
         public static float ScientificCount { get; private set; }
