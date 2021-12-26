@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using Planets;
-using UnityEditor.Experimental;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -87,7 +84,7 @@ namespace Control
             var planet = RaycastForPlanet(pos);
             if (planet != null)
             {
-                if (_selectablePlanets.Contains(planet) == false && planet.Team == Team.Blue)
+                if (_selectablePlanets.Contains(planet) == false && planet.Team == Planets.Team.Blue)
                 {
                     OnSelecting(planet);
                 }
@@ -145,7 +142,7 @@ namespace Control
 
                 var team = planet.Team;
                 var count = _selectablePlanets.Count;
-                if (team == Team.Blue)
+                if (team == Planets.Team.Blue)
                 {
                     
                     if(count==0)
@@ -155,7 +152,7 @@ namespace Control
                         var lastPlanet = _selectablePlanets.Last();
                         if (planet == lastPlanet)
                             return;
-                        if (lastPlanet.Team != Team.Blue)
+                        if (lastPlanet.Team != Planets.Team.Blue)
                         {
                             OnCancelingSelection(lastPlanet);
                             _selectablePlanets.RemoveAt(count-1);
@@ -180,7 +177,7 @@ namespace Control
                         if (planet == lastPlanet)
                             return;
                         
-                        if (lastPlanet.Team != Team.Blue)
+                        if (lastPlanet.Team != Planets.Team.Blue)
                         {
                             OnCancelingSelection(lastPlanet);
                             _selectablePlanets.RemoveAt(count-1);
@@ -223,7 +220,8 @@ namespace Control
             foreach (var planet in _selectablePlanets)
             {
                 OnCancelingSelection(planet);
-                planet.LaunchUnit(destination);
+                if(planet.Team==Planets.Team.Blue)
+                    planet.LaunchUnit(destination);
             }
             _selectablePlanets.Clear();
         }

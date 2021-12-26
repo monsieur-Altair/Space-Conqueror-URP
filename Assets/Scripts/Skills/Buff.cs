@@ -24,8 +24,13 @@ namespace Skills
             if(!IsForAI)
                 SelectedPlanet = RaycastForPlanet();
 //            Debug.Log("Selected team="+SelectedPlanet.Team);
-            if(SelectedPlanet.Team==teamConstraint)
+           
+            if (SelectedPlanet!=null && SelectedPlanet.Team == teamConstraint)
                 ApplySkillToPlanet(BuffPlanet);
+            else
+            {
+                UnblockButton();
+            }
         }
 
         private void BuffPlanet()
