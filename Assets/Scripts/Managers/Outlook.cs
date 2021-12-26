@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Planets;
 using UnityEngine;
 using Type = Planets.Type;
 
 namespace Managers
 {    
-    [DefaultExecutionOrder(1000)]
+    //[DefaultExecutionOrder(1000)]
     public class Outlook : MonoBehaviour
     {
         private readonly List<List<Texture>> _allTextures=new List<List<Texture>>();
@@ -30,30 +31,38 @@ namespace Managers
         private const int MainTexIndex = 0;
         private const int BuffTexIndex = 1;
         
-        private List<Planets.Base> _allPlanets => Main.Instance.AllPlanets;
+        private List<Planets.Base> _allPlanets;
         public static Outlook Instance { get; private set; }
 
         public void Awake()
         {
+            Debug.Log("awake outlook");
             if (Instance == null)
             {
                 Instance = this;
             }
+            _allTextures.Add(scientificTextures);
+            _allTextures.Add(spawnerTextures);
+            _allTextures.Add(attackerTextures);
+
         }
         private Outlook()
         {
             
         }
         
-        public void Start()
+        public void OnEnable()
         {
-            _allTextures.Add(scientificTextures);
-            _allTextures.Add(spawnerTextures);
-            _allTextures.Add(attackerTextures);
-            
+            /*Debug.Log("enable outlook");
+            PrepareLevel();*/
+        }
+
+        public void PrepareLevel()
+        {
+            _allPlanets=new List<Base>(Main.Instance.AllPlanets);
+            _planetsRenderer?.Clear();
             FillList();
             SetAllOutlooks();
-            
         }
 
         private void SetAllOutlooks()
@@ -68,6 +77,7 @@ namespace Managers
         {
             foreach (var planet in _allPlanets)
             {
+                planet.SetOutlookManager();
                 Decompose(planet);
             }
         }

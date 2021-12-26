@@ -64,9 +64,9 @@ namespace Planets
         }
         
 
-        // Start is called before the first frame update
-        public virtual void Start()
+        public void Init()
         {
+            Debug.Log("init planet");
             _count = 0.0f;
             ID = _id++;
             
@@ -74,8 +74,6 @@ namespace Planets
                 throw new MyException("resource is not loaded: "+name);
             
             _unitInf = new UnitInf();
-            _outlook=Managers.Outlook.Instance;
-            UI = Managers.UI.Instance;
             Main = Managers.Main.Instance;
             Pool = Managers.ObjectPool.Instance;
             OrbitRadius = GetComponent<SphereCollider>().radius;
@@ -88,6 +86,17 @@ namespace Planets
                 IncreaseResources();
         }
 
+        public void SetUIManager()
+        {
+            UI = Managers.UI.Instance;
+        }
+
+        public void SetOutlookManager()
+        {
+            _outlook=Managers.Outlook.Instance;
+        }
+        
+        
         public void LateUpdate()
         {
             DisplayUI();

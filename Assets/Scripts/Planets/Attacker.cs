@@ -8,11 +8,11 @@ namespace Planets
         [SerializeField] private Resources.Unit resourceBullet;
         private UnitInf _bulletInf;
 
-        public override void Start()
+        public void Start()
         {
             _bulletInf = new UnitInf();
             
-            base.Start();
+            //base.Start();
         }
 
         
