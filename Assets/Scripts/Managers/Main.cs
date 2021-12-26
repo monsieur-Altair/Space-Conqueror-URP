@@ -42,9 +42,9 @@ namespace Managers
             }
 
             //Debug.Log(_teamNumber);
-            ObjectsCount=new List<int>(_teamNumber);
+            _objectsCount=new List<int>(_teamNumber);
             for (int i = 0; i < _teamNumber;i++)
-                ObjectsCount.Add(0);
+                _objectsCount.Add(0);
             
             _levelsManager=Levels.Instance;
             if (_levelsManager == null)
@@ -141,20 +141,20 @@ namespace Managers
             {
                 var team = (int) planet.Team;
                 //Debug.Log(team);
-                ObjectsCount[team]++;
+                _objectsCount[team]++;
             }
         }
 
         public void UpdateObjectsCount(Planets.Team oldTeam, Planets.Team newTeam)
         {
-            ObjectsCount[(int) oldTeam]--;
-            ObjectsCount[(int) newTeam]++;
+            _objectsCount[(int) oldTeam]--;
+            _objectsCount[(int) newTeam]++;
         }
 
         public void CheckGameOver()
         {
-            var noneBlue = ObjectsCount[(int)Planets.Team.Blue]==0;
-            var noneRed = ObjectsCount[(int)Planets.Team.Red]==0;
+            var noneBlue = _objectsCount[(int)Planets.Team.Blue]==0;
+            var noneRed = _objectsCount[(int)Planets.Team.Red]==0;
             if (noneBlue || noneRed )
             {
                 GameState = GameStates.GameOver;
