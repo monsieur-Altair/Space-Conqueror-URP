@@ -39,8 +39,12 @@ namespace Skills
                 SelectedPlanet = RaycastForPlanet();
             
            //Debug.Log("Selected team="+SelectedPlanet.Team);
-            if (SelectedPlanet.Team != teamConstraint)
+           if (SelectedPlanet!=null && SelectedPlanet.Team != teamConstraint)
                 ApplySkillToPlanet(StartRain);
+           else
+           {
+               UnblockButton();
+           }
         }
 
         private void StartRain()

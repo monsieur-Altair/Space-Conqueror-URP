@@ -1,6 +1,4 @@
-﻿using System;
-using Planets;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace Skills
@@ -28,11 +26,11 @@ namespace Skills
 
         private Button _button;
 
-        private static int ii = 0;
+        //private static int ii = 0;
         
         public void Start()
         {
-            Debug.Log(ii++);
+            //Debug.Log(ii++);
             SkillController = Control.SkillController.Instance;
             if (SkillController == null)
                 throw new MyException("can't get skill controller");
@@ -81,9 +79,9 @@ namespace Skills
 
         public void SetTeamConstraint(Planets.Team team)
         {
-            IsForAI = (team == Team.Red);
+            IsForAI = (team == Planets.Team.Red);
             teamConstraint = team;
-            Debug.Log(IsForAI);
+            //Debug.Log(IsForAI);
         }
 
         public void ExecuteForAI(Planets.Base planet)

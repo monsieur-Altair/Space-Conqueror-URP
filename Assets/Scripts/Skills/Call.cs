@@ -28,9 +28,14 @@ namespace Skills
             //if (SelectedPlanet == null)
             if(!IsForAI)
                 SelectedPlanet = RaycastForPlanet();
-           // Debug.Log("Selected team="+SelectedPlanet.Team);
-            if(SelectedPlanet.Team==teamConstraint)
+            //Debug.Log("Selected team="+SelectedPlanet.Team);
+
+           if (SelectedPlanet!=null && SelectedPlanet.Team == teamConstraint)
                 ApplySkillToPlanet(CallSupply);
+            else
+            {
+                UnblockButton();
+            }
         }
 
         protected override void CancelSkill()

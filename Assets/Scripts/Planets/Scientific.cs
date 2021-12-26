@@ -1,5 +1,4 @@
-﻿using TMPro;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Planets
 {
@@ -65,8 +64,7 @@ namespace Planets
 
         private void DisplayScientificBar()
         {
-//            UI.SetScientificCounter((int)ScientificCount);
-            UI.SetScientificCounter((int)AI.Core.ScientificCount);
+            UI.SetScientificCounter((int)ScientificCount);
         }
     }
 }
