@@ -8,9 +8,12 @@ namespace Skills
 {
     public class Acid : Base
     {
-        /*[SerializeField] private VisualEffect vfxPrefab;
-        private VisualEffect _acidRainEffect;*/
-        private readonly Vector3 _offset = new Vector3(0, 1, 0);
+
+        [SerializeField] private GameObject acidPrefab;
+        private GameObject _acidRain;
+        private ParticleSystem _acidParticles;
+        
+        private readonly Vector3 _offset = new Vector3(1, 3, 0);
         public float HitDuration { get; private set; }
         public float Duration { get; private set; }
         public float HitDamage { get; private set; }
@@ -27,8 +30,13 @@ namespace Skills
                 HitDamage = res.damage / HitCount;
             }
 
-            /*_acidRainEffect = Instantiate(vfxPrefab);
-            _acidRainEffect.Stop();*/
+            _acidRain = Instantiate(acidPrefab);
+            if (_acidRain == null)
+                throw new MyException("cannot instantiate acid prefab");
+            _acidParticles = _acidRain.transform.GetChild(0).GetComponent<ParticleSystem>();
+            if (_acidParticles == null)
+                throw new MyException("cannot get particle system");
+
         }
         
         protected override void ApplySkill()
@@ -38,19 +46,19 @@ namespace Skills
             if(!IsForAI)
                 SelectedPlanet = RaycastForPlanet();
             
-           //Debug.Log("Selected team="+SelectedPlanet.Team);
-           if (SelectedPlanet!=null && SelectedPlanet.Team != teamConstraint)
+            //Debug.Log("Selected team="+SelectedPlanet.Team);
+            if (SelectedPlanet!=null && SelectedPlanet.Team != teamConstraint) 
                 ApplySkillToPlanet(StartRain);
-           else
-           {
+            else
+            {
                UnblockButton();
-           }
+            }
         }
 
         private void StartRain()
         {
-            /*_acidRainEffect.transform.position = SelectedPlanet.transform.position +_offset;
-            _acidRainEffect.Play(); */                                                                             
+            _acidRain.transform.position = SelectedPlanet.transform.position +_offset;
+            _acidParticles.Play();                                                                              
             StartCoroutine(nameof(DamagePlanetByRain));
         }
         
@@ -63,7 +71,7 @@ namespace Skills
                 yield return new WaitForSeconds(HitDuration);
                 count++;
             }
-            /*_acidRainEffect.Stop();*/
+            _acidParticles.Stop();
             SelectedPlanet = null;
         }
 
