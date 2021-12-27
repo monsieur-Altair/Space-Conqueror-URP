@@ -38,12 +38,12 @@ namespace Units
             Agent.speed = _unitInf.Speed;
         }
 
-        public override float CalculateAttack(Planets.Team planetTeam)
+        public override float CalculateAttack(Planets.Team planetTeam, float defence)
         {
             //damage in percent
             if (_unitInf.Team == planetTeam)
                 return _unitInf.UnitCount;
-            return -1.0f*_unitInf.Damage / 100.0f* _unitInf.UnitCount;
+            return -1.0f*_unitInf.Damage / (100.0f * defence) * _unitInf.UnitCount;
         }
 
         public override float GetActualCount(float countAfterAttack)

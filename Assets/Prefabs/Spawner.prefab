@@ -126,8 +126,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   team: 2
   type: 1
-  resourceUnit: {fileID: 11400000, guid: ef4201503508ce24eba422d5c1d0f314, type: 2}
-  resourcePlanet: {fileID: 11400000, guid: face58731701fc1489033df9770fa002, type: 2}
+  resourceUnit: {fileID: 11400000, guid: 724a5ee8338170042acfce3eb4f66124, type: 2}
+  resourcePlanet: {fileID: 11400000, guid: a9f4f7403dd24ca43b3583ed47c3d30d, type: 2}
 --- !u!54 &-4838908423273356698
 Rigidbody:
   m_ObjectHideFlags: 0

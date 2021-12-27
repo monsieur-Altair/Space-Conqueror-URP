@@ -3,7 +3,7 @@ using System.Collections;
 using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.AI;
-using Buildeerrr= UnityEditor.AI.NavMeshBuilder;
+//using Buildeerrr= UnityEditor.AI.NavMeshBuilder;
 
 namespace Managers
 {
@@ -16,7 +16,6 @@ namespace Managers
         //[SerializeField] private NavMeshData Data;
         private NavMeshSurface _navMeshSurface;
         private GameObject _currentLevel;
-        private bool _isDeleted=true;
         public static Levels Instance { get; private set; }
 
         public void Awake()
@@ -36,14 +35,14 @@ namespace Managers
 
         public void SwitchToNextLevel()
         {
-            StartCoroutine(DeleteAllNahui());
+            StartCoroutine(DeleteAllLevel());
             currentLevelNumber++;
             if (currentLevelNumber == levels.Length)
                 currentLevelNumber--;
         }
 
 
-        private IEnumerator DeleteAllNahui()
+        private IEnumerator DeleteAllLevel()
         {
             Destroy(_currentLevel.gameObject);
             yield break;
@@ -71,7 +70,7 @@ namespace Managers
         public IEnumerator InstantiateLevel()
         {
             if(callCount!=0)
-                yield return StartCoroutine(DeleteAllNahui());
+                yield return StartCoroutine(DeleteAllLevel());
             _currentLevel = Instantiate(levels[currentLevelNumber], _instantiatePos, Quaternion.identity);
             _currentLevel.SetActive(true);
              Debug.Log("BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKE");

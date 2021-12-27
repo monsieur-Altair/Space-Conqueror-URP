@@ -212,7 +212,7 @@ namespace Planets
         public void AttackedByUnit(Units.Base unit)
         {
             var unitTeam = unit.GETTeam();
-            var attack=unit.CalculateAttack(Team);
+            var attack=unit.CalculateAttack(Team,Defense);
             _count += attack;
             if (_count < 0)
             {

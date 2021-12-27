@@ -62,7 +62,7 @@ MonoBehaviour:
   team: 5
   type: 0
   resourceUnit: {fileID: 11400000, guid: ef4201503508ce24eba422d5c1d0f314, type: 2}
-  resourcePlanet: {fileID: 11400000, guid: face58731701fc1489033df9770fa002, type: 2}
+  resourcePlanet: {fileID: 11400000, guid: 8c95948abc54c2b498e16d0999756e1e, type: 2}
   scientific: {fileID: 11400000, guid: cc768069f79321947a143375a62c56ed, type: 2}
 --- !u!54 &5140267705438508648
 Rigidbody:

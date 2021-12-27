@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Scientific
   m_EditorClassIdentifier: 
   maxCount: 100
-  produceCount: 6
+  produceCount: 4
   produceTime: 1
