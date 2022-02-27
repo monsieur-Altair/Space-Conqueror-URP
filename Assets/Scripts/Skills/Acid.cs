@@ -1,8 +1,5 @@
 ﻿using System.Collections;
-using System.IO;
-using Planets;
 using UnityEngine;
-using UnityEngine.VFX;
 
 namespace Skills
 {
@@ -29,9 +26,6 @@ namespace Skills
                 HitDuration = Duration / HitCount;
                 HitDamage = res.damage / HitCount;
             }
-
-            
-            
             
             _acidRain = Instantiate(acidPrefab);
             if (_acidRain == null)
@@ -43,13 +37,10 @@ namespace Skills
         
         protected override void ApplySkill()
         {
-            //Debug.Log("acid");
-            //if(SelectedPlanet==null)
             if(!IsForAI)
                 SelectedPlanet = RaycastForPlanet();
             
-            //Debug.Log("Selected team="+SelectedPlanet.Team);
-            if (SelectedPlanet!=null && SelectedPlanet.Team != teamConstraint) 
+            if (SelectedPlanet!=null && SelectedPlanet.Team != TeamConstraint) 
                 ApplySkillToPlanet(StartRain);
             else
             {

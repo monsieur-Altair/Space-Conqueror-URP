@@ -35,18 +35,8 @@ namespace Control
             if(!isActive)
                 return;
 #if TOUCH
-          if (Input.touchCount > 0)
-            {
-
-                //Debug.Log("touch screen\n");
-                
-                _touch = Input.GetTouch(0);
-                if(_skillController.IsSelectedSkill)
-                    _skillController.HandleTouch(_touch);
-                else
-                    _planetController.HandleTouch(_touch); 
-            } 
- #else
+            HandleTouch();
+#else
             if(_skillController.IsSelectedSkill)
                 _skillController.HandleClick();
             else 
@@ -55,6 +45,23 @@ namespace Control
        
             
         }
+        
+        
+#if TOUCH
+        private void HandleTouch()
+        {
+            if (Input.touchCount > 0)
+            {
+                //Debug.Log("touch screen\n");
+
+                _touch = Input.GetTouch(0);
+                if (_skillController.IsSelectedSkill)
+                    _skillController.HandleTouch(_touch);
+                else
+                    _planetController.HandleTouch(_touch);
+            }
+        }
+#endif
     }
 }
 

@@ -38,12 +38,9 @@ namespace Units
         {
             if (Target != null)
             {
-                /*if (Agent.velocity.sqrMagnitude > Mathf.Epsilon)
-                {
-                    transform.rotation = Quaternion.LookRotation(Agent.velocity.normalized);
-                }*/
-                var distance = Vector3.Distance(_destination, transform.position);
-                //Debug.Log(distance);
+               
+                float distance = Vector3.Distance(_destination, transform.position);
+           
                 if (distance < MinDistance)
                 {
                     Agent.isStopped = true;

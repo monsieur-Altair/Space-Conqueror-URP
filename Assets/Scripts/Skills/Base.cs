@@ -16,21 +16,17 @@ namespace Skills
         protected abstract void CancelSkill();
         protected bool IsOnCooldown = false;
         protected bool IsForAI = false;
-        protected Planets.Team teamConstraint; 
+        protected Planets.Team TeamConstraint; 
         protected delegate void UniqueActionToPlanet();
         public delegate void DecreasingCounter(float count);
 
-        private DecreasingCounter _decreasingCounter;
+        private DecreasingCounter _decreaseCounter;
         public float Cooldown { get; private set; }
         public int Cost { get; private set; }
 
-        private Button _button;
-
-        //private static int ii = 0;
-        
+        private Button _button; 
         public void Start()
         {
-            //Debug.Log(ii++);
             SkillController = Control.SkillController.Instance;
             if (SkillController == null)
                 throw new MyException("can't get skill controller");
@@ -41,10 +37,6 @@ namespace Skills
             if (ObjectPool == null)
                 throw new MyException("can't get object pool");
             _button = GetComponent<Button>();
-            /*if (_button==null)
-            {
-                throw new MyException("cannot get button component");
-            }*/
             if(_button!=null)
                 _button.onClick.AddListener(() => { SkillController.PressHandler(_button);});
             
@@ -61,7 +53,7 @@ namespace Skills
 
         public void SetDecreasingFunction(DecreasingCounter function)
         {
-            _decreasingCounter = function;
+            _decreaseCounter = function;
         }
         
         public void ExecuteForPlayer(Vector3 pos)
@@ -80,8 +72,7 @@ namespace Skills
         public void SetTeamConstraint(Planets.Team team)
         {
             IsForAI = (team == Planets.Team.Red);
-            teamConstraint = team;
-            //Debug.Log(IsForAI);
+            TeamConstraint = team;
         }
 
         public void ExecuteForAI(Planets.Base planet)
@@ -89,14 +80,12 @@ namespace Skills
             SelectedPlanet = planet;
             if (AI.Core.ScientificCount > Cost && !IsOnCooldown)
             {
-                //Debug.Log("try skill");
                 ApplySkill();
             }
         }
 
         protected Planets.Base RaycastForPlanet()
         {
-//            Debug.Log("Raycast done");
             int layerMask = 1 << 0;
             layerMask = ~layerMask;
             var ray = MainCamera.ScreenPointToRay(SelectedScreenPos);
@@ -111,12 +100,10 @@ namespace Skills
 
         protected void ApplySkillToPlanet(UniqueActionToPlanet action)
         {
-            //Debug.Log("apply skill to planet");
             if (SelectedPlanet != null)
             {
                 IsOnCooldown = true;
-                //Planets.Scientific.DecreaseScientificCount(Cost);
-                _decreasingCounter(Cost);
+                _decreaseCounter(Cost);
                 action();
                 Invoke(nameof(CancelSkill), Cooldown);
             }

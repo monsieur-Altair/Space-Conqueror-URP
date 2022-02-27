@@ -60,16 +60,5 @@ namespace Planets
                 
            
         }
-        
-        /*protected override void DisplayUI()
-        {
-            base.DisplayUI();
-           // DisplayScientificBar();
-        }*/
-
-        /*private void DisplayScientificBar()
-        {
-            UI.SetScientificCounter((int)ScientificCount);
-        }*/
     }
 }

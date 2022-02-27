@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 namespace Managers
 {
-    //[DefaultExecutionOrder(600)]
     public class UI : MonoBehaviour
     {
         public static UI Instance { get; private set; }
@@ -16,17 +15,14 @@ namespace Managers
         
         [SerializeField] private List<Color> counterBackground;
         [SerializeField] private List<Color> counterForeground;
-        private List<GameObject> _countersList;
 
-       // [SerializeField] private TextMeshProUGUI textScientific;
-        
         private List<Planets.Base> _allPlanets=new List<Base>();
         private Camera _mainCamera;
+        private List<GameObject> _countersList;
         
         private float _maxDepth;
         private float _minDepth;
-
-        // private Dictionary<int,GameObject> _counter=new Dictionary<int, GameObject>();
+        
         private readonly Dictionary<int,Image> _backgrounds=new Dictionary<int, Image>();
         private readonly Dictionary<int,TextMeshProUGUI> _foregrounds=new Dictionary<int, TextMeshProUGUI>();
         
@@ -34,7 +30,6 @@ namespace Managers
         private Vector3 _offsetCounter;
         public void Awake()
         {
-            Debug.Log("awake ui");
             if (Instance == null)
             {
                 Instance = this;
@@ -49,12 +44,6 @@ namespace Managers
             _offsetCounter = new Vector3(0, 0, 0);
             
         }
-        
-
-        private void OnEnable()
-        {
-            //PrepareLevel();
-        }
 
         public void PrepareLevel()
         {
@@ -68,7 +57,7 @@ namespace Managers
         {
             _foregrounds.Clear();
             _backgrounds.Clear();
-            foreach (var counter in _countersList)
+            foreach (GameObject counter in _countersList)
             {
                 Destroy(counter);
             }
@@ -77,17 +66,14 @@ namespace Managers
                 throw new MyException("main camera = null");
             foreach (var planet in _allPlanets)
             {
-                Debug.Log("set ui manager");
                 planet.SetUIManager();
                 var pos = planet.transform.position;
                 var counter = Instantiate(counterPrefab, canvas.transform);
                 _countersList.Add(counter);
                 _offsetCamera = FindOffset(pos);
                 var screenPos = _mainCamera.WorldToScreenPoint(pos+_offsetCounter);
-                //Debug.Log("screen = "+screenPos);
                 counter.transform.position = screenPos + _offsetCamera;
                 var index = planet.ID.GetHashCode();
-                //_counter.Add(index,counter);
                 _foregrounds.Add(index, counter.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>());
                 _backgrounds.Add(index, counter.GetComponentInChildren<Image>());
             }
@@ -101,9 +87,9 @@ namespace Managers
             var depth = screenPos.z;
             var offsetY=(_minDepth-depth)/ (_maxDepth-_minDepth)*80.0f;
             var offsetX=(_minDepth-depth)/ (_maxDepth-_minDepth)*(80.0f/coef);
-            //var offsetY=(MINDepth-depth)/ (MAXDepth-MINDepth);
+  
             var res = new Vector3(offsetX, offsetY, 0);
-            //Debug.Log(res+" "+MAXDepth+" "+MINDepth);
+     
             return res;
         }
         
@@ -114,8 +100,6 @@ namespace Managers
             {
                 SetUnitCounterColor(planet);
             }
-            
-          //  textScientific.color=Color.blue;
         }
 
         public void SetUnitCounterColor(Planets.Base planet)
@@ -132,9 +116,5 @@ namespace Managers
             _foregrounds[index].text = value.ToString();
         }
 
-        /*public void SetScientificCounter(int value)
-        {
-            textScientific.text = value.ToString();
-        }*/
     }
 }

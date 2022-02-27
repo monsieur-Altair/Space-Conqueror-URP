@@ -8,23 +8,20 @@ namespace AI
 { 
     public class Core : MonoBehaviour
     {
-        private Planets.Base mainPlanet;
-        [SerializeField] private GameObject allActions;
-        
+        public static float ScientificCount;
         public Vector3 MainPos { get; private set; }
         public List<List<Planets.Base>> AllPlanets { get; private set; }
         public static int Own, Enemy, Neutral;
-        private bool _isActive = false;
         public static Core Instance { get; private set; }
 
-        private IAction _attackByRocket;
-        public static float ScientificCount;
+        [SerializeField] private GameObject allActions;
 
+        private Planets.Base _mainPlanet;
+        private bool _isActive;
+        private IAction _attackByRocket;
         private const float MinDelay = 4.0f;
         private const float MaxDelay = 7.0f;
 
-        //[SerializeField]private int actionSkillPercent = 25;
-        
         
         public void Awake()
         {
@@ -45,20 +42,17 @@ namespace AI
         {
             AllPlanets.Clear();
             
-            for (var i = 0; i < 3; i++)
+            for (int i = 0; i < 3; i++)
                 AllPlanets.Add(new List<Planets.Base>());
 
 
-            int ii = 0;
-            foreach (var planet in planets)
+            foreach (Planets.Base planet in planets)
             {
                 AllPlanets[(int)planet.Team].Add(planet);
-                Debug.Log(ii++ +"team="+planet.Team);
             }
 
-            Debug.Log("Own="+ AllPlanets[Own].Count);
-            mainPlanet = AllPlanets[Own][0];
-            MainPos = mainPlanet.transform.position;
+            _mainPlanet = AllPlanets[Own][0];
+            MainPos = _mainPlanet.transform.position;
 
             _attackByRocket = allActions.GetComponent<AttackSomePlanet>();
             _attackByRocket.InitAction();
@@ -68,14 +62,12 @@ namespace AI
             }
 
             ScientificCount = 0.0f;/////////////////////////////////////////////
-            Debug.Log("Init is ended");
         }
         
         //attack after lost
         //firstly attack neutral
         //attack immediately 
         //firstly attack scientific
-        
         
         public void Enable()
         {
@@ -92,31 +84,17 @@ namespace AI
         {
             while (_isActive)
             {
-                var delay = Random.Range(MinDelay, MaxDelay);
+                float delay = Random.Range(MinDelay, MaxDelay);
                 yield return new WaitForSeconds(delay);
                 if(_isActive)
                     _attackByRocket.Execute();
             }
         }
 
-        /*private IAction FindAction()
-        {
-            var decisionValue = Random.Range(1,101);//1-100
-            if (decisionValue <= actionSkillPercent)
-                return _attackBySkill;
-            return _attackByRocket;
-        }*/
-
         private void AdjustPlanetsList(Planets.Base planet, Planets.Team oldTeam, Planets.Team newTeam)
         {
             AllPlanets[(int) oldTeam].Remove(planet);
             AllPlanets[(int) newTeam].Add(planet);
         }
-
-        /*public void IncreaseScientificCount(float value)
-        {
-            
-        }*/
-        
     }
 }

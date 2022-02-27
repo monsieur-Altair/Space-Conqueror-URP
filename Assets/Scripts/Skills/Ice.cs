@@ -6,9 +6,7 @@ namespace Skills
     public class Ice : Base
     {
         [SerializeField] private GameObject icePrefab;
-        //[SerializeField] private GameObject icePrefab;
         
-        //private const float Radius = 3.0f;
         private const float PlanetLayHeight = 0.66f;
         public float Duration { get; private set; }
 
@@ -54,7 +52,6 @@ namespace Skills
             var obj = other.gameObject.GetComponent<Skills.IFreezable>();
             if (obj != null)
             {
-                //Debug.Log("trigger");
                 obj.Freeze();
                 DeletingFreezingZone += obj.Unfreeze;
             }

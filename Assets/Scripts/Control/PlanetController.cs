@@ -9,8 +9,7 @@ namespace Control
     public class PlanetController : MonoBehaviour
     {
         private List<Planets.Base> _selectablePlanets;
-        private Planets.Base _destination = null;
-        //public UnityEvent onSelectPlanet;
+        private Planets.Base _destination;
         private event Action<Object, Planets.Base> CancelingSelection;
         private event Action<Object, Planets.Base> Selecting;
         private Camera _mainCamera;
@@ -37,8 +36,7 @@ namespace Control
         {
             _touch = touch;
         
-            //Debug.Log("handle planet touch\n");
-            var pos = _touch.position;
+            Vector2 pos = _touch.position;
             switch (_touch.phase)
             {
                 case TouchPhase.Began:
@@ -81,7 +79,7 @@ namespace Control
     
         private void HandleClick(Vector3 pos)
         {
-            var planet = RaycastForPlanet(pos);
+            Planets.Base planet = RaycastForPlanet(pos);
             if (planet != null)
             {
                 if (_selectablePlanets.Contains(planet) == false && planet.Team == Planets.Team.Blue)
@@ -95,7 +93,7 @@ namespace Control
         {
             if (RaycastForPlanet(pos) == null)
             {
-                foreach (var planet in _selectablePlanets)
+                foreach (Planets.Base planet in _selectablePlanets)
                 {
                     OnCancelingSelection(planet);
                 }
@@ -109,13 +107,14 @@ namespace Control
                 _destination = _selectablePlanets[count - 1];
                 OnCancelingSelection(_destination);
                 _selectablePlanets.Remove(_destination);
+                
                 LaunchToDestination(_destination);
+                _selectablePlanets.Clear();
             }
         }
 
         private void OnSelecting(Planets.Base planet)
         {
-            //Debug.Log("increase");
             Selecting?.Invoke(this, planet);
         }
     
@@ -128,73 +127,33 @@ namespace Control
         {
             int layerMask = 1 << 0;
             layerMask = ~layerMask;
-            var ray = _mainCamera.ScreenPointToRay(pos);
-            return Physics.Raycast(ray, out var hit,Mathf.Infinity, layerMask) ? hit.collider.GetComponent<Planets.Base>() : null;
+            Ray ray = _mainCamera.ScreenPointToRay(pos);
+            return Physics.Raycast(ray, out var hit,Mathf.Infinity, layerMask) 
+                ? hit.collider.GetComponent<Planets.Base>() : null;
         }
 
         private void HandleMultipleSelection(Vector3 pos)
         {
-            var planet = RaycastForPlanet(pos);
-            if (planet != null)
+            Planets.Base planet = RaycastForPlanet(pos);
+            if (planet == null) 
+                return;
+            //1 - empty: only blue,
+            //2 - not empty: if user has selected blue, check container + if the last isn't blue, delete them 
+
+            Planets.Team team = planet.Team;
+            int count = _selectablePlanets.Count;
+            if (team == Planets.Team.Blue)
             {
-                //1 - empty: only blue,
-                //2 - not empty: if user has selected blue, check container + if the last isn't blue, delete them 
-
-                var team = planet.Team;
-                var count = _selectablePlanets.Count;
-                if (team == Planets.Team.Blue)
-                {
                     
-                    if(count==0)
-                        OnSelecting(planet);
-                    else
-                    {
-                        var lastPlanet = _selectablePlanets.Last();
-                        if (planet == lastPlanet)
-                            return;
-                        if (lastPlanet.Team != Planets.Team.Blue)
-                        {
-                            OnCancelingSelection(lastPlanet);
-                            _selectablePlanets.RemoveAt(count-1);
-                        }
-                        if (_selectablePlanets.Contains(planet))
-                        {
-                            _selectablePlanets.Remove(planet);
-                            _selectablePlanets.Add(planet);
-                        }
-                        else
-                        {
-                            //Debug.Log("last case");
-                            OnSelecting(planet);
-                        }
-                    }
-                }
+                if(count==0)
+                    OnSelecting(planet);
                 else
                 {
-                    if (count > 0)
-                    {
-                        var lastPlanet = _selectablePlanets.Last();
-                        if (planet == lastPlanet)
-                            return;
-                        
-                        if (lastPlanet.Team != Planets.Team.Blue)
-                        {
-                            OnCancelingSelection(lastPlanet);
-                            _selectablePlanets.RemoveAt(count-1);
-                        }
-                        OnSelecting(planet);
-                    }
-                }
-
-                /*var count = _selectablePlanets.Count;
-                if (count == 0 && planet.Team != Team.Blue)
-                {
-                    return;
-                }
-                else
-                {
-                    var lastPlanet = _selectablePlanets.Last();
-                    if (count != 0 && lastPlanet.Team != Team.Blue)
+                    Planets.Base lastPlanet = _selectablePlanets.Last();
+                    if (planet == lastPlanet)
+                        return;
+                    
+                    if (lastPlanet.Team != Planets.Team.Blue)
                     {
                         OnCancelingSelection(lastPlanet);
                         _selectablePlanets.RemoveAt(count-1);
@@ -203,39 +162,50 @@ namespace Control
                     {
                         _selectablePlanets.Remove(planet);
                         _selectablePlanets.Add(planet);
-                        //return;
                     }
                     else
                     {
-                        Debug.Log("last case");
                         OnSelecting(planet);
                     }
-                    
-                }*/
+                }
+            }
+            else
+            {
+                if (count > 0)
+                {
+                    var lastPlanet = _selectablePlanets.Last();
+                    if (planet == lastPlanet)
+                        return;
+                        
+                    if (lastPlanet.Team != Planets.Team.Blue)
+                    {
+                        OnCancelingSelection(lastPlanet);
+                        _selectablePlanets.RemoveAt(count-1);
+                    }
+                    OnSelecting(planet);
+                }
             }
         }
 
         private void LaunchToDestination(Planets.Base destination)
         {
-            foreach (var planet in _selectablePlanets)
+            foreach (Planets.Base planet in _selectablePlanets)
             {
                 OnCancelingSelection(planet);
                 if(planet.Team==Planets.Team.Blue)
                     planet.LaunchUnit(destination);
             }
-            _selectablePlanets.Clear();
+            
         }
 
-        private void DecreaseScale(Object sender, Planets.Base planet)
+        private static void DecreaseScale(Object sender, Planets.Base planet)
         {
-            //planet.isSelected = false;
             if(planet!=null)
                 planet.transform.localScale /= 1.5f;
         }
     
-        private void IncreaseScale(Object sender, Planets.Base planet)
+        private static void IncreaseScale(Object sender, Planets.Base planet)
         {
-            //planet.isSelected = true;
             if(planet!=null) 
                 planet.transform.localScale *= 1.5f;
         }

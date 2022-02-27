@@ -24,16 +24,16 @@ namespace Planets
         [SerializeField] private Resources.Planet resourcePlanet;
 
         private const float LaunchCoefficient = 0.5f;
-        
-        protected Managers.Main Main;
+
+        private Managers.Main _main;
         private Managers.Outlook _outlook;
-        protected Managers.UI UI;
-        protected Managers.ObjectPool Pool;
-        
-        private float speed = 20.0f;
+        private Managers.UI _ui;
+        private Managers.ObjectPool _pool;
+
+        private const float Speed = 20.0f;
         private float _count;
         private UnitInf _unitInf;
-        private bool _isFrozen=false;
+        private bool _isFrozen;
 
         public static event Action<Planets.Base, Team, Team> Conquered;
         private static int _id = 0;
@@ -66,7 +66,6 @@ namespace Planets
 
         public void Init()
         {
-            Debug.Log("init planet");
             _count = 0.0f;
             ID = _id++;
             
@@ -74,8 +73,8 @@ namespace Planets
                 throw new MyException("resource is not loaded: "+name);
             
             _unitInf = new UnitInf();
-            Main = Managers.Main.Instance;
-            Pool = Managers.ObjectPool.Instance;
+            _main = Managers.Main.Instance;
+            _pool = Managers.ObjectPool.Instance;
             OrbitRadius = GetComponent<SphereCollider>().radius;
             LoadResources();
         }
@@ -88,7 +87,7 @@ namespace Planets
 
         public void SetUIManager()
         {
-            UI = Managers.UI.Instance;
+            _ui = Managers.UI.Instance;
         }
 
         public void SetOutlookManager()
@@ -99,7 +98,7 @@ namespace Planets
         
         public void LateUpdate()
         {
-            if(UI!=null)
+            if(_ui!=null)
                 DisplayUI();
         }
 
@@ -125,34 +124,31 @@ namespace Planets
 
         public void OnDestroy()
         {
-            Debug.Log("DESTROYED");
             Skills.Ice.DeletingFreezingZone -= Unfreeze;
         }
         
         protected virtual void Move()
         {
             if(!_isFrozen)
-                transform.Rotate(Vector3.up, speed*Time.deltaTime,Space.World);
+                transform.Rotate(Vector3.up, Speed*Time.deltaTime,Space.World);
         }
 
         protected virtual void IncreaseResources()
         {
-            if (!_isFrozen)
+            if (_isFrozen) 
+                return;
+            
+            if(_count<MaxCount)
+                _count += ProduceCount / ProduceTime * Time.deltaTime;
+            else if(_count>MaxCount + 0.1f)
             {
-                if(_count<MaxCount)
-                    _count += ProduceCount / ProduceTime * Time.deltaTime;
-                else if(_count>MaxCount + 0.1f)
-                {
-                    _count -= ReducingSpeed * Time.deltaTime;
-                }
-                /*if (_count > MaxCount) 
-                    _count = MaxCount;*/
+                _count -= ReducingSpeed * Time.deltaTime;
             }
         }
 
         protected virtual void DisplayUI()
         {
-            UI.SetUnitCounter(this,(int)_count);
+            _ui.SetUnitCounter(this,(int)_count);
         }
 
         public void LaunchUnit(Planets.Base destination)
@@ -161,7 +157,7 @@ namespace Planets
             
             #region Object pooling
 
-            var unit = Pool.GetObject(
+            Units.Base unit = _pool.GetObject(
                 Type,
                 launchPos, 
                 Quaternion.LookRotation(destPos-launchPos)
@@ -177,9 +173,9 @@ namespace Planets
         private static void CalculateLaunchPositions(out Vector3 st, out Vector3 dest, Base stBase, Base destBase)
         {
             //st=start, dest=destination
-            var stPos = stBase.transform.position;
-            var destPos = destBase.transform.position;
-            var offset = (destPos - stPos).normalized;
+            Vector3 stPos = stBase.transform.position;
+            Vector3 destPos = destBase.transform.position;
+            Vector3 offset = (destPos - stPos).normalized;
             st = stPos + offset * stBase.OrbitRadius;
             dest = destPos - offset * destBase.OrbitRadius;
         }
@@ -211,20 +207,19 @@ namespace Planets
 
         public void AttackedByUnit(Units.Base unit)
         {
-            var unitTeam = unit.GETTeam();
-            var attack=unit.CalculateAttack(Team,Defense);
+            Team unitTeam = unit.GETTeam();
+            float attack=unit.CalculateAttack(Team,Defense);
             _count += attack;
             if (_count < 0)
             {
-                var oldTeam = Team;
-                var newTeam = unitTeam;
+                Team oldTeam = Team;
+                Team newTeam = unitTeam;
                 OnConquered(oldTeam,newTeam);
                 _count *= -1.0f;
                 _count = unit.GetActualCount(_count);
-                Main.UpdateObjectsCount(Team,unitTeam);
+                _main.UpdateObjectsCount(Team,unitTeam);
                 SwitchTeam(unitTeam);
-                Main.CheckGameOver();
-                //IsBuffed = false;
+                _main.CheckGameOver();
             }
         }
 
@@ -236,7 +231,7 @@ namespace Planets
             LoadResources();
 
             _outlook.SetOutlook(this);
-            UI.SetUnitCounterColor(this);
+            _ui.SetUnitCounterColor(this);
         }
 
         public void Buff(float percent)
@@ -263,7 +258,7 @@ namespace Planets
             _isFrozen = false;
         }
 
-        protected void OnConquered(Team oldTeam, Team newTeam)
+        private void OnConquered(Team oldTeam, Team newTeam)
         {
             Conquered?.Invoke(this, oldTeam, newTeam);
         }

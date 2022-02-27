@@ -26,13 +26,12 @@ namespace Managers
 
         public void Start()
         {
-            Debug.Log("start pool");
-            foreach (var pool in pools)
+            foreach (Pool pool in pools)
             {
                 Queue<GameObject> objectPool = new Queue<GameObject>(); 
-                for (var i = 0; i < pool.size; i++)
+                for (int i = 0; i < pool.size; i++)
                 {
-                    var unit = Instantiate(pool.prefab,transform);
+                    GameObject unit = Instantiate(pool.prefab,transform);
                     unit.SetActive(false);
                     objectPool.Enqueue(unit);
                 }
@@ -42,7 +41,7 @@ namespace Managers
 
         public GameObject GetObject(Planets.Type type, Vector3 position, Quaternion rotation)
         {
-            var hash=type.GetHashCode();
+            int hash=type.GetHashCode();
             if (_poolDictionary.ContainsKey(hash) == false)
             {
                 throw new MyException("doesn't exist key value");
@@ -60,9 +59,9 @@ namespace Managers
 
         public bool DisableAllUnitsInScene()
         {
-            foreach (var pair in _poolDictionary)
+            foreach (KeyValuePair<int, Queue<GameObject>> pair in _poolDictionary)
             {
-                foreach (var unit in pair.Value)
+                foreach (GameObject unit in pair.Value)
                 {
                     if(unit.activeSelf)
                         unit.SetActive(false);

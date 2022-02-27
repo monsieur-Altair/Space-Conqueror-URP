@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Skills;
 using UnityEngine;
 using Button = UnityEngine.UI.Button;
 
@@ -18,6 +19,15 @@ namespace Control
     public class SkillController : MonoBehaviour
     {
         [SerializeField] private List<Button> buttons;
+
+        
+        public static SkillController Instance;
+        public Camera MainCamera { get; private set; }
+        public static float MinDepth { get; private set; }
+        public static float MaxDepth { get; private set; }
+        public bool IsSelectedSkill { get; private set; }
+        public event Action CanceledSelection;
+        
         
         private const int Buff = 0, Acid = 1, Ice = 2, Call = 3;
         private Touch _touch;
@@ -27,12 +37,6 @@ namespace Control
         private Skills.Acid _acid;
         private Skills.Ice _ice;
 
-        public static SkillController Instance;
-        public Camera MainCamera { get; private set; }
-        public static float MinDepth { get; private set; }
-        public static float MaxDepth { get; private set; }
-        public bool IsSelectedSkill { get; private set; }
-        public event Action CanceledSelection;
         
         public void Awake()
         {
@@ -63,50 +67,34 @@ namespace Control
             
             MinDepth = MaxDepth = 0.0f;
             
-            GetCameraDepths(out var min,out var max);
+            GetCameraDepths(out float min,out float max);
             MinDepth = min;
             MaxDepth = max;
         }
 
-        /*private void DecreasePlayerSciCounter(float value)
-        {
-            Planets.Scientific.ScientificCount -= value;
-        }*/
-
         public static void GetCameraDepths(out float min, out float max)
         {
             min = max = 0.0f;
-            var camera = Camera.main;
-            var plane = new Plane(Vector3.up, new Vector3(0, 0, 0));
-            var ray = camera.ViewportPointToRay(new Vector3(0,0,0));
+            Camera camera = Camera.main;
+            Plane plane = new Plane(Vector3.up, new Vector3(0, 0, 0));
+            Ray ray = camera.ViewportPointToRay(new Vector3(0,0,0));
             if (plane.Raycast(ray, out var distance))
             {
-                var botLeft = ray.GetPoint(distance);
+                Vector3 botLeft = ray.GetPoint(distance);
                 min = camera.WorldToViewportPoint(botLeft).z;
             }
-            //Debug.Log("left="+MainCamera.WorldToViewportPoint(botLeft));
             
             ray = camera.ViewportPointToRay(new Vector3(1,1,0));
             if (plane.Raycast(ray, out var distance1))
             {
-                var topRight = ray.GetPoint(distance1);
+                Vector3 topRight = ray.GetPoint(distance1);
                 max = camera.WorldToViewportPoint(topRight).z;
             }
-            //Debug.Log("right="+MainCamera.WorldToViewportPoint(topRight));
-            
-            /*ray = camera.ViewportPointToRay(new Vector3(0.5f,0.5f,0));
-            if (plane.Raycast(ray, out var distance2))
-            {
-                var center = ray.GetPoint(distance2);
-                Debug.Log("center = "+center);
-            }*/
         }
         
         public void HandleTouch(Touch touch)
         {
             _touch = touch;
-           // Debug.Log(_touch.position);
-           // Debug.Log("handle skill touch\n");
             
             switch (_touch.phase)
             {
@@ -129,7 +117,7 @@ namespace Control
             {
                 if (IsSelectedSkill)
                 {
-                    var skill= ChooseSkill();
+                    ISkill skill= ChooseSkill();
                     skill.ExecuteForPlayer(Input.mousePosition);
                     OnCanceledSelection();
                 }
@@ -141,7 +129,7 @@ namespace Control
             //if doesn't work after canceling button, add yield return
             if (IsSelectedSkill)
             {
-                var skill= ChooseSkill();
+                ISkill skill= ChooseSkill();
                 skill.ExecuteForPlayer(_touch.position);
                 OnCanceledSelection();
             }
@@ -149,7 +137,6 @@ namespace Control
 
         public Skills.ISkill ChooseSkill()
         {
-//            Debug.Log(_selectedSkillName);
             return _selectedSkillName switch
             {
                 SkillName.Buff => _buff,
@@ -167,7 +154,6 @@ namespace Control
                 return;
             if (!IsSelectedSkill)
             {
-                //Debug.Log("skill selected");
                 BlockButton(button);
                 StartCoroutine(nameof(SwitchWithWaiting));
             }
@@ -188,7 +174,6 @@ namespace Control
         {
             var index = buttons.IndexOf(button);
             _selectedSkillName = (SkillName)index;
-            
             button.image.color=Color.red;
         }
 
