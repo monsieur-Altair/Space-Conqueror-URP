@@ -163,6 +163,8 @@ namespace Control
 
         public void PressHandler(Button button)
         {
+            if(!UserControl.Instance.isActive)
+                return;
             if (!IsSelectedSkill)
             {
                 //Debug.Log("skill selected");

@@ -99,7 +99,8 @@ namespace Planets
         
         public void LateUpdate()
         {
-            DisplayUI();
+            if(UI!=null)
+                DisplayUI();
         }
 
 
@@ -122,7 +123,12 @@ namespace Planets
                 _count = MaxCount;
         }
 
-
+        public void OnDestroy()
+        {
+            Debug.Log("DESTROYED");
+            Skills.Ice.DeletingFreezingZone -= Unfreeze;
+        }
+        
         protected virtual void Move()
         {
             if(!_isFrozen)
@@ -206,7 +212,7 @@ namespace Planets
         public void AttackedByUnit(Units.Base unit)
         {
             var unitTeam = unit.GETTeam();
-            var attack=unit.CalculateAttack(Team);
+            var attack=unit.CalculateAttack(Team,Defense);
             _count += attack;
             if (_count < 0)
             {

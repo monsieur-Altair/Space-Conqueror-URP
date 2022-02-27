@@ -18,7 +18,7 @@ namespace Managers
         [SerializeField] private List<Color> counterForeground;
         private List<GameObject> _countersList;
 
-        [SerializeField] private TextMeshProUGUI textScientific;
+       // [SerializeField] private TextMeshProUGUI textScientific;
         
         private List<Planets.Base> _allPlanets=new List<Base>();
         private Camera _mainCamera;
@@ -77,6 +77,7 @@ namespace Managers
                 throw new MyException("main camera = null");
             foreach (var planet in _allPlanets)
             {
+                Debug.Log("set ui manager");
                 planet.SetUIManager();
                 var pos = planet.transform.position;
                 var counter = Instantiate(counterPrefab, canvas.transform);
@@ -114,7 +115,7 @@ namespace Managers
                 SetUnitCounterColor(planet);
             }
             
-            textScientific.color=Color.blue;
+          //  textScientific.color=Color.blue;
         }
 
         public void SetUnitCounterColor(Planets.Base planet)
@@ -131,9 +132,9 @@ namespace Managers
             _foregrounds[index].text = value.ToString();
         }
 
-        public void SetScientificCounter(int value)
+        /*public void SetScientificCounter(int value)
         {
             textScientific.text = value.ToString();
-        }
+        }*/
     }
 }

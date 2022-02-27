@@ -22,6 +22,11 @@ namespace Planets
             LoadScientificRes();
         }
 
+        public static void DischargeScientificCount()
+        {
+            ScientificCount = 0;
+        }
+        
         private void LoadScientificRes()
         {
             MaxCountScientific = scientific.maxCount;
@@ -56,15 +61,15 @@ namespace Planets
            
         }
         
-        protected override void DisplayUI()
+        /*protected override void DisplayUI()
         {
             base.DisplayUI();
-            DisplayScientificBar();
-        }
+           // DisplayScientificBar();
+        }*/
 
-        private void DisplayScientificBar()
+        /*private void DisplayScientificBar()
         {
             UI.SetScientificCounter((int)ScientificCount);
-        }
+        }*/
     }
 }

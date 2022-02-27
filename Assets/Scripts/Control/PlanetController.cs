@@ -229,13 +229,15 @@ namespace Control
         private void DecreaseScale(Object sender, Planets.Base planet)
         {
             //planet.isSelected = false;
-            planet.transform.localScale /= 1.5f;
+            if(planet!=null)
+                planet.transform.localScale /= 1.5f;
         }
     
         private void IncreaseScale(Object sender, Planets.Base planet)
         {
             //planet.isSelected = true;
-            planet.transform.localScale *= 1.5f;
+            if(planet!=null) 
+                planet.transform.localScale *= 1.5f;
         }
     
         private void AddToList(Object sender, Planets.Base planet)

@@ -18,7 +18,7 @@ namespace Skills
             if (res != null)
                 BuffPercent = res.buffPercent;
             
-            _indicator = Instantiate(indicatorPrefab,transform.parent);
+            _indicator = Instantiate(indicatorPrefab );
             _indicator.SetActive(false);
         }
       

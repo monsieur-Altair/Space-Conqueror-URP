@@ -132,9 +132,12 @@ namespace Managers
         {
             int index = planet.ID.GetHashCode();
             
-            var materials = _planetsRenderer[index].materials;
-            materials[BuffTexIndex] = (planet.Type == Type.Spawner) ? glassMaterial : null;
-            _planetsRenderer[index].materials = materials;
+            if (_planetsRenderer.TryGetValue(index,out var value))
+            {
+                var materials = value.materials;
+                materials[BuffTexIndex] = (planet.Type == Type.Spawner) ? glassMaterial : null;
+                value.materials = materials;
+            }
         }
         
     }

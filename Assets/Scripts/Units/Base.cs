@@ -25,7 +25,7 @@ namespace Units
 
         public abstract Planets.Team GETTeam();
         protected abstract void SetSpeed();
-        public abstract float CalculateAttack(Team planetTeam);
+        public abstract float CalculateAttack(Team planetTeam,float defence);
         
         private const float MinDistance = 1.0f;
 

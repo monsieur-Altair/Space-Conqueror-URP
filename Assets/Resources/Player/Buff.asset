@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0548eff964c243dbae06a2f4a4f40e27, type: 3}
   m_Name: Buff
   m_EditorClassIdentifier: 
-  cooldown: 5
-  cost: 5
+  cooldown: 8
+  cost: 10
   buffPercent: 100

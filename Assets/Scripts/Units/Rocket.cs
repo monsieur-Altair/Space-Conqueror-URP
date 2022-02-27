@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System;
+using System.Linq.Expressions;
 using Planets;
 using UnityEngine;
 
@@ -19,7 +20,11 @@ namespace Units
             gameObject.SetActive(false);
             Target = null;
         }
-        
+
+        public void OnDisable()
+        {
+            Skills.Ice.DeletingFreezingZone -= Unfreeze;
+        }
 
         public override void SetData(in Planets.Base.UnitInf unitInf)
         {
@@ -33,12 +38,12 @@ namespace Units
             Agent.speed = _unitInf.Speed;
         }
 
-        public override float CalculateAttack(Planets.Team planetTeam)
+        public override float CalculateAttack(Planets.Team planetTeam, float defence)
         {
             //damage in percent
             if (_unitInf.Team == planetTeam)
                 return _unitInf.UnitCount;
-            return -1.0f*_unitInf.Damage / 100.0f* _unitInf.UnitCount;
+            return -1.0f*_unitInf.Damage / (100.0f * defence) * _unitInf.UnitCount;
         }
 
         public override float GetActualCount(float countAfterAttack)
@@ -53,7 +58,7 @@ namespace Units
         }
 
         public void Unfreeze()
-        {
+        { 
             Agent.isStopped = false;
             //SetSpeed();
         }

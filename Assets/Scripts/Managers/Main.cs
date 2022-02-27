@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -19,8 +20,8 @@ namespace Managers
         private readonly int _teamNumber = Enum.GetNames(typeof(Planets.Team)).Length;
         [SerializeField] private AI.Core core;
 
-        [SerializeField] private GameObject butObj;
-        private Button _buttonToNext;
+        [SerializeField] private GameObject nextLevelButton;
+        [SerializeField] private GameObject retryLevelButton;
         //private AI.AI _ai;
         public List<Planets.Base> AllPlanets { get; private set; } 
         private GameObject _planetsLay;
@@ -29,6 +30,8 @@ namespace Managers
         public GameStates GameState { get; private set; }
         private ObjectPool _objectPool;
         private Levels _levelsManager;
+
+        private bool _isWin = false;
         /*private UI _uiManager;
         private Outlook _outlookManager;*/
 
@@ -50,8 +53,8 @@ namespace Managers
             if (_levelsManager == null)
                 throw new MyException("cannot get level manager");
 
-            _buttonToNext = butObj.GetComponent<Button>();
-            butObj.SetActive(false);
+            nextLevelButton.SetActive(false);
+            retryLevelButton.SetActive(false);
         }
         
         public void OnEnable()
@@ -87,6 +90,7 @@ namespace Managers
             
             foreach (var planet in AllPlanets)
             {
+                planet.gameObject.SetActive(true);
                 planet.Init();
             }
             
@@ -106,30 +110,60 @@ namespace Managers
                 }
                 case GameStates.Gameplay:
                 {
-                    butObj.SetActive(false);
-                    _levelsManager.LoadCurrentLevel();
+                    
+                    nextLevelButton.SetActive(false);
+                    retryLevelButton.SetActive(false);
+                    StartCoroutine(StartGameplay());
+                    /*_levelsManager.LoadCurrentLevel();
                     _planetsLay = _levelsManager.GetCurrentLay();
                     this.PrepareLevel();
                     core.Init(AllPlanets);
                     core.Enable();
                     Outlook.Instance.PrepareLevel();
                     UI.Instance.PrepareLevel();
+                    Planets.Scientific.DischargeScientificCount();
+                    Control.UserControl.Instance.isActive = true;*/
+                   // _levelsManager.BakeNavMesh();
                     break;
                 }
                 case GameStates.GameOver:
                 {
+                    Control.UserControl.Instance.isActive = false;
                     Debug.Log("Ended");
                     _objectPool.DisableAllUnitsInScene();
                     core.Disable();
-                    butObj.SetActive(true);
+                    if(_isWin)
+                        nextLevelButton.SetActive(true);
+                    else 
+                        retryLevelButton.SetActive(true);
                     break;
                 }
             }
         }
 
+        private IEnumerator StartGameplay()
+        {
+            yield return StartCoroutine(_levelsManager.InstantiateLevel());
+            _planetsLay = _levelsManager.GetCurrentLay();
+            this.PrepareLevel();
+            core.Init(AllPlanets);
+            core.Enable();
+            Outlook.Instance.PrepareLevel();
+            UI.Instance.PrepareLevel();
+            Planets.Scientific.DischargeScientificCount();
+            Control.UserControl.Instance.isActive = true;
+        }
+        
         public void LoadNextLevel()
         {
             _levelsManager.SwitchToNextLevel();
+            GameState = GameStates.Gameplay;
+            UpdateState();
+        }
+
+        public void RetryLevel()
+        {
+            _levelsManager.RestartLevel();
             GameState = GameStates.Gameplay;
             UpdateState();
         }
@@ -137,6 +171,9 @@ namespace Managers
         
         private void FillTeamCount()
         {
+            _objectsCount.Clear();
+            for (int i = 0; i < _teamNumber;i++)
+                _objectsCount.Add(0);
             foreach (var planet in AllPlanets)
             {
                 var team = (int) planet.Team;
@@ -157,8 +194,11 @@ namespace Managers
             var noneRed = _objectsCount[(int)Planets.Team.Red]==0;
             if (noneBlue || noneRed )
             {
+                _isWin = noneRed;
                 GameState = GameStates.GameOver;
                 UpdateState();
+               
+                //Debug.Log("iswin" + _isWin);
             }
             /*if (noneBlue)
             {

@@ -67,7 +67,7 @@ namespace AI
                 throw new MyException("attack by rocket = null");
             }
 
-            ScientificCount = 50.0f;/////////////////////////////////////////////
+            ScientificCount = 0.0f;/////////////////////////////////////////////
             Debug.Log("Init is ended");
         }
         
