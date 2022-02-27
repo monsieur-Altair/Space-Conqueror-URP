@@ -30,6 +30,9 @@ namespace Skills
                 HitDamage = res.damage / HitCount;
             }
 
+            
+            
+            
             _acidRain = Instantiate(acidPrefab);
             if (_acidRain == null)
                 throw new MyException("cannot instantiate acid prefab");
