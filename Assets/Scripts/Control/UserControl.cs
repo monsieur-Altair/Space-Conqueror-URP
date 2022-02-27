@@ -1,4 +1,4 @@
-﻿#define TOUCH
+﻿//#define TOUCH
 
 using System;
 using UnityEngine;

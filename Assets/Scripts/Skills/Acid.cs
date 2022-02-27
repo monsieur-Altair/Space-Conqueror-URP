@@ -30,7 +30,7 @@ namespace Skills
                 HitDamage = res.damage / HitCount;
             }
 
-            _acidRain = Instantiate(acidPrefab,transform.parent);
+            _acidRain = Instantiate(acidPrefab);
             if (_acidRain == null)
                 throw new MyException("cannot instantiate acid prefab");
             _acidParticles = _acidRain.transform.GetChild(0).GetComponent<ParticleSystem>();
@@ -57,6 +57,7 @@ namespace Skills
         private void StartRain()
         {
             _acidRain.transform.position = SelectedPlanet.transform.position +_offset;
+            _acidRain.transform.rotation = Quaternion.identity;
             _acidParticles.Play();                                                                              
             StartCoroutine(nameof(DamagePlanetByRain));
         }
