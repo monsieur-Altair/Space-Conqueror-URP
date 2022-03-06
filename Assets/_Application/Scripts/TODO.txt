@@ -1,0 +1,3 @@
+﻿1. create good state machine
+2. refactor services into non-monobeh
+3. inject dependencies correctly
