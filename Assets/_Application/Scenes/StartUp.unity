@@ -628,6 +628,10 @@ PrefabInstance:
       value: Play
       objectReference: {fileID: 0}
     - target: {fileID: 1354981698931259691, guid: 145bc8f41742a3f4f997de82b0308dd2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354981698931259691, guid: 145bc8f41742a3f4f997de82b0308dd2, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 0}
@@ -643,6 +647,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[4].m_Target
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 1354981698931259691, guid: 145bc8f41742a3f4f997de82b0308dd2, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 145bc8f41742a3f4f997de82b0308dd2, type: 3}
 --- !u!1001 &1687113786479167014
@@ -653,12 +661,20 @@ PrefabInstance:
     m_TransformParent: {fileID: 1040306288}
     m_Modifications:
     - target: {fileID: 1687113786363914472, guid: 554a036bb63a80445b77ba14a3ee39f1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1687113786363914472, guid: 554a036bb63a80445b77ba14a3ee39f1, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 1687113786363914472, guid: 554a036bb63a80445b77ba14a3ee39f1, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1687113786363914472, guid: 554a036bb63a80445b77ba14a3ee39f1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_BoolArgument
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1687113786363914474, guid: 554a036bb63a80445b77ba14a3ee39f1, type: 3}
       propertyPath: m_Name

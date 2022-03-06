@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Control
+namespace _Application.Scripts.Control
 {
     public class Zone : MonoBehaviour
     {
@@ -18,15 +16,11 @@ namespace Control
                 throw new MyException("cannot get zone collider");
         }
 
-        public void SetTriggerFunction(TriggerFunction function)
-        {
+        public void SetTriggerFunction(TriggerFunction function) => 
             _triggerAction = function;
-        }
-        
-        private void OnTriggerEnter(Collider other)
-        {
+
+        private void OnTriggerEnter(Collider other) => 
             _triggerAction(other);
-        }
     }
     
 }

@@ -4,7 +4,7 @@ namespace _Application.Scripts.Control
 {
     public class UserControl : MonoBehaviour
     {
-        public bool isActive=false;
+        public bool isActive;///////////////////////////////////////////
         public static UserControl Instance;
 
         private IInputService _inputService;
@@ -14,8 +14,9 @@ namespace _Application.Scripts.Control
             if (Instance==null) 
                 Instance = this;
 
+            //_inputService = Game.InputService;
+            //_inputService.Init(new PlanetController(Camera.main), GetComponent<SkillController>());
             _inputService = RegisterInputService();
-            _inputService.Init(new PlanetController(Camera.main),GetComponent<SkillController>());
         }
 
         public void Update()
@@ -26,12 +27,15 @@ namespace _Application.Scripts.Control
             _inputService.HandleInput();
         }
 
-        private static IInputService RegisterInputService()
+        private IInputService RegisterInputService()
         {
+            IInputService service;
             if (Application.isEditor)
-                return new StandaloneInput();
+                service = new StandaloneInput();
             else
-                return new MobileInput();
+                service = new MobileInput();
+            service.Init(new PlanetController(Camera.main),GetComponent<SkillController>());
+            return service;
         }
     }
 }

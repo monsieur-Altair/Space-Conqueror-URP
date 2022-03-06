@@ -1,4 +1,5 @@
 using System;
+using Managers;
 using Scriptables;
 using UnityEngine; 
 
@@ -157,12 +158,14 @@ namespace Planets
             CalculateLaunchPositions( out var launchPos,out var destPos,this,destination);
             
             #region Object pooling
-
-            Units.Base unit = _pool.GetObject(
-                Type,
+            
+            ObjectPool.PoolObjectType poolObjectType = (ObjectPool.PoolObjectType)((int) Type);
+            
+            _Application.Scripts.Units.Base unit = _pool.GetObject(
+                poolObjectType,
                 launchPos, 
                 Quaternion.LookRotation(destPos-launchPos)
-            ).GetComponent<Units.Base>();
+            ).GetComponent<_Application.Scripts.Units.Base>();
 
             #endregion
             
@@ -181,10 +184,7 @@ namespace Planets
             dest = destPos - offset * destBase.OrbitRadius;
         }
 
-        private void LaunchFromCounter()
-        {
-            _count *= (1-LaunchCoefficient);
-        }
+        
 
         public void DecreaseCounter(float value)
         {
@@ -193,20 +193,15 @@ namespace Planets
                 _count = 0.0f;
         }
         
-        public void AdjustUnit(Units.Base unit)
+        public void AdjustUnit(_Application.Scripts.Units.Base unit)
         {
             SetUnitCount();
             _outlook.SetUnitOutlook(this, unit);
             unit.SetData(in _unitInf);
         }
-        
-        private void SetUnitCount()
-        {
-            _unitInf.UnitCount = _count*LaunchCoefficient;
-        }
 
 
-        public void AttackedByUnit(Units.Base unit)
+        public void AttackedByUnit(_Application.Scripts.Units.Base unit)
         {
             Team unitTeam = unit.GETTeam();
             float attack=unit.CalculateAttack(Team,Defense);
@@ -222,17 +217,6 @@ namespace Planets
                 SwitchTeam(unitTeam);
                 _main.CheckGameOver();
             }
-        }
-
-        private void SwitchTeam(Planets.Team newTeam)
-        {
-            
-            team = newTeam;
-            //reset resources
-            LoadResources();
-
-            _outlook.SetOutlook(this);
-            _ui.SetUnitCounterColor(this);
         }
 
         public void Buff(float percent)
@@ -257,6 +241,27 @@ namespace Planets
         public void Unfreeze()
         {
             _isFrozen = false;
+        }
+
+        private void SwitchTeam(Planets.Team newTeam)
+        {
+            
+            team = newTeam;
+            //reset resources
+            LoadResources();
+
+            _outlook.SetOutlook(this);
+            _ui.SetUnitCounterColor(this);
+        }
+
+        private void LaunchFromCounter()
+        {
+            _count *= (1-LaunchCoefficient);
+        }
+        
+        private void SetUnitCount()
+        {
+            _unitInf.UnitCount = _count*LaunchCoefficient;
         }
 
         private void OnConquered(Team oldTeam, Team newTeam)

@@ -1,25 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
-using _Application.Scripts.States;
 
 namespace _Application.Scripts.Infrastructure.States
 {
     public class StateMachine
     {
-        private readonly Dictionary<Type, IState> _states;
-        private IState _activeState;
+        private readonly Dictionary<Type, IBaseState> _states;
+        private IBaseState _activeState;
 
-        public StateMachine()
+        public StateMachine(SceneLoader sceneLoader)
         {
-            _states = new Dictionary<Type, IState>();
+            _states = new Dictionary<Type, IBaseState>()
+            {
+                [typeof(BootstrapState)] = new BootstrapState(this, sceneLoader),
+                [typeof(LoadLevelState)] = new LoadLevelState(this, sceneLoader),
+                [typeof(GameLoopState)] = new GameLoopState(this)
+            };
         }
 
-        public void Enter<TState>() where TState : IState
+        public void Enter<TState>() where TState : class, IState
         {
             _activeState?.Exit();
-            IState state = _states[typeof(TState)];
+            IState state = GetState<TState>();
             _activeState = state;
             state.Enter();
+        }
+
+        public void Enter<TState, TPayload>(TPayload payload) where TState : class, IStateWithPayload<TPayload>
+        {
+            _activeState?.Exit();
+            IStateWithPayload<TPayload> state = GetState<TState>();
+            _activeState = state;
+            state.Enter(payload);
+        }
+
+        private TState GetState<TState>() where TState : class, IBaseState
+        {
+            return _states[typeof(TState)] as TState;
         }
     }
 }

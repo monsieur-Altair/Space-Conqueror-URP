@@ -1,3 +1,12 @@
 ﻿1. create good state machine
 2. refactor services into non-monobeh
 3. inject dependencies correctly
+
+4. -ui, -outloook
+5. add counters to pool (and planets)
+6. input, outlook, ui, ai, save-load
+
+
+orders: main 500, base skill 1000
+
+7. mistake in call skill (call percent isn't used)

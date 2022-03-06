@@ -1,4 +1,5 @@
 ﻿using System;
+using _Application.Scripts.Control;
 using UnityEngine;
 
 namespace Skills
@@ -11,7 +12,7 @@ namespace Skills
         public float Duration { get; private set; }
 
         private GameObject _freezingObject;
-        private Control.Zone _freezingZone;
+        private Zone _freezingZone;
         private Plane _plane;
         
         public static event Action DeletingFreezingZone;
@@ -26,7 +27,7 @@ namespace Skills
 
             _freezingObject = Instantiate(icePrefab);
             
-            _freezingZone = _freezingObject.GetComponent<Control.Zone>(); 
+            _freezingZone = _freezingObject.GetComponent<Zone>(); 
             _freezingZone.SetTriggerFunction(FreezingEnteredObjects);
             
             _freezingObject.SetActive(false);

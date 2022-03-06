@@ -43,9 +43,7 @@ namespace Skills
             if (SelectedPlanet!=null && SelectedPlanet.Team != TeamConstraint) 
                 ApplySkillToPlanet(StartRain);
             else
-            {
-               UnblockButton();
-            }
+                UnblockButton();
         }
 
         private void StartRain()

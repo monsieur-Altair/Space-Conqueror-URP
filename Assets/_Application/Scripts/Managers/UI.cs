@@ -12,7 +12,6 @@ namespace Managers
     {
         public static UI Instance { get; private set; }
         
-        [SerializeField] private GameObject counterPrefab;
         [SerializeField] private Canvas canvas;
         
         [SerializeField] private List<Color> counterBackground;
@@ -30,6 +29,9 @@ namespace Managers
         
         private Vector3 _offsetCamera;
         private Vector3 _offsetCounter;
+
+        private ObjectPool _pool;
+        
         public void Awake()
         {
             if (Instance == null)
@@ -44,7 +46,8 @@ namespace Managers
             _countersList = new List<GameObject>();
             _offsetCamera = new Vector3(0, -1.0f, 0);
             _offsetCounter = new Vector3(0, 0, 0);
-            
+
+            _pool = ObjectPool.Instance;
         }
 
         public void PrepareLevel()
@@ -61,34 +64,42 @@ namespace Managers
             _backgrounds.Clear();
             foreach (GameObject counter in _countersList)
             {
-                Destroy(counter);
+                counter.gameObject.SetActive(false);
             }
 
             if (Camera.main == null)
                 throw new MyException("main camera = null");
-            foreach (var planet in _allPlanets)
+            foreach (Base planet in _allPlanets)
             {
                 planet.SetUIManager();
-                var pos = planet.transform.position;
-                var counter = Instantiate(counterPrefab, canvas.transform);
+                Vector3 counterPos = GetCounterPos(planet);
+                GameObject counter = _pool.GetObject(ObjectPool.PoolObjectType.Counter, counterPos, Quaternion.identity);
+                counter.transform.SetParent(canvas.transform);
+                //var counter = Instantiate(counterPrefab, canvas.transform);
                 _countersList.Add(counter);
-                _offsetCamera = FindOffset(pos);
-                var screenPos = _mainCamera.WorldToScreenPoint(pos+_offsetCounter);
-                counter.transform.position = screenPos + _offsetCamera;
-                var index = planet.ID.GetHashCode();
+                
+                int index = planet.ID.GetHashCode();
                 _foregrounds.Add(index, counter.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>());
                 _backgrounds.Add(index, counter.GetComponentInChildren<Image>());
             }
         }
-        
+
+        private Vector3 GetCounterPos(Base planet)
+        {
+            Vector3 pos = planet.transform.position;
+            _offsetCamera = FindOffset(pos);
+            Vector3 screenPos = _mainCamera.WorldToScreenPoint(pos + _offsetCounter);
+            return screenPos + _offsetCamera;
+        }
+
 
         private Vector3 FindOffset(Vector3 worldPos)
         {
-            int coef = _mainCamera.pixelHeight / _mainCamera.pixelWidth;
+            int coefficient = _mainCamera.pixelHeight / _mainCamera.pixelWidth;
             var screenPos = _mainCamera.WorldToScreenPoint(worldPos);
             var depth = screenPos.z;
             var offsetY=(_minDepth-depth)/ (_maxDepth-_minDepth)*80.0f;
-            var offsetX=(_minDepth-depth)/ (_maxDepth-_minDepth)*(80.0f/coef);
+            var offsetX=(_minDepth-depth)/ (_maxDepth-_minDepth)*(80.0f/coefficient);
   
             var res = new Vector3(offsetX, offsetY, 0);
      
@@ -98,7 +109,7 @@ namespace Managers
         
         private void SetAllCountersColor()
         {
-            foreach (var planet in _allPlanets)
+            foreach (Base planet in _allPlanets)
             {
                 SetUnitCounterColor(planet);
             }

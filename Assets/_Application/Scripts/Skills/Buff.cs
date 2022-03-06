@@ -24,9 +24,7 @@ namespace Skills
             if (SelectedPlanet!=null && SelectedPlanet.Team == TeamConstraint)
                 ApplySkillToPlanet(BuffPlanet);
             else
-            {
                 UnblockButton();
-            }
         }
 
         private void BuffPlanet()

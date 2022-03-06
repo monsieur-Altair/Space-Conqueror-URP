@@ -1,4 +1,6 @@
 ﻿
+using _Application.Scripts.Units;
+
 namespace Units
 {
     public class Rocket : Base, Skills.IFreezable

@@ -1,15 +1,14 @@
 ﻿using Planets;
-using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.EventSystems;
 
-namespace Units
+namespace _Application.Scripts.Units
 {
     [RequireComponent(
         typeof(NavMeshAgent),
         typeof(Collider), 
         typeof(Rigidbody))]
+    
     public abstract class Base : MonoBehaviour
     {
         protected NavMeshAgent Agent;
@@ -17,9 +16,7 @@ namespace Units
         private Vector3 _destination;
         protected Planets.Base Target;
         
-        public bool IsBuffed { get; private set; }
 
-        //override this method to adjust functionality, when unit arrives at the target  
         protected abstract void TargetInRange();
         public abstract void SetData(in Planets.Base.UnitInf unitInf);
 
@@ -28,11 +25,6 @@ namespace Units
         public abstract float CalculateAttack(Team planetTeam,float defence);
         
         private const float MinDistance = 1.0f;
-
-        public void Start()
-        {
-            IsBuffed = false;
-        }
 
         public void Update()
         {
@@ -48,9 +40,8 @@ namespace Units
                 }
             }
         }
-        
-        
-        public void GoTo(Vector3 destinationPos)
+
+        private void GoTo(Vector3 destinationPos)
         {
             _destination = destinationPos;
 

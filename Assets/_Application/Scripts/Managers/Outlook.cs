@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using _Application.Scripts.Units;
 using UnityEngine;
 using Type = Planets.Type;
 
@@ -90,7 +91,7 @@ namespace Managers
             _planetsRenderer[index].materials = materials;
         }
 
-        public void SetUnitOutlook(Planets.Base planet, Units.Base unit)
+        public void SetUnitOutlook(Planets.Base planet, Base unit)
         {
             int team = (int) planet.Team;
             //also we can add all rockets materials to list 

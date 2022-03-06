@@ -1,8 +1,6 @@
-﻿using Control;
-
-namespace _Application.Scripts.Control
+﻿namespace _Application.Scripts.Control
 {
-    internal interface IInputService
+    public interface IInputService
     {
         void HandleInput();
         void Init(PlanetController planetController, SkillController skillController);

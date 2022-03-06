@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using _Application.Scripts.Misc;
-using Control;
-using Skills;
 using UnityEngine;
 using Button = UnityEngine.UI.Button;
 
@@ -21,16 +18,11 @@ namespace _Application.Scripts.Control
     public class SkillController : MonoBehaviour
     {
         [SerializeField] private List<Button> buttons;
-
         
         public static SkillController Instance;
-        public Camera MainCamera { get; private set; }
-        public static float MinDepth { get; private set; }
-        public static float MaxDepth { get; private set; }
         public bool IsSelectedSkill { get; private set; }
         public event Action CanceledSelection;
-        
-        
+
         private const int Buff = 0;
         private const int Acid = 1;
         private const int Ice = 2;
@@ -51,7 +43,6 @@ namespace _Application.Scripts.Control
 
         public void Start()
         {
-            MainCamera=Camera.main;
             IsSelectedSkill = false;
             _selectedSkillName = SkillName.None;
             
@@ -66,22 +57,15 @@ namespace _Application.Scripts.Control
             _acid = buttons[Acid].GetComponent<Skills.Acid>();
             _acid.SetTeamConstraint(Planets.Team.Blue);
             _acid.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
-
             
             _ice = buttons[Ice].GetComponent<Skills.Ice>();
-            
-            MinDepth = MaxDepth = 0.0f;
-            
-            CameraResolution.GetCameraDepths(out float min,out float max);
-            MinDepth = min;
-            MaxDepth = max;
         }
         
         public void ApplySkill(Vector3 position)
         {
             if (IsSelectedSkill)
             {
-                ISkill skill= ChooseSkill();
+                Skills.ISkill skill= ChooseSkill();
                 skill.ExecuteForPlayer(position);
                 OnCanceledSelection();
             }
@@ -89,8 +73,9 @@ namespace _Application.Scripts.Control
 
         public void PressHandler(Button button)
         {
-            if(!UserControl.Instance.isActive)
+            if(!UserControl.Instance.isActive)//////////////////////////////////
                 return;
+            
             if (!IsSelectedSkill)
             {
                 BlockButton(button);
@@ -102,7 +87,7 @@ namespace _Application.Scripts.Control
             }
         }
 
-        private ISkill ChooseSkill()
+        private Skills.ISkill ChooseSkill()
         {
             return _selectedSkillName switch
             {
@@ -124,7 +109,7 @@ namespace _Application.Scripts.Control
 
         private void BlockButton(Button button)////////////////////////////////////////////
         {
-            var index = buttons.IndexOf(button);
+            int index = buttons.IndexOf(button);
             _selectedSkillName = (SkillName)index;
             button.image.color=Color.red;
         }

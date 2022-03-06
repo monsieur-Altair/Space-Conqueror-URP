@@ -8,13 +8,25 @@ namespace Managers
     {
         private Dictionary<int, Queue<GameObject>> _poolDictionary;
 
+        public enum PoolObjectType
+        {
+            ScientificRocket = 0,
+            SpawnerRocket = 1,
+            AttackerRocket = 2,
+            ScientificPlanet = 3,
+            SpawnerPlanet = 4,
+            AttackerPlanet = 5,
+            Counter = 6
+        }
+
         [Serializable]
         public class Pool
         {
-            public Planets.Type type;
+            public PoolObjectType poolObjectType;
             public GameObject prefab;
             public int size;
         }
+        
         public List<Pool> pools;
         public static ObjectPool Instance;
         public void Awake()
@@ -35,11 +47,11 @@ namespace Managers
                     unit.SetActive(false);
                     objectPool.Enqueue(unit);
                 }
-                _poolDictionary.Add(pool.type.GetHashCode(),objectPool);
+                _poolDictionary.Add(pool.poolObjectType.GetHashCode(),objectPool);
             }
         }
 
-        public GameObject GetObject(Planets.Type type, Vector3 position, Quaternion rotation)
+        public GameObject GetObject(PoolObjectType type, Vector3 position, Quaternion rotation)
         {
             int hash=type.GetHashCode();
             if (_poolDictionary.ContainsKey(hash) == false)

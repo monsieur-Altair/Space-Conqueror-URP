@@ -32,7 +32,7 @@ namespace Skills
             SkillController = SkillController.Instance;
             if (SkillController == null)
                 throw new MyException("can't get skill controller");
-            MainCamera=SkillController.MainCamera;
+            MainCamera=Camera.main;
             if(MainCamera==null)
                 throw new MyException("can't get main camera");
             ObjectPool = Managers.ObjectPool.Instance;
@@ -61,14 +61,10 @@ namespace Skills
         public void ExecuteForPlayer(Vector3 pos)
         {
             SelectedScreenPos = pos;
-            if (Planets.Scientific.ScientificCount>Cost && !IsOnCooldown)
-            {
+            if (Planets.Scientific.ScientificCount > Cost && !IsOnCooldown)
                 ApplySkill();
-            }
             else
-            {
                 UnblockButton();
-            }
         }
 
         public void SetTeamConstraint(Planets.Team team)
@@ -96,8 +92,8 @@ namespace Skills
         
         protected void UnblockButton()
         {
-            if(!IsOnCooldown && _button!=null)
-                _button.image.color=Color.white;
+            if (!IsOnCooldown && _button != null)
+                _button.image.color = Color.white;
         }
 
         protected void ApplySkillToPlanet(UniqueActionToPlanet action)
