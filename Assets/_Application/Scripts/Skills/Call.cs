@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using _Application.Scripts.Control;
 using Planets;
 using UnityEngine;
 
@@ -86,9 +87,9 @@ namespace Skills
             Vector3[] possiblePoints =
             {
                 new Vector3(0,destY,destZ),                                  //from left side
-                new Vector3(destX,Screen.height,Control.SkillController.MaxDepth), //from top side
+                new Vector3(destX,Screen.height,SkillController.MaxDepth), //from top side
                 new Vector3(Screen.width,destY,destZ),                       //from right side
-                new Vector3(destX,0,Control.SkillController.MinDepth)              //from bottom side
+                new Vector3(destX,0,SkillController.MinDepth)              //from bottom side
             };
 
             var minWayIndex = FindMinWay(in possiblePoints,in destPosScreen);

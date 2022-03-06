@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using _Application.Scripts.Misc;
+using Control;
 using Skills;
 using UnityEngine;
 using Button = UnityEngine.UI.Button;
 
-namespace Control
+namespace _Application.Scripts.Control
 {
     public enum SkillName
     {
@@ -29,8 +31,11 @@ namespace Control
         public event Action CanceledSelection;
         
         
-        private const int Buff = 0, Acid = 1, Ice = 2, Call = 3;
-        private Touch _touch;
+        private const int Buff = 0;
+        private const int Acid = 1;
+        private const int Ice = 2;
+        private const int Call = 3;
+        
         private SkillName _selectedSkillName;
         private Skills.Call _call;
         private Skills.Buff _buff;
@@ -67,85 +72,19 @@ namespace Control
             
             MinDepth = MaxDepth = 0.0f;
             
-            GetCameraDepths(out float min,out float max);
+            CameraResolution.GetCameraDepths(out float min,out float max);
             MinDepth = min;
             MaxDepth = max;
         }
-
-        public static void GetCameraDepths(out float min, out float max)
-        {
-            min = max = 0.0f;
-            Camera camera = Camera.main;
-            Plane plane = new Plane(Vector3.up, new Vector3(0, 0, 0));
-            Ray ray = camera.ViewportPointToRay(new Vector3(0,0,0));
-            if (plane.Raycast(ray, out var distance))
-            {
-                Vector3 botLeft = ray.GetPoint(distance);
-                min = camera.WorldToViewportPoint(botLeft).z;
-            }
-            
-            ray = camera.ViewportPointToRay(new Vector3(1,1,0));
-            if (plane.Raycast(ray, out var distance1))
-            {
-                Vector3 topRight = ray.GetPoint(distance1);
-                max = camera.WorldToViewportPoint(topRight).z;
-            }
-        }
         
-        public void HandleTouch(Touch touch)
+        public void ApplySkill(Vector3 position)
         {
-            _touch = touch;
-            
-            switch (_touch.phase)
-            {
-                /*case TouchPhase.Began:
-                {
-                    HandleClick();
-                    break;
-                }*/
-                case TouchPhase.Ended:
-                {
-                    HandleRelease();
-                    break;
-                }
-            }
-        }
-
-        public void HandleClick()
-        {
-            if (Input.GetMouseButtonUp(0))
-            {
-                if (IsSelectedSkill)
-                {
-                    ISkill skill= ChooseSkill();
-                    skill.ExecuteForPlayer(Input.mousePosition);
-                    OnCanceledSelection();
-                }
-            }
-        }
-
-        private void HandleRelease()
-        {
-            //if doesn't work after canceling button, add yield return
             if (IsSelectedSkill)
             {
                 ISkill skill= ChooseSkill();
-                skill.ExecuteForPlayer(_touch.position);
+                skill.ExecuteForPlayer(position);
                 OnCanceledSelection();
             }
-        }
-
-        public Skills.ISkill ChooseSkill()
-        {
-            return _selectedSkillName switch
-            {
-                SkillName.Buff => _buff,
-                SkillName.Acid => _acid,
-                SkillName.Ice  => _ice,
-                SkillName.Call => _call,
-                SkillName.None => null,
-                _ => throw new ArgumentOutOfRangeException()
-            };
         }
 
         public void PressHandler(Button button)
@@ -161,6 +100,19 @@ namespace Control
             {
                 OnCanceledSelection();
             }
+        }
+
+        private ISkill ChooseSkill()
+        {
+            return _selectedSkillName switch
+            {
+                SkillName.Buff => _buff,
+                SkillName.Acid => _acid,
+                SkillName.Ice  => _ice,
+                SkillName.Call => _call,
+                SkillName.None => null,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
 
         private IEnumerator SwitchWithWaiting()

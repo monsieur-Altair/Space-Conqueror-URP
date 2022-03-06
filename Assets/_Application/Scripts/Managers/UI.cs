@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using _Application.Scripts.Control;
+using _Application.Scripts.Misc;
 using Planets;
 using TMPro;
 using UnityEngine;
@@ -34,7 +36,7 @@ namespace Managers
             {
                 Instance = this;
             }
-            Control.SkillController.GetCameraDepths(out _minDepth, out _maxDepth);
+            CameraResolution.GetCameraDepths(out _minDepth, out _maxDepth);
 
             _mainCamera=Camera.main;
             if (_mainCamera == null)

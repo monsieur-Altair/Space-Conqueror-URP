@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using _Application.Scripts.Control;
 using UnityEngine;
 
 namespace Managers
@@ -99,7 +100,7 @@ namespace Managers
                 }
                 case GameStates.GameOver:
                 {
-                    Control.UserControl.Instance.isActive = false;
+                    UserControl.Instance.isActive = false;
                     _objectPool.DisableAllUnitsInScene();
                     core.Disable();
                     if(_isWin)
@@ -121,7 +122,7 @@ namespace Managers
             Outlook.Instance.PrepareLevel();
             UI.Instance.PrepareLevel();
             Planets.Scientific.DischargeScientificCount();
-            Control.UserControl.Instance.isActive = true;
+            UserControl.Instance.isActive = true;
         }
         
         public void LoadNextLevel()

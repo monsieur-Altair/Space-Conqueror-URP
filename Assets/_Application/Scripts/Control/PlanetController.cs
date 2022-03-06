@@ -2,24 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
-namespace Control
+namespace _Application.Scripts.Control
 {
-    public class PlanetController : MonoBehaviour
+    public class PlanetController
     {
-        private List<Planets.Base> _selectablePlanets;
+        private readonly List<Planets.Base> _selectablePlanets;
         private Planets.Base _destination;
-        private event Action<Object, Planets.Base> CancelingSelection;
-        private event Action<Object, Planets.Base> Selecting;
-        private Camera _mainCamera;
-        private Touch _touch;
+        private event Action<Planets.Base> CancelingSelection;
+        private event Action<Planets.Base> Selecting;
+        private readonly Camera _mainCamera;
     
-        public void Start()
+        public PlanetController(Camera camera)
         {
-            _mainCamera = Camera.main;
-            if (_mainCamera == null)
-                throw new MyException("can't get camera: " + name);
+            _mainCamera = camera;
             _selectablePlanets = new List<Planets.Base>();
             CancelingSelection += DecreaseScale;
             Selecting += IncreaseScale;
@@ -32,52 +28,8 @@ namespace Control
             OnCancelingSelection(planet);
         }
         
-        public void HandleTouch(Touch touch)
-        {
-            _touch = touch;
-        
-            Vector2 pos = _touch.position;
-            switch (_touch.phase)
-            {
-                case TouchPhase.Began:
-                {
-                    HandleClick(pos);
-                    break;
-                }
-                case TouchPhase.Ended:
-                {
-                    HandleRelease(pos);
-                    break;
-                }
-                case TouchPhase.Moved:
-                {
-                    HandleMultipleSelection(pos);
-                    break;
-                }
-            }
-        }
 
-        public void HandleMouseClick()
-        {
-            var pos = Input.mousePosition;
-            if (Input.GetMouseButtonUp(0))
-            {
-                //Debug.Log("release");
-                HandleRelease(pos);
-            }
-            else if (Input.GetMouseButtonDown(0))
-            {
-                HandleClick(pos);
-            }
-            else if(Input.GetMouseButton(0))
-            {
-                HandleMultipleSelection(pos);
-            }
-        }
-        
-        
-    
-        private void HandleClick(Vector3 pos)
+        public void HandleClick(Vector3 pos)
         {
             Planets.Base planet = RaycastForPlanet(pos);
             if (planet != null)
@@ -89,7 +41,7 @@ namespace Control
             }
         }
 
-        private void HandleRelease(Vector3 pos)
+        public void HandleRelease(Vector3 pos)
         {
             if (RaycastForPlanet(pos) == null)
             {
@@ -115,12 +67,12 @@ namespace Control
 
         private void OnSelecting(Planets.Base planet)
         {
-            Selecting?.Invoke(this, planet);
+            Selecting?.Invoke(planet);
         }
     
         private void OnCancelingSelection(Planets.Base planet)
         {
-            CancelingSelection?.Invoke(this, planet);
+            CancelingSelection?.Invoke(planet);
         }
 
         private Planets.Base RaycastForPlanet(Vector3 pos)
@@ -132,7 +84,7 @@ namespace Control
                 ? hit.collider.GetComponent<Planets.Base>() : null;
         }
 
-        private void HandleMultipleSelection(Vector3 pos)
+        public void HandleMultipleSelection(Vector3 pos)
         {
             Planets.Base planet = RaycastForPlanet(pos);
             if (planet == null) 
@@ -198,19 +150,19 @@ namespace Control
             
         }
 
-        private static void DecreaseScale(Object sender, Planets.Base planet)
+        private static void DecreaseScale(Planets.Base planet)
         {
             if(planet!=null)
                 planet.transform.localScale /= 1.5f;
         }
     
-        private static void IncreaseScale(Object sender, Planets.Base planet)
+        private static void IncreaseScale(Planets.Base planet)
         {
             if(planet!=null) 
                 planet.transform.localScale *= 1.5f;
         }
     
-        private void AddToList(Object sender, Planets.Base planet)
+        private void AddToList(Planets.Base planet)
         {
             _selectablePlanets.Add(planet);
         }

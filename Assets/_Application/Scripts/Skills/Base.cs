@@ -1,4 +1,5 @@
-﻿using Scriptables;
+﻿using _Application.Scripts.Control;
+using Scriptables;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,7 +10,7 @@ namespace Skills
     {
         [SerializeField] protected Skill resource;
         protected Vector3 SelectedScreenPos { get; private set; }
-        protected Control.SkillController SkillController;
+        protected SkillController SkillController;
         protected Camera MainCamera;
         protected Managers.ObjectPool ObjectPool;
         protected Planets.Base SelectedPlanet;
@@ -28,7 +29,7 @@ namespace Skills
         private Button _button; 
         public void Start()
         {
-            SkillController = Control.SkillController.Instance;
+            SkillController = SkillController.Instance;
             if (SkillController == null)
                 throw new MyException("can't get skill controller");
             MainCamera=SkillController.MainCamera;

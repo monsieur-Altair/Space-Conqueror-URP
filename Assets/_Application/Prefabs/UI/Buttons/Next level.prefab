@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 133221864307917139}
   - component: {fileID: 5643300420948435107}
   m_Layer: 5
-  m_Name: NextLvlButton
+  m_Name: Next level
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
