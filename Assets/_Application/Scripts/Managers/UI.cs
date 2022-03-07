@@ -8,11 +8,12 @@ using UnityEngine.UI;
 
 namespace Managers
 {
+    [DefaultExecutionOrder(400)]
     public class UI : MonoBehaviour
     {
         public static UI Instance { get; private set; }
         
-        [SerializeField] private Canvas canvas;
+        private Canvas _canvas;
         
         [SerializeField] private List<Color> counterBackground;
         [SerializeField] private List<Color> counterForeground;
@@ -38,6 +39,13 @@ namespace Managers
             {
                 Instance = this;
             }
+
+            _canvas = GameObject.FindGameObjectWithTag("CanvasTag").GetComponent<Canvas>();
+            if (_canvas == null)
+            {
+                throw new MyException("cannot get canvas component");
+            }
+            
             CameraResolution.GetCameraDepths(out _minDepth, out _maxDepth);
 
             _mainCamera=Camera.main;
@@ -48,6 +56,10 @@ namespace Managers
             _offsetCounter = new Vector3(0, 0, 0);
 
             _pool = ObjectPool.Instance;
+            if (_pool == null)
+            {
+                throw new MyException("cannot get pool component");
+            }
         }
 
         public void PrepareLevel()
@@ -74,7 +86,7 @@ namespace Managers
                 planet.SetUIManager();
                 Vector3 counterPos = GetCounterPos(planet);
                 GameObject counter = _pool.GetObject(ObjectPool.PoolObjectType.Counter, counterPos, Quaternion.identity);
-                counter.transform.SetParent(canvas.transform);
+                counter.transform.SetParent(_canvas.transform);
                 //var counter = Instantiate(counterPrefab, canvas.transform);
                 _countersList.Add(counter);
                 

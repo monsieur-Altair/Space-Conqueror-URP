@@ -14,7 +14,7 @@ namespace _Application.Scripts.Control
         Call,
         None
     }
-    
+    [DefaultExecutionOrder(450)]
     public class SkillController : MonoBehaviour
     {
         [SerializeField] private List<Button> buttons;
@@ -33,12 +33,19 @@ namespace _Application.Scripts.Control
         private Skills.Buff _buff;
         private Skills.Acid _acid;
         private Skills.Ice _ice;
-
         
+        private UserControl _userControl;
+
+
         public void Awake()
         {
             if (Instance == null)
                 Instance = this;
+            _userControl = UserControl.Instance;
+            if (_userControl==null)
+            {
+                throw new MyException("cannot get user control component");
+            }
         }
 
         public void Start()
@@ -73,7 +80,7 @@ namespace _Application.Scripts.Control
 
         public void PressHandler(Button button)
         {
-            if(!UserControl.Instance.isActive)//////////////////////////////////
+            if(!_userControl.isActive)//////////////////////////////////
                 return;
             
             if (!IsSelectedSkill)

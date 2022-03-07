@@ -27,10 +27,17 @@ namespace _Application.Scripts.Infrastructure.States
 
         private void OnLoaded()
         {
+            //GameObject pool = Instantiate("Managers/Object Pool");
+            //GameObject uiManager = Instantiate("Managers/UI Manager");
+            GameObject userControl = Instantiate("Managers/User Control");
+            GameObject mainManager = Instantiate("Managers/Main Manager");
+            
             //inst planets and ui   
+            //inject all dependencies in the scene
+            _stateMachine.Enter<GameLoopState>();
         }
 
-        private GameObject Inst(string path)
+        private GameObject Instantiate(string path)
         {
             GameObject prefab = Resources.Load<GameObject>(path);
             return Object.Instantiate(prefab);

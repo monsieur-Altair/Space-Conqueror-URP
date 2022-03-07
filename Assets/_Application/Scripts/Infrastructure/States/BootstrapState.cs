@@ -5,7 +5,7 @@ namespace _Application.Scripts.Infrastructure.States
 {
     public class BootstrapState : IState
     {
-        private const string Initial = "Initial";
+        private const string StartUp = "StartUp";
         private const string Main = "Main";
         private readonly StateMachine _stateMachine;
         private readonly SceneLoader _sceneLoader;
@@ -20,21 +20,20 @@ namespace _Application.Scripts.Infrastructure.States
         {
             RegisterServices();
             //_sceneLoader.Load(Initial, onLoaded: EnterLoadLevel);
-            _sceneLoader.Load(Initial);
+            _sceneLoader.Load(StartUp);
         }
 
         public void Exit()
         {
+            
         }
 
-        private void EnterLoadLevel()
-        {
-            _stateMachine.Enter<LoadLevelState, string>(Main);
-        }
+        private void EnterLoadLevel() => 
+            _stateMachine.Enter<LoadLevelState, string>("Main");
 
         private void RegisterServices()
         {
-            Game.InputService = RegisterInputService();
+            //Game.InputService = RegisterInputService();
         }
 
         private IInputService RegisterInputService()

@@ -32,6 +32,7 @@ namespace Managers
         private const int BuffTexIndex = 1;
 
         private List<Planets.Base> _allPlanets;
+        private Main _mainManager;
 
         public void Awake()
         {
@@ -42,12 +43,12 @@ namespace Managers
             _allTextures.Add(scientificTextures);
             _allTextures.Add(spawnerTextures);
             _allTextures.Add(attackerTextures);
-
+            _mainManager = Main.Instance;
         }
        
-        public void PrepareLevel()
+        public void PrepareLevel(List<Planets.Base> planets)
         {
-            _allPlanets=new List<Planets.Base>(Main.Instance.AllPlanets);
+            _allPlanets=new List<Planets.Base>(planets);
             _planetsRenderer?.Clear();
             FillList();
             SetAllOutlooks();

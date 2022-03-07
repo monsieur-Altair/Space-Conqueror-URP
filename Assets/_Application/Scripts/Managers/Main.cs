@@ -17,7 +17,7 @@ namespace Managers
     [DefaultExecutionOrder(500)]
     public class Main : MonoBehaviour
     {
-        [SerializeField] private AI.Core core;
+        private AI.Core _core;
         [SerializeField] private GameObject nextLevelButton;
         [SerializeField] private GameObject retryLevelButton;
 
@@ -32,12 +32,14 @@ namespace Managers
         private bool _isWin;
 
         public static Main Instance;
+        private UserControl _userControl;
+        private Outlook _outlook;
+        private UI _ui;
+
         public void Awake()
         {
-            if (Instance == null)
-            {
+            if (Instance == null) 
                 Instance = this;
-            }
 
             ObjectsCount=new List<int>(_teamNumber);
             for (int i = 0; i < _teamNumber;i++)
@@ -46,15 +48,14 @@ namespace Managers
             _levelsManager=Levels.Instance;
             if (_levelsManager == null)
                 throw new MyException("cannot get level manager");
-
             nextLevelButton.SetActive(false);
             retryLevelButton.SetActive(false);
         }
         
         public void OnEnable()
         {
-            core = core.GetComponent<AI.Core>();
-            if (core==null)
+            _core = AI.Core.Instance;
+            if (_core==null)
             {
                 throw new MyException("cannot get ai component");
             }
@@ -63,7 +64,22 @@ namespace Managers
             {
                 throw new MyException("cannot get object pool component");
             }
-            
+            _userControl = UserControl.Instance;
+            if (_userControl==null)
+            {
+                throw new MyException("cannot get user control component");
+            }
+            _outlook = Outlook.Instance;
+            if (_outlook==null)
+            {
+                throw new MyException("cannot get outlook component");
+            }
+            _ui = UI.Instance;
+            if (_ui==null)
+            {
+                throw new MyException("cannot get ui component");
+            }
+
             CurrentGameState = GameStates.Gameplay;
             UpdateState();
         }
@@ -86,11 +102,7 @@ namespace Managers
         private void UpdateState()
         {
             switch (CurrentGameState)
-            {
-                case GameStates.Opening:
-                {
-                    break;
-                }
+            { 
                 case GameStates.Gameplay:
                 {
                     nextLevelButton.SetActive(false);
@@ -100,9 +112,9 @@ namespace Managers
                 }
                 case GameStates.GameOver:
                 {
-                    UserControl.Instance.isActive = false;
+                    _userControl.isActive = false;
                     _objectPool.DisableAllUnitsInScene();
-                    core.Disable();
+                    _core.Disable();
                     if(_isWin)
                         nextLevelButton.SetActive(true);
                     else 
@@ -117,12 +129,14 @@ namespace Managers
             yield return StartCoroutine(_levelsManager.InstantiateLevel());
             _planetsLay = _levelsManager.GetCurrentLay();
             this.PrepareLevel();
-            core.Init(AllPlanets);
-            core.Enable();
-            Outlook.Instance.PrepareLevel();
-            UI.Instance.PrepareLevel();
-            Planets.Scientific.DischargeScientificCount();
-            UserControl.Instance.isActive = true;
+            _core.Init(AllPlanets);
+            _core.Enable();
+            _outlook.PrepareLevel(AllPlanets);
+            _ui.PrepareLevel();
+            
+            Planets.Scientific.DischargeScientificCount();//sci-count = 0
+            
+            _userControl.isActive = true;
         }
         
         public void LoadNextLevel()
