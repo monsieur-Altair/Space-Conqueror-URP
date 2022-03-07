@@ -16,5 +16,15 @@ namespace _Application.Scripts.Control
             _planetController = planetController;
             _skillController = skillController;
         }
+
+        public void Enable()
+        {
+            _skillController.Enable();
+        }
+
+        public void Disable()
+        {
+            _skillController.Disable();
+        }
     }
 }

@@ -6,6 +6,8 @@
 6. input, outlook, ui, ai, save-load
 
 
-orders: main 500, base skill 1000, ui 400, skill contr 450
+orders: main 500, base skill 200, ui 400, skill contr 450
 
-7. mistake in call skill (call percent isn't used)
+BUGS:
+    mistake in call skill (call percent isn't used)
+    input: double click after using skill reload this skill 

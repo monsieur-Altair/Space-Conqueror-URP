@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Skills
+namespace _Application.Scripts.Skills
 {
     public interface ISkill
     {

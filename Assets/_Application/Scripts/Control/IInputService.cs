@@ -4,6 +4,7 @@
     {
         void HandleInput();
         void Init(PlanetController planetController, SkillController skillController);
-        
+        void Enable();
+        void Disable();
     }
 }

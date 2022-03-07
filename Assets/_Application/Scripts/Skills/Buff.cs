@@ -1,19 +1,15 @@
-﻿
-using Planets;
-using UnityEngine;
-
-namespace Skills
+﻿namespace _Application.Scripts.Skills
 {
     public class Buff : Base
     {
-        public float BuffPercent { get; private set; }
+        private float _buffPercent;
 
         protected override void LoadResources()
         {
             base.LoadResources();
             var res = resource as Scriptables.Buff;
             if(res!=null)
-                BuffPercent = res.buffPercent;
+                _buffPercent = res.buffPercent;
         }
 
         protected override void ApplySkill()
@@ -24,20 +20,20 @@ namespace Skills
             if (SelectedPlanet!=null && SelectedPlanet.Team == TeamConstraint)
                 ApplySkillToPlanet(BuffPlanet);
             else
-                UnblockButton();
+                OnCanceledSkill();
         }
 
         private void BuffPlanet()
         {
-            SelectedPlanet.Buff(BuffPercent);
+            SelectedPlanet.Buff(_buffPercent);
         }
         
         protected override void CancelSkill()
         {
             IsOnCooldown = false;
-            SelectedPlanet.UnBuff(BuffPercent);
+            SelectedPlanet.UnBuff(_buffPercent);
             SelectedPlanet = null;
-            UnblockButton();
+            OnCanceledSkill();
         }
     }
 }

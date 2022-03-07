@@ -1,27 +1,27 @@
 ﻿using System.Collections;
-using _Application.Scripts.Control;
 using _Application.Scripts.Misc;
 using Managers;
-using Planets;
 using UnityEngine;
 
-namespace Skills
+namespace _Application.Scripts.Skills
 {
     public class Call : Base
     {
-        [SerializeField] private GameObject indicatorPrefab;
+        [SerializeField] 
+        private GameObject indicatorPrefab;
+        
         private GameObject _indicator;
         private readonly Vector3 _indicatorOffset = new Vector3(0, 1.9f, 0);
         private float _maxDepth;
         private float _minDepth;
-        public float BuffPercent { get; private set; }
+        private float _buffPercent;
 
         protected override void LoadResources()
         {
             base.LoadResources();
             var res = resource as Scriptables.Call;
             if (res != null)
-                BuffPercent = res.callPercent;
+                _buffPercent = res.callPercent;
             
             CameraResolution.GetCameraDepths(out _minDepth, out _maxDepth);
             
@@ -37,14 +37,14 @@ namespace Skills
             if (SelectedPlanet!=null && SelectedPlanet.Team == TeamConstraint)
                 ApplySkillToPlanet(CallSupply);
             else
-                UnblockButton();
+                OnCanceledSkill();
         }
 
         protected override void CancelSkill()
         {
             SelectedPlanet = null;
             IsOnCooldown = false;
-            UnblockButton();
+            OnCanceledSkill();
         }
         
         private void CallSupply()

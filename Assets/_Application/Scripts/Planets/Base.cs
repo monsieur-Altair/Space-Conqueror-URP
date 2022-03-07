@@ -1,7 +1,9 @@
 using System;
+using _Application.Scripts.Skills;
 using Managers;
 using Scriptables;
-using UnityEngine; 
+using UnityEngine;
+using Ice = _Application.Scripts.Skills.Ice;
 
 namespace Planets
 {
@@ -18,7 +20,7 @@ namespace Planets
         Attacker=2
     }
     [RequireComponent(typeof(Collider))]//,typeof(Rigidbody))]
-    public abstract class Base : MonoBehaviour, Skills.IFreezable, Skills.IBuffable
+    public abstract class Base : MonoBehaviour, IFreezable, IBuffable
     {
         [SerializeField] private Team team;
         [SerializeField] private Type type;
@@ -126,7 +128,7 @@ namespace Planets
 
         public void OnDestroy()
         {
-            Skills.Ice.DeletingFreezingZone -= Unfreeze;
+            Ice.DeletingFreezingZone -= Unfreeze;
         }
         
         protected virtual void Move()

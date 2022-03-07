@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using _Application.Scripts.Skills;
+using UnityEngine;
 
 namespace AI
 {
@@ -7,26 +8,26 @@ namespace AI
 
         [SerializeField] private GameObject aiSkills;
      
-        private Skills.Call _call;
-        private Skills.Buff _buff;
-        private Skills.Acid _acid;
-        private Skills.Ice _ice;
+        private Call _call;
+        private Buff _buff;
+        private Acid _acid;
+        private Ice _ice;
 
         public void InitSkills()
         {
-            _call = aiSkills.GetComponent<Skills.Call>();
+            _call = aiSkills.GetComponent<Call>();
             _call.SetTeamConstraint(Planets.Team.Red);
             _call.SetDecreasingFunction(DecreaseAISciCounter);
 
-            _buff = aiSkills.GetComponent<Skills.Buff>();
+            _buff = aiSkills.GetComponent<Buff>();
             _buff.SetTeamConstraint(Planets.Team.Red);
             _buff.SetDecreasingFunction(DecreaseAISciCounter);
 
-            _acid = aiSkills.GetComponent<Skills.Acid>();
+            _acid = aiSkills.GetComponent<Acid>();
             _acid.SetTeamConstraint(Planets.Team.Red);
             _acid.SetDecreasingFunction(DecreaseAISciCounter);
 
-            _ice = aiSkills.GetComponent<Skills.Ice>();
+            _ice = aiSkills.GetComponent<Ice>();
 
             if (_acid == null || _buff == null || _call == null || _ice == null)
                 throw new MyException("cannot get skill component, AI");

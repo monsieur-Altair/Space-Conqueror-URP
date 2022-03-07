@@ -1,49 +1,48 @@
-﻿using _Application.Scripts.Control;
+﻿using System;
 using Scriptables;
 using UnityEngine;
-using UnityEngine.UI;
 
-namespace Skills
+namespace _Application.Scripts.Skills
 {
-    [DefaultExecutionOrder(1000)]
+    [DefaultExecutionOrder(200)]
     public abstract class Base : MonoBehaviour, ISkill
     {
-        [SerializeField] protected Skill resource;
-        protected Vector3 SelectedScreenPos { get; private set; }
-        protected SkillController SkillController;
+        [SerializeField] 
+        protected Skill resource;
+
+        public event Action CanceledSkill;
+        public delegate void DecreasingCounter(float count);
+        protected abstract void CancelSkill();
+        protected abstract void ApplySkill();
+
         protected Camera MainCamera;
         protected Managers.ObjectPool ObjectPool;
         protected Planets.Base SelectedPlanet;
-        protected abstract void ApplySkill();
-        protected abstract void CancelSkill();
-        protected bool IsOnCooldown = false;
-        protected bool IsForAI = false;
-        protected Planets.Team TeamConstraint; 
+        protected float Cooldown;
+        protected int Cost;
+        protected bool IsOnCooldown;
+        protected bool IsForAI;
+        protected Planets.Team TeamConstraint;
         protected delegate void UniqueActionToPlanet();
-        public delegate void DecreasingCounter(float count);
-
+        
+        
         private DecreasingCounter _decreaseCounter;
-        public float Cooldown { get; private set; }
-        public int Cost { get; private set; }
 
-        private Button _button; 
-        public void Start()
+
+        protected Vector3 SelectedScreenPos { get; private set; }
+
+        private void Awake()
         {
-            SkillController = SkillController.Instance;
-            if (SkillController == null)
-                throw new MyException("can't get skill controller");
             MainCamera=Camera.main;
             if(MainCamera==null)
                 throw new MyException("can't get main camera");
             ObjectPool = Managers.ObjectPool.Instance;
             if (ObjectPool == null)
                 throw new MyException("can't get object pool");
-            _button = GetComponent<Button>();
-            if(_button!=null)
-                _button.onClick.AddListener(() => { SkillController.PressHandler(_button);});
-            
-            SkillController.CanceledSelection += UnblockButton;
-            
+        }
+
+        public void Start()
+        {
             LoadResources();
         }
 
@@ -53,18 +52,16 @@ namespace Skills
             Cost = resource.cost;
         }
 
-        public void SetDecreasingFunction(DecreasingCounter function)
-        {
+        public void SetDecreasingFunction(DecreasingCounter function) => 
             _decreaseCounter = function;
-        }
-        
+
         public void ExecuteForPlayer(Vector3 pos)
         {
             SelectedScreenPos = pos;
             if (Planets.Scientific.ScientificCount > Cost && !IsOnCooldown)
                 ApplySkill();
             else
-                UnblockButton();
+                OnCanceledSkill();
         }
 
         public void SetTeamConstraint(Planets.Team team)
@@ -90,26 +87,29 @@ namespace Skills
             return Physics.Raycast(ray, out var hit,Mathf.Infinity, layerMask) ? hit.collider.GetComponent<Planets.Base>() : null;
         }
         
-        protected void UnblockButton()
-        {
-            if (!IsOnCooldown && _button != null)
-                _button.image.color = Color.white;
-        }
-
         protected void ApplySkillToPlanet(UniqueActionToPlanet action)
         {
-            if (SelectedPlanet != null)
-            {
-                IsOnCooldown = true;
-                _decreaseCounter(Cost);
-                action();
-                Invoke(nameof(CancelSkill), Cooldown);
-            }
-            else
-            {
-                UnblockButton();
-            }
+            // if (SelectedPlanet != null)
+            // {
+            //     IsOnCooldown = true;
+            //     _decreaseCounter(Cost);
+            //     action();
+            //     Invoke(nameof(CancelSkill), Cooldown);
+            // }
+            // else
+            // {
+            //     OnCanceledSkill();
+            // }
+            IsOnCooldown = true;
+            _decreaseCounter(Cost);
+            action();
+            Invoke(nameof(CancelSkill), Cooldown);
         }
         
+        protected void OnCanceledSkill()
+        {
+            if(!IsOnCooldown)
+                CanceledSkill?.Invoke();
+        }
     }
 }

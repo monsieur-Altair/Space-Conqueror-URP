@@ -29,8 +29,8 @@ namespace _Application.Scripts.Infrastructure.States
         {
             //GameObject pool = Instantiate("Managers/Object Pool");
             //GameObject uiManager = Instantiate("Managers/UI Manager");
-            GameObject userControl = Instantiate("Managers/User Control");
-            GameObject mainManager = Instantiate("Managers/Main Manager");
+            //GameObject userControl = Instantiate("Managers/User Control");
+            //GameObject mainManager = Instantiate("Managers/Main Manager");
             
             //inst planets and ui   
             //inject all dependencies in the scene

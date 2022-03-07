@@ -18,85 +18,97 @@ namespace _Application.Scripts.Control
     public class SkillController : MonoBehaviour
     {
         [SerializeField] private List<Button> buttons;
-        
-        public static SkillController Instance;
-        public bool IsSelectedSkill { get; private set; }
-        public event Action CanceledSelection;
+
+        private static SkillController _instance;
 
         private const int Buff = 0;
         private const int Acid = 1;
         private const int Ice = 2;
         private const int Call = 3;
-        
-        private SkillName _selectedSkillName;
+
+        public SkillName SelectedSkillName { get; private set; }
         private Skills.Call _call;
         private Skills.Buff _buff;
         private Skills.Acid _acid;
         private Skills.Ice _ice;
         
-        private UserControl _userControl;
+        private bool _isActive;
 
 
         public void Awake()
         {
-            if (Instance == null)
-                Instance = this;
-            _userControl = UserControl.Instance;
-            if (_userControl==null)
-            {
-                throw new MyException("cannot get user control component");
-            }
+            if (_instance == null)
+                _instance = this;
         }
 
         public void Start()
         {
-            IsSelectedSkill = false;
-            _selectedSkillName = SkillName.None;
+            SelectedSkillName = SkillName.None;
             
             _call = buttons[Call].GetComponent<Skills.Call>();
             _call.SetTeamConstraint(Planets.Team.Blue);
             _call.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
+            _call.CanceledSkill += ()=> UnblockButton(buttons[Call]);
             
             _buff = buttons[Buff].GetComponent<Skills.Buff>();
             _buff.SetTeamConstraint(Planets.Team.Blue);
             _buff.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
+            _buff.CanceledSkill += ()=> UnblockButton(buttons[Buff]);
             
             _acid = buttons[Acid].GetComponent<Skills.Acid>();
             _acid.SetTeamConstraint(Planets.Team.Blue);
             _acid.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
+            _acid.CanceledSkill += ()=> UnblockButton(buttons[Acid]);
             
             _ice = buttons[Ice].GetComponent<Skills.Ice>();
+            _ice.CanceledSkill += ()=> UnblockButton(buttons[Ice]);
+            
+            foreach (Button button in buttons) 
+                button.onClick.AddListener(() => { PressHandler(button); });
+
         }
         
         public void ApplySkill(Vector3 position)
         {
-            if (IsSelectedSkill)
+            if (SelectedSkillName!=SkillName.None)
             {
                 Skills.ISkill skill= ChooseSkill();
                 skill.ExecuteForPlayer(position);
-                OnCanceledSelection();
+                SelectedSkillName = SkillName.None;
             }
         }
 
-        public void PressHandler(Button button)
+        public void Disable()
         {
-            if(!_userControl.isActive)//////////////////////////////////
+            _isActive = false;
+        }
+
+        public void Enable()
+        {
+            _isActive = true;
+        }
+
+        private void PressHandler(Button button)
+        {
+            if(!_isActive) 
                 return;
             
-            if (!IsSelectedSkill)
+            if (SelectedSkillName==SkillName.None)
             {
+                int index = buttons.IndexOf(button);
                 BlockButton(button);
-                StartCoroutine(nameof(SwitchWithWaiting));
+                StartCoroutine((SwitchWithWaiting(index)));
             }
             else
             {
-                OnCanceledSelection();
+                SelectedSkillName = SkillName.None;
+                UnblockButton(button);
             }
         }
 
         private Skills.ISkill ChooseSkill()
         {
-            return _selectedSkillName switch
+            return SelectedSkillName switch
             {
                 SkillName.Buff => _buff,
                 SkillName.Acid => _acid,
@@ -107,25 +119,17 @@ namespace _Application.Scripts.Control
             };
         }
 
-        private IEnumerator SwitchWithWaiting()
+        private IEnumerator SwitchWithWaiting(int index)
         {
             //if not use waiting, touch "handle release" will be worked immediately
             yield return new WaitForSeconds(0.1f);//0.1s is finger lift time
-            IsSelectedSkill = true;
+            SelectedSkillName = (SkillName)index;
         }
 
-        private void BlockButton(Button button)////////////////////////////////////////////
-        {
-            int index = buttons.IndexOf(button);
-            _selectedSkillName = (SkillName)index;
-            button.image.color=Color.red;
-        }
+        private static void BlockButton(Button button)
+            => button.image.color=Color.red;
 
-        private void OnCanceledSelection()
-        {
-            CanceledSelection?.Invoke();
-            _selectedSkillName = SkillName.None;
-            IsSelectedSkill = false;
-        }
+        private static void UnblockButton(Button button) => 
+            button.image.color = Color.white;
     }
 }

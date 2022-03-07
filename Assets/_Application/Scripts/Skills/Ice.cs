@@ -2,7 +2,7 @@
 using _Application.Scripts.Control;
 using UnityEngine;
 
-namespace Skills
+namespace _Application.Scripts.Skills
 {
     public class Ice : Base
     {
@@ -50,11 +50,11 @@ namespace Skills
 
         private static void FreezingEnteredObjects(Collider other)
         {
-            var obj = other.gameObject.GetComponent<Skills.IFreezable>();
+            var obj = other.gameObject.GetComponent<global::_Application.Scripts.Skills.IFreezable>();
             if (obj != null)
             {
                 obj.Freeze();
-                DeletingFreezingZone += obj.Unfreeze;
+                DeletingFreezingZone += obj.Unfreeze;/////////////////
             }
         }
 
@@ -71,7 +71,7 @@ namespace Skills
             DeletingFreezingZone?.Invoke();
             _freezingObject.SetActive(false);
             IsOnCooldown = false;
-            UnblockButton();
+            OnCanceledSkill();
         }
     }
 }

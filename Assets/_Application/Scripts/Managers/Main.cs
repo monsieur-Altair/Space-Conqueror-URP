@@ -112,7 +112,7 @@ namespace Managers
                 }
                 case GameStates.GameOver:
                 {
-                    _userControl.isActive = false;
+                    _userControl.Disable();
                     _objectPool.DisableAllUnitsInScene();
                     _core.Disable();
                     if(_isWin)
@@ -136,7 +136,7 @@ namespace Managers
             
             Planets.Scientific.DischargeScientificCount();//sci-count = 0
             
-            _userControl.isActive = true;
+            _userControl.Enable();
         }
         
         public void LoadNextLevel()

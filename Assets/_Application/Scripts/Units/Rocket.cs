@@ -1,15 +1,16 @@
 ﻿
-using _Application.Scripts.Units;
+using _Application.Scripts.Skills;
+using Base = _Application.Scripts.Units.Base;
 
 namespace Units
 {
-    public class Rocket : Base, Skills.IFreezable
+    public class Rocket : Base, IFreezable
     {
         private Planets.Base.UnitInf _unitInf;
         
         protected override void TargetInRange()
         {
-            Skills.Ice.DeletingFreezingZone -= Unfreeze;
+            Ice.DeletingFreezingZone -= Unfreeze;
         
             if(Target!=null)
                 Target.AttackedByUnit(this);
@@ -20,7 +21,7 @@ namespace Units
 
         public void OnDisable()
         {
-            Skills.Ice.DeletingFreezingZone -= Unfreeze;
+            Ice.DeletingFreezingZone -= Unfreeze;
         }
 
         public override void SetData(in Planets.Base.UnitInf unitInf)

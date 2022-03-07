@@ -4,7 +4,7 @@ namespace _Application.Scripts.Control
 {
     public class UserControl : MonoBehaviour
     {
-        public bool isActive;///////////////////////////////////////////
+        private bool _isActive;
         public static UserControl Instance;
 
         private IInputService _inputService;
@@ -21,10 +21,22 @@ namespace _Application.Scripts.Control
 
         public void Update()
         {
-            if(!isActive)
+            if(!_isActive)
                 return;
             
             _inputService.HandleInput();
+        }
+
+        public void Disable()
+        {
+            _isActive = false;
+            _inputService.Disable();
+        }
+        
+        public void Enable()
+        {
+            _isActive = true;
+            _inputService.Enable();
         }
 
         private IInputService RegisterInputService()

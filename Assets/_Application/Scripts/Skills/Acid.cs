@@ -1,30 +1,31 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace Skills
+namespace _Application.Scripts.Skills
 {
     public class Acid : Base
     {
-
-        [SerializeField] private GameObject acidPrefab;
-        private GameObject _acidRain;
-        private ParticleSystem _acidParticles;
+        [SerializeField] 
+        private GameObject acidPrefab;
         
         private readonly Vector3 _offset = new Vector3(1, 3, 0);
-        public float HitDuration { get; private set; }
-        public float Duration { get; private set; }
-        public float HitDamage { get; private set; }
-        public int HitCount { get; private set; }
+        private GameObject _acidRain;
+        private ParticleSystem _acidParticles;
+        private float _hitDuration;
+        private float _duration;
+        private float _hitDamage;
+        private int _hitCount;
+        
         protected override void LoadResources()
         {
             base.LoadResources();
-            var res = resource as Scriptables.Acid;
+            Scriptables.Acid res = resource as Scriptables.Acid;
             if (res != null)
             {
-                Duration =res.duration;
-                HitCount = res.hitCount;
-                HitDuration = Duration / HitCount;
-                HitDamage = res.damage / HitCount;
+                _duration =res.duration;
+                _hitCount = res.hitCount;
+                _hitDuration = _duration / _hitCount;
+                _hitDamage = res.damage / _hitCount;
             }
             
             _acidRain = Instantiate(acidPrefab);
@@ -34,7 +35,13 @@ namespace Skills
             if (_acidParticles == null)
                 throw new MyException("cannot get particle system");
         }
-        
+
+        protected override void CancelSkill()
+        {
+            IsOnCooldown = false;
+            OnCanceledSkill();
+        }
+
         protected override void ApplySkill()
         {
             if(!IsForAI)
@@ -43,7 +50,7 @@ namespace Skills
             if (SelectedPlanet!=null && SelectedPlanet.Team != TeamConstraint) 
                 ApplySkillToPlanet(StartRain);
             else
-                UnblockButton();
+                OnCanceledSkill();
         }
 
         private void StartRain()
@@ -53,25 +60,18 @@ namespace Skills
             _acidParticles.Play();                                                                              
             StartCoroutine(nameof(DamagePlanetByRain));
         }
-        
+
         private IEnumerator DamagePlanetByRain()
         {
             var count = 0;
-            while (count != HitCount)
+            while (count != _hitCount)
             {
-                SelectedPlanet.DecreaseCounter(HitDamage);
-                yield return new WaitForSeconds(HitDuration);
+                SelectedPlanet.DecreaseCounter(_hitDamage);
+                yield return new WaitForSeconds(_hitDuration);
                 count++;
             }
             _acidParticles.Stop();
             SelectedPlanet = null;
-        }
-
-        protected override void CancelSkill()
-        {
-            IsOnCooldown = false;
-            
-            UnblockButton();
         }
     }
 }
