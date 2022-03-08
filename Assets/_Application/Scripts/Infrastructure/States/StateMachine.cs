@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using _Application.Scripts.Infrastructure.Factory;
+using _Application.Scripts.Infrastructure.Services;
 
 namespace _Application.Scripts.Infrastructure.States
 {
@@ -8,12 +10,12 @@ namespace _Application.Scripts.Infrastructure.States
         private readonly Dictionary<Type, IBaseState> _states;
         private IBaseState _activeState;
 
-        public StateMachine(SceneLoader sceneLoader)
+        public StateMachine(SceneLoader sceneLoader, AllServices allServices)
         {
             _states = new Dictionary<Type, IBaseState>()
             {
-                [typeof(BootstrapState)] = new BootstrapState(this, sceneLoader),
-                [typeof(LoadLevelState)] = new LoadLevelState(this, sceneLoader),
+                [typeof(BootstrapState)] = new BootstrapState(this, sceneLoader, allServices),
+                [typeof(LoadLevelState)] = new LoadLevelState(this, sceneLoader, allServices.GetSingle<IGameFactory>()),
                 [typeof(GameLoopState)] = new GameLoopState(this)
             };
         }
@@ -34,9 +36,7 @@ namespace _Application.Scripts.Infrastructure.States
             state.Enter(payload);
         }
 
-        private TState GetState<TState>() where TState : class, IBaseState
-        {
-            return _states[typeof(TState)] as TState;
-        }
+        private TState GetState<TState>() where TState : class, IBaseState => 
+            _states[typeof(TState)] as TState;
     }
 }

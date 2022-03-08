@@ -1,6 +1,6 @@
 ﻿using System.Collections;
+using _Application.Scripts.Managers;
 using _Application.Scripts.Misc;
-using Managers;
 using UnityEngine;
 
 namespace _Application.Scripts.Skills
@@ -14,14 +14,14 @@ namespace _Application.Scripts.Skills
         private readonly Vector3 _indicatorOffset = new Vector3(0, 1.9f, 0);
         private float _maxDepth;
         private float _minDepth;
-        private float _buffPercent;
+        private float _callPercent;
 
         protected override void LoadResources()
         {
             base.LoadResources();
-            var res = resource as Scriptables.Call;
+            Scriptables.Call res = resource as Scriptables.Call;
             if (res != null)
-                _buffPercent = res.callPercent;
+                _callPercent = res.callPercent;
             
             CameraResolution.GetCameraDepths(out _minDepth, out _maxDepth);
             
@@ -49,10 +49,10 @@ namespace _Application.Scripts.Skills
         
         private void CallSupply()
         {
-            var launchPos= FindSpawnPoint(SelectedPlanet);
-            var destPos = CalculateDestPos(launchPos, SelectedPlanet);
+            Vector3 launchPos= FindSpawnPoint(SelectedPlanet);
+            Vector3 destPos = CalculateDestPos(launchPos, SelectedPlanet);
             ObjectPool.PoolObjectType poolObjectType = (ObjectPool.PoolObjectType)((int) SelectedPlanet.Type);
-            var unit = ObjectPool.GetObject(poolObjectType, 
+            Units.Base unit = ObjectPool.GetObject(poolObjectType, 
                 launchPos, 
                 Quaternion.LookRotation(destPos-launchPos))
                 .GetComponent<_Application.Scripts.Units.Base>();
@@ -73,19 +73,19 @@ namespace _Application.Scripts.Skills
         
         private Vector3 CalculateDestPos(in Vector3 launchPos, Planets.Base destinationPlanet)
         {
-            var destPos = destinationPlanet.transform.position;
-            var offset = (destPos - launchPos).normalized;
+            Vector3 destPos = destinationPlanet.transform.position;
+            Vector3 offset = (destPos - launchPos).normalized;
             return destPos - offset * destinationPlanet.OrbitRadius;
         }
         
         //calculate a min way on SCREEN (NOT WORLD) coordinates for supply
         private Vector3 FindSpawnPoint(Planets.Base destination)
         {
-            var destPosWorld = destination.transform.position;
-            var destPosScreen = MainCamera.WorldToScreenPoint(destPosWorld);
-            var destX = destPosScreen.x;
-            var destY = destPosScreen.y;
-            var destZ = destPosScreen.z;
+            Vector3 destPosWorld = destination.transform.position;
+            Vector3 destPosScreen = MainCamera.WorldToScreenPoint(destPosWorld);
+            float destX = destPosScreen.x;
+            float destY = destPosScreen.y;
+            float destZ = destPosScreen.z;
 
             //possible points for spawn on screen coordinates
             Vector3[] possiblePoints =
@@ -96,9 +96,9 @@ namespace _Application.Scripts.Skills
                 new Vector3(destX,0,_minDepth)              //from bottom side
             };
 
-            var minWayIndex = FindMinWay(in possiblePoints,in destPosScreen);
+            int minWayIndex = FindMinWay(in possiblePoints,in destPosScreen);
             
-            var result=MainCamera.ScreenToWorldPoint(possiblePoints[minWayIndex]);
+            Vector3 result=MainCamera.ScreenToWorldPoint(possiblePoints[minWayIndex]);
             result.y = destPosWorld.y;
             return result;
         }
@@ -107,7 +107,7 @@ namespace _Application.Scripts.Skills
         private static int FindMinWay(in Vector3[] possiblePoints, in Vector3 destinationPos)
         {            
             int minIndex = 0;
-            var min = float.MaxValue;
+            float min = float.MaxValue;
             int index = 0;
             foreach (var point in possiblePoints)
             {

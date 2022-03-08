@@ -4,37 +4,39 @@ using System.Collections.Generic;
 using System.Linq;
 using _Application.Scripts.Control;
 using UnityEngine;
+using UnityEngine.UI;
 
-namespace Managers
+namespace _Application.Scripts.Managers
 {
     public enum GameStates
     {
-        Opening,
         Gameplay,
         GameOver
     }
     
-    [DefaultExecutionOrder(500)]
     public class Main : MonoBehaviour
     {
-        private AI.Core _core;
-        [SerializeField] private GameObject nextLevelButton;
-        [SerializeField] private GameObject retryLevelButton;
-
-        public List<Planets.Base> AllPlanets { get; private set; } 
-        public static List<int> ObjectsCount { get; private set; }
-        public GameStates CurrentGameState { get; private set; }
-        
-        private ObjectPool _objectPool;
-        private GameObject _planetsLay;
-        private Levels _levelsManager;
-        private readonly int _teamNumber = Enum.GetNames(typeof(Planets.Team)).Length;
-        private bool _isWin;
-
         public static Main Instance;
+        private GameObject _nextLevelButton;
+        private GameObject _retryLevelButton;
+
+
+        private ObjectPool _objectPool;
+        private Levels _levelsManager;
+        private AI.Core _core;
         private UserControl _userControl;
         private Outlook _outlook;
         private UI _ui;
+        
+        private GameObject _planetsLay;
+        private readonly int _teamNumber = Enum.GetNames(typeof(Planets.Team)).Length;
+        private bool _isWin;
+        private GameStates _currentGameState;
+
+
+        public List<Planets.Base> AllPlanets { get; private set; }
+        public List<int> ObjectsCount { get; private set; }
+
 
         public void Awake()
         {
@@ -42,46 +44,68 @@ namespace Managers
                 Instance = this;
 
             ObjectsCount=new List<int>(_teamNumber);
+            AllPlanets = new List<Planets.Base>();
+            
             for (int i = 0; i < _teamNumber;i++)
                 ObjectsCount.Add(0);
             
             _levelsManager=Levels.Instance;
-            if (_levelsManager == null)
-                throw new MyException("cannot get level manager");
-            nextLevelButton.SetActive(false);
-            retryLevelButton.SetActive(false);
+
+            Planets.Base.Conquered += UpdateObjectsCount;
         }
-        
+
         public void OnEnable()
         {
             _core = AI.Core.Instance;
-            if (_core==null)
-            {
-                throw new MyException("cannot get ai component");
-            }
             _objectPool = ObjectPool.Instance;
-            if (_objectPool==null)
-            {
-                throw new MyException("cannot get object pool component");
-            }
             _userControl = UserControl.Instance;
-            if (_userControl==null)
-            {
-                throw new MyException("cannot get user control component");
-            }
             _outlook = Outlook.Instance;
-            if (_outlook==null)
-            {
-                throw new MyException("cannot get outlook component");
-            }
             _ui = UI.Instance;
-            if (_ui==null)
+
+            // _currentGameState = GameStates.Gameplay;
+            // UpdateState();
+        }
+
+        public void OnDisable() => 
+            Planets.Base.Conquered -= UpdateObjectsCount;
+
+        public void SetButtons(GameObject retryButton, GameObject nextLevelButton)
+        {
+            _retryLevelButton = retryButton;
+            _nextLevelButton = nextLevelButton;
+            
+            _retryLevelButton.GetComponent<Button>().onClick.AddListener(RetryLevel);
+            _nextLevelButton.GetComponent<Button>().onClick.AddListener(LoadNextLevel);
+            
+            _retryLevelButton.SetActive(false);
+            _nextLevelButton.SetActive(false);
+        }
+
+        public void StartGame()
+        {
+            _currentGameState = GameStates.Gameplay; ////////////////
+            UpdateState(); //////////////////////
+        }
+
+        private void UpdateObjectsCount(Planets.Base planet ,Planets.Team oldTeam, Planets.Team newTeam)
+        {
+            ObjectsCount[(int) oldTeam]--;
+            ObjectsCount[(int) newTeam]++;
+          
+            CheckGameOver();
+        }
+
+        private void CheckGameOver()
+        {
+            bool noneBlue = ObjectsCount[(int)Planets.Team.Blue]==0;
+            bool noneRed = ObjectsCount[(int)Planets.Team.Red]==0;
+            if (noneBlue || noneRed )
             {
-                throw new MyException("cannot get ui component");
+                _isWin = noneRed;
+                _currentGameState = GameStates.GameOver;
+                UpdateState();
             }
 
-            CurrentGameState = GameStates.Gameplay;
-            UpdateState();
         }
 
         private void PrepareLevel()
@@ -92,21 +116,25 @@ namespace Managers
             {
                 planet.gameObject.SetActive(true);
                 planet.Init();
+                planet.LaunchingUnit += SpawnUnit;
             }
             
             FillTeamCount();
-            
         }
 
+        private Units.Base SpawnUnit(ObjectPool.PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation)
+        {
+            return _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.Base>();
+        }
+        
 
         private void UpdateState()
         {
-            switch (CurrentGameState)
+            switch (_currentGameState)
             { 
                 case GameStates.Gameplay:
                 {
-                    nextLevelButton.SetActive(false);
-                    retryLevelButton.SetActive(false);
+                    HideSuitableUI();
                     StartCoroutine(StartGameplay());
                     break;
                 }
@@ -115,20 +143,32 @@ namespace Managers
                     _userControl.Disable();
                     _objectPool.DisableAllUnitsInScene();
                     _core.Disable();
-                    if(_isWin)
-                        nextLevelButton.SetActive(true);
-                    else 
-                        retryLevelButton.SetActive(true);
+                    ShowSuitableUI();
                     break;
                 }
             }
         }
 
+        private void HideSuitableUI()
+        {
+            _nextLevelButton.SetActive(false);
+            _retryLevelButton.SetActive(false);
+        }
+
+        private void ShowSuitableUI()
+        {
+            if (_isWin)
+                _nextLevelButton.SetActive(true);
+            else
+                _retryLevelButton.SetActive(true);
+        }
+
         private IEnumerator StartGameplay()
         {
+            ClearLists();
             yield return StartCoroutine(_levelsManager.InstantiateLevel());
             _planetsLay = _levelsManager.GetCurrentLay();
-            this.PrepareLevel();
+            PrepareLevel();
             _core.Init(AllPlanets);
             _core.Enable();
             _outlook.PrepareLevel(AllPlanets);
@@ -138,51 +178,39 @@ namespace Managers
             
             _userControl.Enable();
         }
-        
-        public void LoadNextLevel()
+
+        private void ClearLists()
+        {
+            foreach (Planets.Base planet in AllPlanets) 
+                planet.LaunchingUnit -= SpawnUnit;
+
+            for (int i = 0; i < _teamNumber;i++)
+                ObjectsCount.Add(0);
+            
+            AllPlanets.Clear();
+        }
+
+        private void LoadNextLevel()
         {
             _levelsManager.SwitchToNextLevel();
-            CurrentGameState = GameStates.Gameplay;
+            _currentGameState = GameStates.Gameplay;
             UpdateState();
         }
 
-        public void RetryLevel()
+        private void RetryLevel()
         {
             _levelsManager.RestartLevel();
-            CurrentGameState = GameStates.Gameplay;
+            _currentGameState = GameStates.Gameplay;
             UpdateState();
         }
         
-        
         private void FillTeamCount()
         {
-            ObjectsCount.Clear();
-            for (int i = 0; i < _teamNumber;i++)
-                ObjectsCount.Add(0);
             foreach (Planets.Base planet in AllPlanets)
             {
                 int team = (int) planet.Team;
                 ObjectsCount[team]++;
             }
-        }
-
-        public void UpdateObjectsCount(Planets.Team oldTeam, Planets.Team newTeam)
-        {
-            ObjectsCount[(int) oldTeam]--;
-            ObjectsCount[(int) newTeam]++;
-        }
-
-        public void CheckGameOver()
-        {
-            bool noneBlue = ObjectsCount[(int)Planets.Team.Blue]==0;
-            bool noneRed = ObjectsCount[(int)Planets.Team.Red]==0;
-            if (noneBlue || noneRed )
-            {
-                _isWin = noneRed;
-                CurrentGameState = GameStates.GameOver;
-                UpdateState();
-            }
-
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Planets;
+﻿using _Application.Scripts.Planets;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -20,7 +20,7 @@ namespace _Application.Scripts.Units
         protected abstract void TargetInRange();
         public abstract void SetData(in Planets.Base.UnitInf unitInf);
 
-        public abstract Planets.Team GETTeam();
+        public abstract Planets.Team GetTeam();
         protected abstract void SetSpeed();
         public abstract float CalculateAttack(Team planetTeam,float defence);
         

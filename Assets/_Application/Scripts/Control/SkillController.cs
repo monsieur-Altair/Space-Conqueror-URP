@@ -14,10 +14,9 @@ namespace _Application.Scripts.Control
         Call,
         None
     }
-    [DefaultExecutionOrder(450)]
     public class SkillController : MonoBehaviour
     {
-        [SerializeField] private List<Button> buttons;
+        private List<Button> _buttons;
 
         private static SkillController _instance;
 
@@ -39,33 +38,34 @@ namespace _Application.Scripts.Control
         {
             if (_instance == null)
                 _instance = this;
-        }
-
-        public void Start()
-        {
+            
             SelectedSkillName = SkillName.None;
             
-            _call = buttons[Call].GetComponent<Skills.Call>();
+            _call = GetComponent<Skills.Call>();
             _call.SetTeamConstraint(Planets.Team.Blue);
             _call.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
-            _call.CanceledSkill += ()=> UnblockButton(buttons[Call]);
             
-            _buff = buttons[Buff].GetComponent<Skills.Buff>();
+            _buff = GetComponent<Skills.Buff>();
             _buff.SetTeamConstraint(Planets.Team.Blue);
             _buff.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
-            _buff.CanceledSkill += ()=> UnblockButton(buttons[Buff]);
             
-            _acid = buttons[Acid].GetComponent<Skills.Acid>();
+            _acid = GetComponent<Skills.Acid>();
             _acid.SetTeamConstraint(Planets.Team.Blue);
             _acid.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
-            _acid.CanceledSkill += ()=> UnblockButton(buttons[Acid]);
             
-            _ice = buttons[Ice].GetComponent<Skills.Ice>();
-            _ice.CanceledSkill += ()=> UnblockButton(buttons[Ice]);
-            
-            foreach (Button button in buttons) 
+            _ice = GetComponent<Skills.Ice>();
+        }
+        
+        public void AdjustSkillButtons(List<Button> createdButtons)
+        {
+            _buttons = createdButtons;
+            foreach (Button button in _buttons) 
                 button.onClick.AddListener(() => { PressHandler(button); });
-
+            
+            _buff.CanceledSkill += ()=> UnblockButton(_buttons[Buff]);
+            _acid.CanceledSkill += ()=> UnblockButton(_buttons[Acid]);
+            _ice.CanceledSkill += ()=> UnblockButton(_buttons[Ice]);
+            _call.CanceledSkill += ()=> UnblockButton(_buttons[Call]);
         }
         
         public void ApplySkill(Vector3 position)
@@ -78,26 +78,26 @@ namespace _Application.Scripts.Control
             }
         }
 
-        public void Disable()
-        {
+        public void Disable() => 
             _isActive = false;
-        }
 
-        public void Enable()
-        {
+        public void Enable() => 
             _isActive = true;
-        }
 
         private void PressHandler(Button button)
         {
             if(!_isActive) 
                 return;
+
+            // if(!button.enabled)
+            //     return;
             
-            if (SelectedSkillName==SkillName.None)
+            if (SelectedSkillName == SkillName.None)
             {
-                int index = buttons.IndexOf(button);
+                int index = _buttons.IndexOf(button);
                 BlockButton(button);
                 StartCoroutine((SwitchWithWaiting(index)));
+                //SelectedSkillName = (SkillName)index;
             }
             else
             {
@@ -127,9 +127,15 @@ namespace _Application.Scripts.Control
         }
 
         private static void BlockButton(Button button)
-            => button.image.color=Color.red;
+        {
+            button.image.color = Color.red;
+            button.enabled = false;
+        }
 
-        private static void UnblockButton(Button button) => 
+        private static void UnblockButton(Button button)
+        {
+            button.enabled = true;
             button.image.color = Color.white;
+        }
     }
 }

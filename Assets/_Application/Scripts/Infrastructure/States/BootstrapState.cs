@@ -1,4 +1,7 @@
 ﻿using _Application.Scripts.Control;
+using _Application.Scripts.Infrastructure.AssetManagement;
+using _Application.Scripts.Infrastructure.Factory;
+using _Application.Scripts.Infrastructure.Services;
 using UnityEngine;
 
 namespace _Application.Scripts.Infrastructure.States
@@ -9,16 +12,19 @@ namespace _Application.Scripts.Infrastructure.States
         private const string Main = "Main";
         private readonly StateMachine _stateMachine;
         private readonly SceneLoader _sceneLoader;
+        private readonly AllServices _allServices; 
 
-        public BootstrapState(StateMachine stateMachine, SceneLoader sceneLoader)
+        public BootstrapState(StateMachine stateMachine, SceneLoader sceneLoader, AllServices allServices)
         {
             _stateMachine = stateMachine;
             _sceneLoader = sceneLoader;
+            _allServices = allServices;
+
+            RegisterServices();
         }
 
         public void Enter()
         {
-            RegisterServices();
             //_sceneLoader.Load(Initial, onLoaded: EnterLoadLevel);
             _sceneLoader.Load(StartUp);
         }
@@ -33,7 +39,9 @@ namespace _Application.Scripts.Infrastructure.States
 
         private void RegisterServices()
         {
-            //Game.InputService = RegisterInputService();
+            _allServices.RegisterSingle<IAssetProvider>(new AssetProvider());
+            _allServices.RegisterSingle<IGameFactory>(new GameFactory(_allServices.GetSingle<IAssetProvider>()));
+            //register input service
         }
 
         private IInputService RegisterInputService()

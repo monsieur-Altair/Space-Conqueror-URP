@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using _Application.Scripts.Units;
 using UnityEngine;
-using Type = Planets.Type;
+using Type = _Application.Scripts.Planets.Type;
 
-namespace Managers
+namespace _Application.Scripts.Managers
 {    
     public class Outlook : MonoBehaviour
     {
@@ -14,8 +14,7 @@ namespace Managers
         [SerializeField] private List<Texture> scientificTextures;
         [SerializeField] private List<Texture> attackerTextures;
         [SerializeField] private List<Texture> spawnerTextures;
-
-
+        
         [SerializeField] private List<Texture> rocketsTextures;
 
         [SerializeField] private Material buffedPlanetMaterial;
@@ -27,47 +26,54 @@ namespace Managers
         [SerializeField] private Material glassMaterial;
 
         private readonly Dictionary<int, MeshRenderer> _planetsRenderer = new Dictionary<int, MeshRenderer>();
+        private List<Planets.Base> _allPlanets = new List<Planets.Base>();
 
         private const int MainTexIndex = 0;
         private const int BuffTexIndex = 1;
 
-        private List<Planets.Base> _allPlanets;
-        private Main _mainManager;
 
         public void Awake()
         {
-            if (Instance == null)
-            {
+            if (Instance == null) 
                 Instance = this;
-            }
             _allTextures.Add(scientificTextures);
             _allTextures.Add(spawnerTextures);
             _allTextures.Add(attackerTextures);
-            _mainManager = Main.Instance;
         }
        
         public void PrepareLevel(List<Planets.Base> planets)
         {
-            _allPlanets=new List<Planets.Base>(planets);
-            _planetsRenderer?.Clear();
+            ClearLists();
+            _allPlanets = new List<Planets.Base>(planets);
             FillList();
-            SetAllOutlooks();
         }
 
-        private void SetAllOutlooks()
+        private void ClearLists()
         {
             foreach (Planets.Base planet in _allPlanets)
             {
-                SetOutlook(planet);
+                planet.Buffed -= SetBuff;
+                planet.UnBuffed -= UnSetBuff;
+                planet.LaunchedUnit -= SetUnitOutlook;
+                planet.TeamChanged -= SetOutlook;
             }
+            _allPlanets.Clear();
+            _planetsRenderer.Clear();
         }
 
         private void FillList()
         {
             foreach (Planets.Base planet in _allPlanets)
             {
-                planet.SetOutlookManager();
+                //planet.SetOutlookManager();
+                planet.Buffed += SetBuff;
+                planet.UnBuffed += UnSetBuff;
+                planet.LaunchedUnit += SetUnitOutlook;
+                planet.TeamChanged += SetOutlook;
+                
                 Decompose(planet);
+                
+                SetOutlook(planet);
             }
         }
 
@@ -77,8 +83,8 @@ namespace Managers
             Transform circle = planet.transform.GetChild(0);
             _planetsRenderer.Add(index, circle.GetComponent<MeshRenderer>());
         }
-        
-        public void SetOutlook(Planets.Base planet)
+
+        private void SetOutlook(Planets.Base planet)
         {
             int team = (int)planet.Team;
             int type = (int) planet.Type;
@@ -92,7 +98,7 @@ namespace Managers
             _planetsRenderer[index].materials = materials;
         }
 
-        public void SetUnitOutlook(Planets.Base planet, Base unit)
+        private void SetUnitOutlook(Planets.Base planet, Base unit)
         {
             int team = (int) planet.Team;
             //also we can add all rockets materials to list 
@@ -107,23 +113,22 @@ namespace Managers
             unit.transform.GetChild(0).GetComponent<MeshRenderer>().materials = materials;
         }
 
-        public void SetBuff(Planets.Base planet)
+        private void SetBuff(Planets.Base planet)
         {
             int index = planet.ID.GetHashCode();
             
             Material[] materials = _planetsRenderer[index].materials;
             materials[BuffTexIndex] = buffedPlanetMaterial;
             _planetsRenderer[index].materials = materials;
-            
         }
-        
-        public void UnSetBuff(Planets.Base planet)
+
+        private void UnSetBuff(Planets.Base planet)
         {
             int index = planet.ID.GetHashCode();
             
             if (_planetsRenderer.TryGetValue(index,out var value))
             {
-                var materials = value.materials;
+                Material[] materials = value.materials;
                 materials[BuffTexIndex] = (planet.Type == Type.Spawner) ? glassMaterial : null;
                 value.materials = materials;
             }

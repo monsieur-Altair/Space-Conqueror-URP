@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Managers
+namespace _Application.Scripts.Managers
 {
     public class ObjectPool : MonoBehaviour
     {
@@ -55,9 +55,7 @@ namespace Managers
         {
             int hash=type.GetHashCode();
             if (_poolDictionary.ContainsKey(hash) == false)
-            {
                 throw new MyException("doesn't exist key value");
-            }
 
             GameObject obj = _poolDictionary[hash].Dequeue();
             obj.SetActive(true);
@@ -69,7 +67,7 @@ namespace Managers
             return obj;
         }
 
-        public bool DisableAllUnitsInScene()
+        public void DisableAllUnitsInScene()
         {
             foreach (KeyValuePair<int, Queue<GameObject>> pair in _poolDictionary)
             {
@@ -79,7 +77,6 @@ namespace Managers
                         unit.SetActive(false);
                 }
             }
-            return false;
         }
     }
 }

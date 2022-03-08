@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using _Application.Scripts.Infrastructure.Services;
+using UnityEngine;
 
 namespace _Application.Scripts.Control
 {
@@ -17,6 +18,7 @@ namespace _Application.Scripts.Control
             //_inputService = Game.InputService;
             //_inputService.Init(new PlanetController(Camera.main), GetComponent<SkillController>());
             _inputService = RegisterInputService();
+            //_inputService = AllServices.Instance.Single<IInputService>();
         }
 
         public void Update()

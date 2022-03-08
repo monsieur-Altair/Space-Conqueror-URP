@@ -1,4 +1,5 @@
 ﻿
+using _Application.Scripts.Planets;
 using _Application.Scripts.Skills;
 using Base = _Application.Scripts.Units.Base;
 
@@ -6,7 +7,7 @@ namespace Units
 {
     public class Rocket : Base, IFreezable
     {
-        private Planets.Base.UnitInf _unitInf;
+        private _Application.Scripts.Planets.Base.UnitInf _unitInf;
         
         protected override void TargetInRange()
         {
@@ -24,29 +25,29 @@ namespace Units
             Ice.DeletingFreezingZone -= Unfreeze;
         }
 
-        public override void SetData(in Planets.Base.UnitInf unitInf)
+        public override void SetData(in _Application.Scripts.Planets.Base.UnitInf unitInf)
         {
             _unitInf = unitInf;
         }
 
-        public override Planets.Team GETTeam() => _unitInf.Team;
+        public override Team GetTeam() => _unitInf.UnitTeam;
 
         protected override void SetSpeed()
         {
-            Agent.speed = _unitInf.Speed;
+            Agent.speed = _unitInf.UnitSpeed;
         }
 
-        public override float CalculateAttack(Planets.Team planetTeam, float defence)
+        public override float CalculateAttack(Team planetTeam, float defence)
         {
             //damage in percent
-            if (_unitInf.Team == planetTeam)
+            if (_unitInf.UnitTeam == planetTeam)
                 return _unitInf.UnitCount;
-            return -1.0f*_unitInf.Damage / (100.0f * defence) * _unitInf.UnitCount;
+            return -1.0f*_unitInf.UnitDamage / (100.0f * defence) * _unitInf.UnitCount;
         }
 
         public override float GetActualCount(float countAfterAttack)
         {
-            return countAfterAttack / (_unitInf.Damage/100.0f);
+            return countAfterAttack / (_unitInf.UnitDamage/100.0f);
         }
 
         public void Freeze()

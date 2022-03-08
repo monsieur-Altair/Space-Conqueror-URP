@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using _Application.Scripts.Planets;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -12,10 +13,10 @@ namespace AI
         [SerializeField]private int callProbability = 40;
         
         
-        private List<List<Planets.Base>> _allPlanets;
+        private List<List<Base>> _allPlanets;
         private Core _core;
-        private Planets.Base _target;
-        private readonly List<Planets.Base> _planetsForLaunch = new List<Planets.Base>();
+        private Base _target;
+        private readonly List<Base> _planetsForLaunch = new List<Base>();
         private Vector3 _mainPos;
         private int _countForLaunch;
         private const int MINCountForLaunch = 1;//inclusive
@@ -65,7 +66,7 @@ namespace AI
         private IEnumerator LaunchToTarget()
         {
             yield return StartCoroutine(FindAllPlanetsToAttack());
-            foreach (Planets.Base planet in _planetsForLaunch)
+            foreach (Base planet in _planetsForLaunch)
             {
                 if((int)planet.Team==Core.Own)
                     planet.LaunchUnit(_target);
@@ -100,7 +101,7 @@ namespace AI
             
             float minDistance = float.PositiveInfinity;
 
-            foreach (Planets.Base possibleTarget in _allPlanets[teamForAttack])
+            foreach (Base possibleTarget in _allPlanets[teamForAttack])
             {
                 float distance = Vector3.Distance(_mainPos, possibleTarget.transform.position);
                 if (distance < minDistance)
@@ -165,11 +166,11 @@ namespace AI
             yield return StartCoroutine(FindTarget());
             
             Vector3 launchPos = _target.transform.position;
-            List<KeyValuePair<Planets.Base, float>> dataForLaunch = new List<KeyValuePair<Planets.Base, float>>();
-            foreach (Planets.Base planetForLaunch in _allPlanets[Core.Own])
+            List<KeyValuePair<Base, float>> dataForLaunch = new List<KeyValuePair<Base, float>>();
+            foreach (Base planetForLaunch in _allPlanets[Core.Own])
             {
                 float distance = Vector3.Distance(launchPos, planetForLaunch.transform.position);
-                dataForLaunch.Add(new KeyValuePair<Planets.Base, float>(planetForLaunch,distance));
+                dataForLaunch.Add(new KeyValuePair<Base, float>(planetForLaunch,distance));
                 yield return null;
             }
 

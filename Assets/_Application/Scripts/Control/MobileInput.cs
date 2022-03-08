@@ -52,6 +52,10 @@ namespace _Application.Scripts.Control
                     _planetController.HandleMultipleSelection(position);
                     break;
                 }
+                case TouchPhase.Stationary:
+                    break;
+                case TouchPhase.Canceled:
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

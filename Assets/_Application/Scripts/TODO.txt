@@ -1,13 +1,12 @@
 ﻿2. refactor services into non-monobeh
-3. inject dependencies correctly
 
 4. -ui, -outloook
 5. add planets to pool
 6. input, outlook, ui, ai, save-load
 
 
-orders: main 500, base skill 200, ui 400, skill contr 450
+//orders: main 500, base skill 200, ui 400, skill contr 450
 
 BUGS:
     mistake in call skill (call percent isn't used)
-    input: double click after using skill reload this skill 
+    //input: double click after using skill reload this skill 

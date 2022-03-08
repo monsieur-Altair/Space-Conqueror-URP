@@ -3,37 +3,40 @@
     public class Buff : Base
     {
         private float _buffPercent;
-
+        private IBuffed _buffed;
+        
         protected override void LoadResources()
         {
             base.LoadResources();
-            var res = resource as Scriptables.Buff;
+            Scriptables.Buff res = resource as Scriptables.Buff;
             if(res!=null)
                 _buffPercent = res.buffPercent;
         }
 
         protected override void ApplySkill()
         {
-            if(!IsForAI)
+            if (!IsForAI)
+            {
                 SelectedPlanet = RaycastForPlanet();
+                _buffed = SelectedPlanet;
+            }
 
-            if (SelectedPlanet!=null && SelectedPlanet.Team == TeamConstraint)
+            if (_buffed!=null && SelectedPlanet.Team == TeamConstraint)
                 ApplySkillToPlanet(BuffPlanet);
             else
                 OnCanceledSkill();
         }
 
-        private void BuffPlanet()
-        {
-            SelectedPlanet.Buff(_buffPercent);
-        }
-        
         protected override void CancelSkill()
         {
             IsOnCooldown = false;
-            SelectedPlanet.UnBuff(_buffPercent);
+            _buffed.UnBuff(_buffPercent);
+            _buffed = null;
             SelectedPlanet = null;
             OnCanceledSkill();
         }
+
+        private void BuffPlanet() => 
+            _buffed.Buff(_buffPercent);
     }
 }

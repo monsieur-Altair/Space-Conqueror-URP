@@ -1,5 +1,7 @@
-﻿using _Application.Scripts.Skills;
+﻿using _Application.Scripts.Planets;
+using _Application.Scripts.Skills;
 using UnityEngine;
+using Base = _Application.Scripts.Planets.Base;
 
 namespace AI
 {
@@ -16,15 +18,15 @@ namespace AI
         public void InitSkills()
         {
             _call = aiSkills.GetComponent<Call>();
-            _call.SetTeamConstraint(Planets.Team.Red);
+            _call.SetTeamConstraint(Team.Red);
             _call.SetDecreasingFunction(DecreaseAISciCounter);
 
             _buff = aiSkills.GetComponent<Buff>();
-            _buff.SetTeamConstraint(Planets.Team.Red);
+            _buff.SetTeamConstraint(Team.Red);
             _buff.SetDecreasingFunction(DecreaseAISciCounter);
 
             _acid = aiSkills.GetComponent<Acid>();
-            _acid.SetTeamConstraint(Planets.Team.Red);
+            _acid.SetTeamConstraint(Team.Red);
             _acid.SetDecreasingFunction(DecreaseAISciCounter);
 
             _ice = aiSkills.GetComponent<Ice>();
@@ -38,18 +40,18 @@ namespace AI
             AI.Core.ScientificCount -= value;
         }
 
-        public void AttackByAcid(Planets.Base target)
+        public void AttackByAcid(Base target)
         {
             _acid.ExecuteForAI(target);
         }
 
-        public void BuffPlanet(Planets.Base target)
+        public void BuffPlanet(Base target)
         {
             _buff.ExecuteForAI(target);
         }
         
         
-        public void Call(Planets.Base target)
+        public void Call(Base target)
         {
             _call.ExecuteForAI(target);
         }

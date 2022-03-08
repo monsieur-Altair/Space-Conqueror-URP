@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using _Application.Scripts.Managers;
+using _Application.Scripts.Planets;
 using UnityEngine;
 using Image = UnityEngine.UI.Image;
 
@@ -16,7 +18,7 @@ namespace mainMenu
         private int _red;
         private int _maximum;
 
-        private void Update()
+        private void LateUpdate()
         {
             GetCurrentFillPlanets();
             GetCurrentFillScience();
@@ -24,7 +26,7 @@ namespace mainMenu
 
         private void GetCurrentFillPlanets()
         {
-            List<int> planets = Managers.Main.ObjectsCount;
+            List<int> planets = Main.Instance.ObjectsCount;
             _blue = planets[0];
             _red = planets[1];
             _maximum = planets[0] + planets[1] + planets[2];
@@ -34,8 +36,8 @@ namespace mainMenu
 
         private void GetCurrentFillScience()
         {
-            _currentScience = Planets.Scientific.ScientificCount;
-            float fill = (float) _currentScience / (float) maximumScience;
+            _currentScience = Scientific.ScientificCount;
+            float fill = _currentScience / maximumScience;
             progressBerScience.fillAmount = fill;
         }
     }
