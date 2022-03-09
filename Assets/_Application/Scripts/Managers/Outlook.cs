@@ -5,9 +5,9 @@ using Type = _Application.Scripts.Planets.Type;
 
 namespace _Application.Scripts.Managers
 {    
-    public class Warehouse : MonoBehaviour
+    public class Outlook : MonoBehaviour
     {
-        public static Warehouse Instance { get; private set; }
+        public static Outlook Instance { get; private set; }
 
 
         [SerializeField] private List<Texture> scientificTextures;

@@ -20,7 +20,7 @@ namespace _Application.Scripts.Managers
         private Levels _levelsManager;
         private AI.Core _core;
         private UserControl _userControl;
-        private Warehouse _warehouse;
+        private Outlook _outlook;
         private UI _ui;
         private TeamManager _teamManager;
         
@@ -51,7 +51,7 @@ namespace _Application.Scripts.Managers
             _core = AI.Core.Instance;
             _objectPool = ObjectPool.Instance;
             _userControl = UserControl.Instance;
-            _warehouse = Warehouse.Instance;
+            _outlook = Outlook.Instance;
             _ui = UI.Instance;
 
             _ui.SetUIBehaviours(_teamManager, RetryLevel, LoadNextLevel);
@@ -129,7 +129,7 @@ namespace _Application.Scripts.Managers
             PrepareLevel();
             _core.Init(AllPlanets);
             _core.Enable();
-            _warehouse.PrepareLevel(AllPlanets);
+            _outlook.PrepareLevel(AllPlanets);
             _ui.PrepareLevel();
             
             Planets.Scientific.DischargeScientificCount();//sci-count = 0
