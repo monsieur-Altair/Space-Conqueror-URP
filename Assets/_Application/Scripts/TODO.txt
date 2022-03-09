@@ -1,10 +1,9 @@
-﻿1. try to avoid skill monobeh
-2. refactor services into non-monobeh (ui, outlook)
+﻿1. try to avoid skill monobeh ???
+2. refactor services into non-monobeh (ui, outlook) ???
 3. all ui (buttons, bar to ui manager)
 5. add planets to pool
 6.  ai, save-load
 7. main manager -> state machine (gameloop)
-8. ui-find offset
 
 BUGS:
     mistake in call skill (call percent isn't used)
