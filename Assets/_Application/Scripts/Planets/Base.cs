@@ -9,16 +9,18 @@ namespace _Application.Scripts.Planets
 {
     public enum Team
     {
-        Blue=0,
-        Red=1,
-        White=2,
+        Blue = 0,
+        Red = 1,
+        White = 2,
     }
+
     public enum Type
     {
-        Scientific=0,
-        Spawner=1,
-        Attacker=2
+        Scientific = 0,
+        Spawner = 1,
+        Attacker = 2
     }
+
     [RequireComponent(typeof(Collider))]//,typeof(Rigidbody))]
     public abstract class Base : MonoBehaviour, IFreezable, IBuffed
     {

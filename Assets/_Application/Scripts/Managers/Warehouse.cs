@@ -5,16 +5,15 @@ using Type = _Application.Scripts.Planets.Type;
 
 namespace _Application.Scripts.Managers
 {    
-    public class Outlook : MonoBehaviour
+    public class Warehouse : MonoBehaviour
     {
-        public static Outlook Instance { get; private set; }
-        
-        private readonly List<List<Texture>> _allTextures=new List<List<Texture>>();
+        public static Warehouse Instance { get; private set; }
+
 
         [SerializeField] private List<Texture> scientificTextures;
         [SerializeField] private List<Texture> attackerTextures;
         [SerializeField] private List<Texture> spawnerTextures;
-        
+
         [SerializeField] private List<Texture> rocketsTextures;
 
         [SerializeField] private Material buffedPlanetMaterial;
@@ -25,10 +24,12 @@ namespace _Application.Scripts.Managers
 
         [SerializeField] private Material glassMaterial;
 
+
+        
+        private readonly List<List<Texture>> _allTextures=new List<List<Texture>>();
         private readonly Dictionary<int, MeshRenderer> _planetsRenderer = new Dictionary<int, MeshRenderer>();
         private List<Planets.Base> _allPlanets = new List<Planets.Base>();
 
-        private const int MainTexIndex = 0;
         private const int BuffTexIndex = 1;
 
 
@@ -126,7 +127,7 @@ namespace _Application.Scripts.Managers
         {
             int index = planet.ID.GetHashCode();
             
-            if (_planetsRenderer.TryGetValue(index,out var value))
+            if (_planetsRenderer.TryGetValue(index,out MeshRenderer value))
             {
                 Material[] materials = value.materials;
                 materials[BuffTexIndex] = (planet.Type == Type.Spawner) ? glassMaterial : null;

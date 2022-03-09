@@ -1,4 +1,4 @@
-﻿1. try to avoid skill monobeh ???
+﻿1. try to avoid skill contr monobeh ???
 2. refactor services into non-monobeh (ui, outlook) ???
 3. all ui (buttons, bar to ui manager)
 5. add planets to pool

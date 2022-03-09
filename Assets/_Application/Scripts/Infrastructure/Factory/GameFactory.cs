@@ -27,14 +27,16 @@ namespace _Application.Scripts.Infrastructure.Factory
             GameObject pool = _assetProvider.Instantiate(AssetPaths.PoolPath);
             GameObject outlookManager = _assetProvider.Instantiate(AssetPaths.OutlookPath);
             GameObject aiManager = _assetProvider.Instantiate(AssetPaths.AIPath);
-            GameObject uiManager = _assetProvider.Instantiate(AssetPaths.UIPath);
+            Managers.UI uiManager = _assetProvider.Instantiate(AssetPaths.UIPath).GetComponent<Managers.UI>();
+            
+            uiManager.SetButtons(retryButton, nextLevelButton);
+            uiManager.SetBars(scientificBar, teamBar);
+            
             GameObject userControl = _assetProvider.Instantiate(AssetPaths.UserControlPath);
             SkillController skillController = userControl.GetComponent<SkillController>();
             skillController.AdjustSkillButtons(createdButtons);
 
             Managers.Main mainManager = _assetProvider.Instantiate(AssetPaths.MainManagerPath).GetComponent<Managers.Main>();
-            mainManager.SetButtons(retryButton, nextLevelButton);
-            mainManager.SetBars(scientificBar, teamBar);
             
             mainManager.StartGame();
         }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using _Application.Scripts.Control;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace _Application.Scripts.Managers
 {
@@ -16,18 +15,12 @@ namespace _Application.Scripts.Managers
     public class Main : MonoBehaviour
     {
         public static Main Instance;
-        
-        private GameObject _nextLevelButton;
-        private GameObject _retryLevelButton;
 
-        private GameObject _scientificBar;
-        private GameObject _teamBar;
-        
         private ObjectPool _objectPool;
         private Levels _levelsManager;
         private AI.Core _core;
         private UserControl _userControl;
-        private Outlook _outlook;
+        private Warehouse _warehouse;
         private UI _ui;
         private TeamManager _teamManager;
         
@@ -58,73 +51,24 @@ namespace _Application.Scripts.Managers
             _core = AI.Core.Instance;
             _objectPool = ObjectPool.Instance;
             _userControl = UserControl.Instance;
-            _outlook = Outlook.Instance;
+            _warehouse = Warehouse.Instance;
             _ui = UI.Instance;
 
+            _ui.SetUIBehaviours(_teamManager, RetryLevel, LoadNextLevel);
+            
             // _currentGameState = GameStates.Gameplay;
             // UpdateState();
         }
 
         public void OnDisable()
         {
-            Planets.Base.Conquered -= _teamManager.UpdateObjectsCount;
-            _teamManager.TeamCountUpdated -= _teamBar.GetComponent<TeamProgressBar>().FillTeamCount;
-            Planets.Scientific.ScientificCountUpdated -= _scientificBar.GetComponent<ScientificBar>().FillScientificCount;
+            _ui.RemoveBehaviours(_teamManager);
         }
 
-        private void OnDestroy()
+        public void OnDestroy()
         {
             _teamManager.GameEnded -= EndGame;
         }
-
-        
-        
-        
-        
-        public void SetButtons(GameObject retryButton, GameObject nextLevelButton)
-        {
-            _retryLevelButton = retryButton;
-            _nextLevelButton = nextLevelButton;
-            
-            _retryLevelButton.GetComponent<Button>().onClick.AddListener(RetryLevel);
-            _nextLevelButton.GetComponent<Button>().onClick.AddListener(LoadNextLevel);
-            
-            _retryLevelButton.SetActive(false);
-            _nextLevelButton.SetActive(false);
-        }
-
-        public void SetBars(GameObject scientificBar, GameObject teamBar)
-        {
-            _scientificBar = scientificBar;
-            _teamBar = teamBar;
-            
-            _teamManager.TeamCountUpdated += _teamBar.GetComponent<TeamProgressBar>().FillTeamCount;
-            Planets.Scientific.ScientificCountUpdated += _scientificBar.GetComponent<ScientificBar>().FillScientificCount;
-        }
-
-        private void ShowGameplayUI()
-        {
-            _nextLevelButton.SetActive(false);
-            _retryLevelButton.SetActive(false);
-            
-            _scientificBar.SetActive(true);
-            _teamBar.SetActive(true);
-        }
-
-        private void ShowGameOverUI()
-        {
-            if (_isWin)
-                _nextLevelButton.SetActive(true);
-            else
-                _retryLevelButton.SetActive(true);
-            
-            _scientificBar.SetActive(false);
-            _teamBar.SetActive(false);
-        }
-
-        
-        
-        
         
         public void StartGame()
         {
@@ -155,7 +99,7 @@ namespace _Application.Scripts.Managers
             { 
                 case GameStates.Gameplay:
                 {
-                    ShowGameplayUI();
+                    _ui.ShowGameplayUI();
                     StartCoroutine(StartGameplay());
                     break;
                 }
@@ -164,7 +108,7 @@ namespace _Application.Scripts.Managers
                     _userControl.Disable();
                     _objectPool.DisableAllUnitsInScene();
                     _core.Disable();
-                    ShowGameOverUI();
+                    _ui.ShowGameOverUI(_isWin);
                     break;
                 }
             }
@@ -185,7 +129,7 @@ namespace _Application.Scripts.Managers
             PrepareLevel();
             _core.Init(AllPlanets);
             _core.Enable();
-            _outlook.PrepareLevel(AllPlanets);
+            _warehouse.PrepareLevel(AllPlanets);
             _ui.PrepareLevel();
             
             Planets.Scientific.DischargeScientificCount();//sci-count = 0
@@ -199,7 +143,6 @@ namespace _Application.Scripts.Managers
                 planet.LaunchingUnit -= SpawnUnit;
 
             _teamManager.Clear();
-
             AllPlanets.Clear();
         }
 

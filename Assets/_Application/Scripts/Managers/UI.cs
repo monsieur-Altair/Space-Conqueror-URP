@@ -2,6 +2,7 @@
 using _Application.Scripts.Misc;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace _Application.Scripts.Managers
@@ -16,17 +17,17 @@ namespace _Application.Scripts.Managers
         [SerializeField] private List<Color> counterForeground;
 
         private List<Planets.Base> _allPlanets = new List<Planets.Base>();
-        private Camera _mainCamera;
+
         private List<GameObject> _countersList;
         
-        private float _maxDepth;
-        private float _minDepth;
-
         private readonly Dictionary<int, Image> _backgrounds = new Dictionary<int, Image>();
         private readonly Dictionary<int, TextMeshProUGUI> _foregrounds = new Dictionary<int, TextMeshProUGUI>();
         
-        private Vector3 _offsetCamera;
-        private Vector3 _offsetCounter;
+        private GameObject _nextLevelButton;
+        private GameObject _retryLevelButton;
+
+        private GameObject _scientificBar;
+        private GameObject _teamBar;
 
         private ObjectPool _pool;
         
@@ -37,14 +38,8 @@ namespace _Application.Scripts.Managers
 
             _canvas = GameObject.FindGameObjectWithTag("CanvasTag").GetComponent<Canvas>();
             _pool = ObjectPool.Instance;
-            _mainCamera = Camera.main;
-
-            CameraResolution.GetCameraDepths(out _minDepth, out _maxDepth);
-
+            
             _countersList = new List<GameObject>();
-            _offsetCamera = new Vector3(0, -1.0f, 0);
-            _offsetCounter = new Vector3(0, 0, 0);
-
         }
 
         public void PrepareLevel()
@@ -53,6 +48,59 @@ namespace _Application.Scripts.Managers
             _allPlanets = new List<Planets.Base>(Main.Instance.AllPlanets);
             FillLists();
         }
+        
+        public void SetButtons(GameObject retryButton, GameObject nextLevelButton)
+        {
+            _retryLevelButton = retryButton;
+            _nextLevelButton = nextLevelButton;
+
+            _retryLevelButton.SetActive(false);
+            _nextLevelButton.SetActive(false);
+        }
+
+        public void SetUIBehaviours(TeamManager teamManager ,UnityAction retryLevelBehaviour, UnityAction loadNextLevelBehaviour)
+        {
+            _retryLevelButton.GetComponent<Button>().onClick.AddListener(retryLevelBehaviour);
+            _nextLevelButton.GetComponent<Button>().onClick.AddListener(loadNextLevelBehaviour);
+
+            teamManager.TeamCountUpdated += _teamBar.GetComponent<TeamProgressBar>().FillTeamCount;
+            Planets.Scientific.ScientificCountUpdated += _scientificBar.GetComponent<ScientificBar>().FillScientificCount;
+        }
+
+        public void RemoveBehaviours(TeamManager teamManager)
+        {
+            Planets.Base.Conquered -= teamManager.UpdateObjectsCount;
+            //_teamManager.TeamCountUpdated -= _teamBar.GetComponent<TeamProgressBar>().FillTeamCount;
+            //null refs?
+            Planets.Scientific.ScientificCountUpdated -= _scientificBar.GetComponent<ScientificBar>().FillScientificCount;
+        }
+        
+        public void SetBars(GameObject scientificBar, GameObject teamBar)
+        {
+            _scientificBar = scientificBar;
+            _teamBar = teamBar;
+        }
+
+        public void ShowGameplayUI()
+        {
+            _nextLevelButton.SetActive(false);
+            _retryLevelButton.SetActive(false);
+            
+            _scientificBar.SetActive(true);
+            _teamBar.SetActive(true);
+        }
+
+        public void ShowGameOverUI(bool isWin)
+        {
+            if (isWin)
+                _nextLevelButton.SetActive(true);
+            else
+                _retryLevelButton.SetActive(true);
+            
+            _scientificBar.SetActive(false);
+            _teamBar.SetActive(false);
+        }
+
 
         private void ClearList()
         {
@@ -102,9 +150,9 @@ namespace _Application.Scripts.Managers
         private Vector3 GetCounterPos(Planets.Base planet)
         {
             Vector3 pos = planet.transform.position;
-            _offsetCamera = CameraResolution.FindOffset(pos, _minDepth, _maxDepth);
-            Vector3 screenPos = _mainCamera.WorldToScreenPoint(pos + _offsetCounter);
-            return screenPos + _offsetCamera;
+            Vector3 offsetCamera = CameraResolution.FindOffset(pos);
+            Vector3 screenPos = CameraResolution.GetScreenPos(pos);
+            return screenPos + offsetCamera;
         }
 
         private void SetCounterColor(Planets.Base planet)
