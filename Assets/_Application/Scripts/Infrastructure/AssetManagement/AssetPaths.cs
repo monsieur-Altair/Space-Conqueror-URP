@@ -14,5 +14,7 @@
         public const string ForthButtonPath = "UI/Buttons/4";
         public const string NextLevelButtonsPath = "UI/Buttons/Next level";
         public const string RetryButtonsPath = "UI/Buttons/Retry";
+        public const string TeamBarPath = "UI/Bars/Team bar";
+        public const string ScientificBarPath = "UI/Bars/Scientific bar";
     }
 }

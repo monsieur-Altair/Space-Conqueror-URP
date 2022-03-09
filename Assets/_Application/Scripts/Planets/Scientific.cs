@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace _Application.Scripts.Planets
 {
@@ -6,17 +7,25 @@ namespace _Application.Scripts.Planets
     {
         [SerializeField] private Scriptables.Scientific scientific;
 
+        public static event Action<float, int> ScientificCountUpdated; 
+        
         private static int _maxCountScientific;
         private float _produceCountScientific;
         private float _produceTimeScientific;
         
         public static float ScientificCount { get; private set; }
 
-        public static void DecreaseScientificCount(float value) => 
+        public static void DecreaseScientificCount(float value)
+        {
             ScientificCount -= value;
+            ScientificCountUpdated?.Invoke(ScientificCount, _maxCountScientific);
+        }
 
-        public static void DischargeScientificCount() => 
+        public static void DischargeScientificCount()
+        {
             ScientificCount = 0;
+            ScientificCountUpdated?.Invoke(ScientificCount, _maxCountScientific);
+        }
 
         protected override void LoadResources()
         {
@@ -45,7 +54,6 @@ namespace _Application.Scripts.Planets
 
             if (Team == Team.Red) 
                 IncreaseForAI();
-
         }
 
         private void IncreaseForAI()
@@ -60,6 +68,7 @@ namespace _Application.Scripts.Planets
             ScientificCount += _produceCountScientific / _produceTimeScientific * Time.deltaTime;
             if (ScientificCount > _maxCountScientific)
                 ScientificCount = _maxCountScientific;
+            ScientificCountUpdated?.Invoke(ScientificCount, _maxCountScientific);
         }
     }
 }

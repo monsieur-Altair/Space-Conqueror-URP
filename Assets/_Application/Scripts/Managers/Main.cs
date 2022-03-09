@@ -17,10 +17,15 @@ namespace _Application.Scripts.Managers
     public class Main : MonoBehaviour
     {
         public static Main Instance;
+
+        private event Action<List<int>> TeamCountUpdated;
+        
         private GameObject _nextLevelButton;
         private GameObject _retryLevelButton;
 
-
+        private GameObject _scientificBar;
+        private GameObject _teamBar;
+        
         private ObjectPool _objectPool;
         private Levels _levelsManager;
         private AI.Core _core;
@@ -35,7 +40,7 @@ namespace _Application.Scripts.Managers
 
 
         public List<Planets.Base> AllPlanets { get; private set; }
-        public List<int> ObjectsCount { get; private set; }
+        private List<int> _teamCount;
 
 
         public void Awake()
@@ -43,11 +48,11 @@ namespace _Application.Scripts.Managers
             if (Instance == null) 
                 Instance = this;
 
-            ObjectsCount=new List<int>(_teamNumber);
+            _teamCount = new List<int>(_teamNumber);
             AllPlanets = new List<Planets.Base>();
             
             for (int i = 0; i < _teamNumber;i++)
-                ObjectsCount.Add(0);
+                _teamCount.Add(0);
             
             _levelsManager=Levels.Instance;
 
@@ -89,16 +94,18 @@ namespace _Application.Scripts.Managers
 
         private void UpdateObjectsCount(Planets.Base planet ,Planets.Team oldTeam, Planets.Team newTeam)
         {
-            ObjectsCount[(int) oldTeam]--;
-            ObjectsCount[(int) newTeam]++;
-          
+            _teamCount[(int) oldTeam]--;
+            _teamCount[(int) newTeam]++;
+
+            TeamCountUpdated?.Invoke(_teamCount);
+            
             CheckGameOver();
         }
 
         private void CheckGameOver()
         {
-            bool noneBlue = ObjectsCount[(int)Planets.Team.Blue]==0;
-            bool noneRed = ObjectsCount[(int)Planets.Team.Red]==0;
+            bool noneBlue = _teamCount[(int)Planets.Team.Blue]==0;
+            bool noneRed = _teamCount[(int)Planets.Team.Red]==0;
             if (noneBlue || noneRed )
             {
                 _isWin = noneRed;
@@ -122,11 +129,9 @@ namespace _Application.Scripts.Managers
             FillTeamCount();
         }
 
-        private Units.Base SpawnUnit(ObjectPool.PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation)
-        {
-            return _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.Base>();
-        }
-        
+        private Units.Base SpawnUnit(ObjectPool.PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
+            _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.Base>();
+
 
         private void UpdateState()
         {
@@ -134,7 +139,7 @@ namespace _Application.Scripts.Managers
             { 
                 case GameStates.Gameplay:
                 {
-                    HideSuitableUI();
+                    ShowGameplayUI();
                     StartCoroutine(StartGameplay());
                     break;
                 }
@@ -143,24 +148,30 @@ namespace _Application.Scripts.Managers
                     _userControl.Disable();
                     _objectPool.DisableAllUnitsInScene();
                     _core.Disable();
-                    ShowSuitableUI();
+                    ShowGameOverUI();
                     break;
                 }
             }
         }
 
-        private void HideSuitableUI()
+        private void ShowGameplayUI()
         {
             _nextLevelButton.SetActive(false);
             _retryLevelButton.SetActive(false);
+            
+            _scientificBar.SetActive(true);
+            _teamBar.SetActive(true);
         }
 
-        private void ShowSuitableUI()
+        private void ShowGameOverUI()
         {
             if (_isWin)
                 _nextLevelButton.SetActive(true);
             else
                 _retryLevelButton.SetActive(true);
+            
+            _scientificBar.SetActive(false);
+            _teamBar.SetActive(false);
         }
 
         private IEnumerator StartGameplay()
@@ -184,9 +195,9 @@ namespace _Application.Scripts.Managers
             foreach (Planets.Base planet in AllPlanets) 
                 planet.LaunchingUnit -= SpawnUnit;
 
-            for (int i = 0; i < _teamNumber;i++)
-                ObjectsCount.Add(0);
-            
+            for (int i = 0; i < _teamCount.Count; i++)
+                _teamCount[i] = 0;
+
             AllPlanets.Clear();
         }
 
@@ -209,8 +220,18 @@ namespace _Application.Scripts.Managers
             foreach (Planets.Base planet in AllPlanets)
             {
                 int team = (int) planet.Team;
-                ObjectsCount[team]++;
+                _teamCount[team]++;
             }
+            TeamCountUpdated?.Invoke(_teamCount);
+        }
+
+        public void SetBars(GameObject scientificBar, GameObject teamBar)
+        {
+            _scientificBar = scientificBar;
+            _teamBar = teamBar;
+            
+            TeamCountUpdated += _teamBar.GetComponent<TeamProgressBar>().FillTeamCount;
+            Planets.Scientific.ScientificCountUpdated += _scientificBar.GetComponent<ScientificBar>().FillScientificCount;
         }
     }
 }

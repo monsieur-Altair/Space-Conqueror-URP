@@ -21,7 +21,9 @@ namespace _Application.Scripts.Infrastructure.Factory
             List<Button> createdButtons = CreateSkillButtons();
             GameObject retryButton = CreateRetryButton();
             GameObject nextLevelButton = CreateNextLevelButton();
-
+            GameObject scientificBar = CreateScientificBar();
+            GameObject teamBar = CreateTeamBar();
+            
             GameObject pool = _assetProvider.Instantiate(AssetPaths.PoolPath);
             GameObject outlookManager = _assetProvider.Instantiate(AssetPaths.OutlookPath);
             GameObject aiManager = _assetProvider.Instantiate(AssetPaths.AIPath);
@@ -32,9 +34,16 @@ namespace _Application.Scripts.Infrastructure.Factory
 
             Managers.Main mainManager = _assetProvider.Instantiate(AssetPaths.MainManagerPath).GetComponent<Managers.Main>();
             mainManager.SetButtons(retryButton, nextLevelButton);
+            mainManager.SetBars(scientificBar, teamBar);
             
             mainManager.StartGame();
         }
+
+        private GameObject CreateScientificBar() => 
+            _assetProvider.InstantiateUI(AssetPaths.ScientificBarPath, _canvas);
+
+        private GameObject CreateTeamBar() => 
+            _assetProvider.InstantiateUI(AssetPaths.TeamBarPath, _canvas);
 
         private GameObject CreateNextLevelButton() => 
             _assetProvider.InstantiateUI(AssetPaths.NextLevelButtonsPath, _canvas);

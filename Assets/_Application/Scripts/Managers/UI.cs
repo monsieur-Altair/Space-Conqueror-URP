@@ -15,7 +15,7 @@ namespace _Application.Scripts.Managers
         [SerializeField] private List<Color> counterBackground;
         [SerializeField] private List<Color> counterForeground;
 
-        private List<Planets.Base> _allPlanets=new List<Planets.Base>();
+        private List<Planets.Base> _allPlanets = new List<Planets.Base>();
         private Camera _mainCamera;
         private List<GameObject> _countersList;
         
@@ -102,22 +102,9 @@ namespace _Application.Scripts.Managers
         private Vector3 GetCounterPos(Planets.Base planet)
         {
             Vector3 pos = planet.transform.position;
-            _offsetCamera = FindOffset(pos);
+            _offsetCamera = CameraResolution.FindOffset(pos, _minDepth, _maxDepth);
             Vector3 screenPos = _mainCamera.WorldToScreenPoint(pos + _offsetCounter);
             return screenPos + _offsetCamera;
-        }
-        
-        private Vector3 FindOffset(Vector3 worldPos)// go to camera resolution
-        {
-            int coefficient = _mainCamera.pixelHeight / _mainCamera.pixelWidth;
-            Vector3 screenPos = _mainCamera.WorldToScreenPoint(worldPos);
-            float depth = screenPos.z;
-            float offsetY=(_minDepth-depth)/ (_maxDepth-_minDepth)*80.0f;
-            float offsetX=(_minDepth-depth)/ (_maxDepth-_minDepth)*(80.0f/coefficient);
-  
-            Vector3 res = new Vector3(offsetX, offsetY, 0);
-     
-            return res;
         }
 
         private void SetCounterColor(Planets.Base planet)
