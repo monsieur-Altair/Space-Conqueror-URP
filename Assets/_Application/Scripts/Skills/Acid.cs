@@ -8,7 +8,8 @@ namespace _Application.Scripts.Skills
         [SerializeField] 
         private GameObject acidPrefab;
         
-        private readonly Vector3 _offset = new Vector3(1, 3, 0);
+        private readonly Vector3 _offset = new Vector3(0.8f, 3, 0);
+        private readonly Quaternion _rotation = Quaternion.Euler(-90f,0,0);
         private GameObject _acidRain;
         private ParticleSystem _acidParticles;
         private float _hitDuration;
@@ -56,7 +57,7 @@ namespace _Application.Scripts.Skills
         private void StartRain()
         {
             _acidRain.transform.position = SelectedPlanet.transform.position +_offset;
-            _acidRain.transform.rotation = Quaternion.identity;
+            _acidRain.transform.rotation = _rotation;
             _acidParticles.Play();                                                                              
             StartCoroutine(nameof(DamagePlanetByRain));
         }
