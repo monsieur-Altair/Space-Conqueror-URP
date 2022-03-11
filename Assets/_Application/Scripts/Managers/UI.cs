@@ -30,7 +30,8 @@ namespace _Application.Scripts.Managers
         private GameObject _teamBar;
 
         private ObjectPool _pool;
-        
+        private readonly Vector3 _offset = new Vector3(0, -35, 0);
+
         public void Awake()
         {
             if (Instance == null) 
@@ -127,6 +128,7 @@ namespace _Application.Scripts.Managers
 
                 GameObject counter = SpawnCounterTo(planet);
                 DecomposeCounter(counter, planet);
+                
                 SetCounterColor(planet);
                 SetCounter(planet, (int) planet.Count);
             }
@@ -151,9 +153,8 @@ namespace _Application.Scripts.Managers
         private Vector3 GetCounterPos(Planets.Base planet)
         {
             Vector3 pos = planet.transform.position;
-            Vector3 offsetCamera = CameraResolution.FindOffset(pos);
             Vector3 screenPos = CameraResolution.GetScreenPos(pos);
-            return screenPos + offsetCamera;
+            return screenPos + _offset;
         }
 
         private void SetCounterColor(Planets.Base planet)
