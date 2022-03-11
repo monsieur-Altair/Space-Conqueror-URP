@@ -9,9 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 154c0321372442efa06a7af9cc96dc27, type: 3}
-  m_Name: Ice
+  m_Script: {fileID: 11500000, guid: 7d3e5c684b3d47218485125b9be09133, type: 3}
+  m_Name: AI Acid
   m_EditorClassIdentifier: 
-  cooldown: 7
+  cooldown: 12
   cost: 15
-  duration: 3
+  duration: 4
+  damage: 35
+  hitCount: 17

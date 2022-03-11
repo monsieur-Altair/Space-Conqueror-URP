@@ -92,7 +92,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca2f1b3e478446858dd9d20e42aaa576, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resource: {fileID: 11400000, guid: 2a8991c489a36aa4dac5697f15d46325, type: 2}
+  resource: {fileID: 11400000, guid: ff07c370f63117047858a35920db871e, type: 2}
   icePrefab: {fileID: 5070550477755079263, guid: ffc191d283b08ec4fbb1529ac5a88c59, type: 3}
 --- !u!114 &1555164344508055469
 MonoBehaviour:
@@ -106,7 +106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e109caef41ed4577a3e3b433a673f533, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resource: {fileID: 11400000, guid: bbfcb65a50e6c5547a4115feea91f710, type: 2}
+  resource: {fileID: 11400000, guid: 4d14c727c331121418c7ad7340a49208, type: 2}
   indicatorPrefab: {fileID: 6276433409546012761, guid: 877d1f4f5ef197248892c82435314711, type: 3}
 --- !u!114 &1555164344508055474
 MonoBehaviour:
@@ -120,7 +120,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2403a1fd0f504169b08050cb48362c20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resource: {fileID: 11400000, guid: 1c9aa00b048ad2241934abdaad833f64, type: 2}
+  resource: {fileID: 11400000, guid: 35282f85e3b4e8b4bb76e471c5159cc2, type: 2}
 --- !u!114 &1555164344508055475
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -133,7 +133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a37a394b8a14c88a65e61dce8c31e82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resource: {fileID: 11400000, guid: 26417f3deaa21bf45b591976381e00d2, type: 2}
+  resource: {fileID: 11400000, guid: f34ea3a4abb401e459dfde9796ea29d0, type: 2}
   acidPrefab: {fileID: 2947993639071935147, guid: 547d0751c77bd0540a252f0a874ba809, type: 3}
 --- !u!1 &1555164344741337714
 GameObject:

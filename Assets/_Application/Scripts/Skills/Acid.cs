@@ -11,6 +11,7 @@ namespace _Application.Scripts.Skills
         private readonly Vector3 _offset = new Vector3(0.8f, 3, 0);
         private readonly Quaternion _rotation = Quaternion.Euler(-90f,0,0);
         private GameObject _acidRain;
+        private Coroutine _damagingByAcid;
         private ParticleSystem _acidParticles;
         private float _hitDuration;
         private float _duration;
@@ -39,6 +40,10 @@ namespace _Application.Scripts.Skills
 
         protected override void CancelSkill()
         {
+            if(_acidParticles.isPlaying)
+                _acidParticles.Stop();
+            StopCoroutine(_damagingByAcid);
+            SelectedPlanet = null;
             IsOnCooldown = false;
             OnCanceledSkill();
         }
@@ -59,7 +64,7 @@ namespace _Application.Scripts.Skills
             _acidRain.transform.position = SelectedPlanet.transform.position +_offset;
             _acidRain.transform.rotation = _rotation;
             _acidParticles.Play();                                                                              
-            StartCoroutine(nameof(DamagePlanetByRain));
+            _damagingByAcid = StartCoroutine(nameof(DamagePlanetByRain));
         }
 
         private IEnumerator DamagePlanetByRain()

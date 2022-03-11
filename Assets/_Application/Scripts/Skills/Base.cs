@@ -1,5 +1,5 @@
 ﻿using System;
-using Scriptables;
+using _Application.Scripts.Scriptables;
 using UnityEngine;
 
 namespace _Application.Scripts.Skills
@@ -39,6 +39,16 @@ namespace _Application.Scripts.Skills
         public void Start() => 
             LoadResources();
 
+        public void Refresh()
+        {
+            if (IsOnCooldown)
+            {
+                CancelInvoke(nameof(CancelSkill));
+                CancelSkill();
+            }
+        }
+        
+        
         public void SetDecreasingFunction(DecreasingCounter function) => 
             _decreaseCounter = function;
 

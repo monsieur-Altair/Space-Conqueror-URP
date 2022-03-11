@@ -1,7 +1,7 @@
 using System;
 using _Application.Scripts.Managers;
+using _Application.Scripts.Scriptables;
 using _Application.Scripts.Skills;
-using Scriptables;
 using UnityEngine;
 using Ice = _Application.Scripts.Skills.Ice;
 
@@ -55,11 +55,12 @@ namespace _Application.Scripts.Planets
         private float _produceTime;
         private float _defense;
         private float _reducingSpeed;
-        
-        
+
+
         public Team Team { get; private set; }
         public Type Type { get; private set; }
-        public bool IsBuffed { get; private set; }
+        public bool IsBuffed { get; set; }
+
 
 
         public struct UnitInf
@@ -90,7 +91,7 @@ namespace _Application.Scripts.Planets
             OrbitRadius = GetComponent<SphereCollider>().radius;
             LoadResources();
         }
-        
+
         public void Buff(float percent)
         {
             IsBuffed = true;
@@ -140,9 +141,16 @@ namespace _Application.Scripts.Planets
             CountChanged?.Invoke(this ,(int)_count);
         }
 
-        public void AdjustUnit(Units.Base unit)
+        private void AdjustUnit(Units.Base unit)
         {
             SetUnitCount();
+            LaunchedUnit?.Invoke(this, unit);
+            unit.SetData(in _unitInf);
+        }
+        
+        public void AdjustUnit(Units.Base unit, float supplyCoefficient)
+        {
+            SetUnitCount(supplyCoefficient);
             LaunchedUnit?.Invoke(this, unit);
             unit.SetData(in _unitInf);
         }
@@ -228,9 +236,10 @@ namespace _Application.Scripts.Planets
             CountChanged?.Invoke(this, (int) _count);
         }
 
-        private void SetUnitCount() => 
-            _unitInf.UnitCount = _count*LaunchCoefficient;
-        
-        
+        private void SetUnitCount() =>
+            _unitInf.UnitCount = _count * LaunchCoefficient;
+
+        private void SetUnitCount(float supplyCoefficient) =>
+            _unitInf.UnitCount = _maxCount * supplyCoefficient;
     }
 }

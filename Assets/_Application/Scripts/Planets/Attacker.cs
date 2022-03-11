@@ -1,4 +1,4 @@
-﻿using Scriptables;
+﻿using _Application.Scripts.Scriptables;
 using UnityEngine;
 
 namespace _Application.Scripts.Planets

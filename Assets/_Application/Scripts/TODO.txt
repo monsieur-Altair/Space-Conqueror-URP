@@ -1,9 +1,5 @@
 ﻿1. try to avoid skill contr monobeh ???
 2. refactor services into non-monobeh (ui, outlook) ???
-3. all ui (buttons, bar to ui manager)
 5. add planets to pool
-6.  ai, save-load
+6.  ai add own balance and reload balance after conquering player planet, save-load
 7. main manager -> state machine (gameloop)
-
-BUGS:
-    mistake in call skill (call percent isn't used)

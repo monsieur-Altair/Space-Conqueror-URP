@@ -72,7 +72,7 @@ namespace _Application.Scripts.Managers
             Planets.Base.Conquered -= teamManager.UpdateObjectsCount;
             //_teamManager.TeamCountUpdated -= _teamBar.GetComponent<TeamProgressBar>().FillTeamCount;
             //null refs?
-            Planets.Scientific.ScientificCountUpdated -= _scientificBar.GetComponent<ScientificBar>().FillScientificCount;
+            //Planets.Scientific.ScientificCountUpdated -= _scientificBar.GetComponent<ScientificBar>().FillScientificCount;
         }
         
         public void SetBars(GameObject scientificBar, GameObject teamBar)

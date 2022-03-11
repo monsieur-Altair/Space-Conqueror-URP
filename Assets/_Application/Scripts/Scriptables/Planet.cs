@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Scriptables
+namespace _Application.Scripts.Scriptables
 {    
     [CreateAssetMenu (fileName = "new planet resource",menuName = "Resources/Planet Resource")]
     public class Planet : ScriptableObject

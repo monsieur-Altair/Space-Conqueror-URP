@@ -12,7 +12,8 @@ namespace _Application.Scripts.Skills
         
         private GameObject _indicator;
         private readonly Vector3 _indicatorOffset = new Vector3(0, 1.9f, 0);
-        
+        private Coroutine _displayingIndicatorCor;
+        private Units.Base _sentUnit;
         private float _callPercent;
 
         protected override void LoadResources()
@@ -39,6 +40,10 @@ namespace _Application.Scripts.Skills
 
         protected override void CancelSkill()
         {
+            StopCoroutine(_displayingIndicatorCor);
+            if (_sentUnit != null)
+                _sentUnit.StopAndDestroy();
+            _indicator.SetActive(false);
             SelectedPlanet = null;
             IsOnCooldown = false;
             OnCanceledSkill();
@@ -49,14 +54,14 @@ namespace _Application.Scripts.Skills
             Vector3 launchPos = CameraResolution.FindSpawnPoint(SelectedPlanet);
             Vector3 destPos = CalculateDestPos(launchPos, SelectedPlanet);
             ObjectPool.PoolObjectType poolObjectType = (ObjectPool.PoolObjectType) ((int) SelectedPlanet.Type);
-            Units.Base unit = ObjectPool.GetObject(poolObjectType,
+            _sentUnit = ObjectPool.GetObject(poolObjectType,
                     launchPos,
                     Quaternion.LookRotation(destPos - launchPos))
-                .GetComponent<_Application.Scripts.Units.Base>();
-            SelectedPlanet.AdjustUnit(unit);
-            unit.GoTo(SelectedPlanet, destPos);
+                .GetComponent<Units.Base>();
+            SelectedPlanet.AdjustUnit(_sentUnit, _callPercent / 100.0f);
+            _sentUnit.GoTo(SelectedPlanet, destPos);
 
-            StartCoroutine(DisplayIndicator());
+            _displayingIndicatorCor = StartCoroutine(DisplayIndicator());
         }
 
         private IEnumerator DisplayIndicator()
@@ -67,7 +72,7 @@ namespace _Application.Scripts.Skills
             _indicator.SetActive(false);
         }
         
-        private Vector3 CalculateDestPos(in Vector3 launchPos, Planets.Base destinationPlanet)
+        private static Vector3 CalculateDestPos(in Vector3 launchPos, Planets.Base destinationPlanet)
         {
             Vector3 destPos = destinationPlanet.transform.position;
             Vector3 offset = (destPos - launchPos).normalized;

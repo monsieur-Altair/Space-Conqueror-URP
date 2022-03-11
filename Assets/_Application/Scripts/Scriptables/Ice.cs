@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Scriptables
+namespace _Application.Scripts.Scriptables
 {
     [CreateAssetMenu(fileName = "new ice resource", menuName = "Resources/Ice resource")]
     public class Ice : Skill

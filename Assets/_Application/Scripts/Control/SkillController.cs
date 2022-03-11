@@ -81,8 +81,14 @@ namespace _Application.Scripts.Control
         public void Disable() => 
             _isActive = false;
 
-        public void Enable() => 
+        public void Enable()
+        {
             _isActive = true;
+            _acid.Refresh();
+            _buff.Refresh();
+            _call.Refresh();
+            _ice.Refresh();
+        }
 
         private void PressHandler(Button button)
         {

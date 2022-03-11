@@ -35,10 +35,16 @@ namespace _Application.Scripts.Units
            
                 if (distance < MinDistance)
                 {
-                    Agent.isStopped = true;
-                    TargetInRange();
+                    StopAndDestroy();
                 }
             }
+        }
+
+        public void StopAndDestroy()
+        {
+            if(Agent.isActiveAndEnabled)
+                Agent.isStopped = true;
+            TargetInRange();
         }
 
         private void GoTo(Vector3 destinationPos)

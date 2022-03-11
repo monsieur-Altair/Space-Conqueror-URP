@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Scriptables
+namespace _Application.Scripts.Scriptables
 {
     [CreateAssetMenu(fileName = "new call resource", menuName = "Resources/Call resource")]
     public class Call : Skill

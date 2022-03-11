@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Scriptables
+namespace _Application.Scripts.Scriptables
 {
     [CreateAssetMenu (fileName = "new unit",menuName = "Resources/Unit")]
     public class Unit:ScriptableObject
