@@ -59,8 +59,8 @@ namespace _Application.Scripts.Planets
 
         public Team Team { get; private set; }
         public Type Type { get; private set; }
-        public bool IsBuffed { get; set; }
-
+        public bool IsBuffed { get; private set; }
+        public float Count => _count;
 
 
         public struct UnitInf
@@ -74,7 +74,7 @@ namespace _Application.Scripts.Planets
         public void Update()
         {
             Move();
-            if(Team!=Team.White)
+            if (Team != Team.White)
                 IncreaseResources();
         }
 

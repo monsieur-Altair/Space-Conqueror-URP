@@ -128,6 +128,7 @@ namespace _Application.Scripts.Managers
                 GameObject counter = SpawnCounterTo(planet);
                 DecomposeCounter(counter, planet);
                 SetCounterColor(planet);
+                SetCounter(planet, (int) planet.Count);
             }
         }
 
