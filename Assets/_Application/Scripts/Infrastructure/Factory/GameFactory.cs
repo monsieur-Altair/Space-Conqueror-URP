@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using _Application.Scripts.Control;
 using _Application.Scripts.Infrastructure.AssetManagement;
+using _Application.Scripts.Managers;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,26 +19,27 @@ namespace _Application.Scripts.Infrastructure.Factory
         {
             _canvas = GameObject.FindGameObjectWithTag("CanvasTag").GetComponent<Canvas>();
             
-            List<Button> createdButtons = CreateSkillButtons();
+            List<Button> skillButtons = CreateSkillButtons();
             GameObject retryButton = CreateRetryButton();
             GameObject nextLevelButton = CreateNextLevelButton();
             GameObject scientificBar = CreateScientificBar();
             GameObject teamBar = CreateTeamBar();
-            
-            GameObject pool = _assetProvider.Instantiate(AssetPaths.PoolPath);
-            GameObject outlookManager = _assetProvider.Instantiate(AssetPaths.OutlookPath);
+
+            Warehouse warehouse = _assetProvider.Instantiate<Warehouse>(AssetPaths.Warehouse);
+            ObjectPool pool = _assetProvider.Instantiate<ObjectPool>(AssetPaths.PoolPath);
             GameObject aiManager = _assetProvider.Instantiate(AssetPaths.AIPath);
-            Managers.UI uiManager = _assetProvider.Instantiate(AssetPaths.UIPath).GetComponent<Managers.UI>();
             
+            UI uiManager = new UI(_canvas,pool,warehouse);
+            Outlook outlookManager = new Outlook(warehouse);
             uiManager.SetButtons(retryButton, nextLevelButton);
             uiManager.SetBars(scientificBar, teamBar);
             
-            GameObject userControl = _assetProvider.Instantiate(AssetPaths.UserControlPath);
+            UserControl userControl = _assetProvider.Instantiate<UserControl>(AssetPaths.UserControlPath);
             SkillController skillController = userControl.GetComponent<SkillController>();
-            skillController.AdjustSkillButtons(createdButtons);
+            skillController.AdjustSkillButtons(skillButtons);
 
-            Managers.Main mainManager = _assetProvider.Instantiate(AssetPaths.MainManagerPath).GetComponent<Managers.Main>();
-            
+            Main mainManager = _assetProvider.Instantiate<Main>(AssetPaths.MainManagerPath);
+            mainManager.Construct(outlookManager, uiManager, userControl);
             mainManager.StartGame();
         }
 
@@ -57,10 +59,10 @@ namespace _Application.Scripts.Infrastructure.Factory
         {
             List<Button> buttons = new List<Button>();
 
-            Button first = _assetProvider.InstantiateUI(AssetPaths.FirstButtonPath, _canvas).GetComponent<Button>();
-            Button second = _assetProvider.InstantiateUI(AssetPaths.SecondButtonPath, _canvas).GetComponent<Button>();
-            Button third = _assetProvider.InstantiateUI(AssetPaths.ThirdButtonPath, _canvas).GetComponent<Button>();
-            Button forth = _assetProvider.InstantiateUI(AssetPaths.ForthButtonPath, _canvas).GetComponent<Button>();
+            Button first = _assetProvider.InstantiateUI<Button>(AssetPaths.FirstButtonPath, _canvas);
+            Button second = _assetProvider.InstantiateUI<Button>(AssetPaths.SecondButtonPath, _canvas);
+            Button third = _assetProvider.InstantiateUI<Button>(AssetPaths.ThirdButtonPath, _canvas);
+            Button forth = _assetProvider.InstantiateUI<Button>(AssetPaths.ForthButtonPath, _canvas);
             
             buttons.Add(first);
             buttons.Add(second);

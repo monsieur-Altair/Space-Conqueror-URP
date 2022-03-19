@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using _Application.Scripts.Control;
@@ -50,14 +51,6 @@ namespace _Application.Scripts.Managers
         {
             _core = AI.Core.Instance;
             _objectPool = ObjectPool.Instance;
-            _userControl = UserControl.Instance;
-            _outlook = Outlook.Instance;
-            _ui = UI.Instance;
-
-            _ui.SetUIBehaviours(_teamManager, RetryLevel, LoadNextLevel);
-            
-            // _currentGameState = GameStates.Gameplay;
-            // UpdateState();
         }
 
         public void OnDisable()
@@ -69,11 +62,19 @@ namespace _Application.Scripts.Managers
         {
             _teamManager.GameEnded -= EndGame;
         }
+
+        public void Construct(Outlook  outlook, UI ui, UserControl userControl)
+        {
+            _outlook = outlook;
+            _ui = ui;
+            _userControl = userControl;
+            _ui.SetUIBehaviours(_teamManager, RetryLevel, LoadNextLevel);
+        }
         
         public void StartGame()
         {
-            _currentGameState = GameStates.Gameplay; ////////////////
-            UpdateState(); //////////////////////
+            _currentGameState = GameStates.Gameplay;
+            UpdateState();
         }
 
         private void PrepareLevel()
@@ -111,6 +112,8 @@ namespace _Application.Scripts.Managers
                     _ui.ShowGameOverUI(_isWin);
                     break;
                 }
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 

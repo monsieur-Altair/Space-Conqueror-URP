@@ -8,7 +8,8 @@
         public const string UIPath = "Managers/UI Manager";
         public const string UserControlPath = "Managers/User Control";
         public const string MainManagerPath = "Managers/Main Manager";
-        
+        public const string Warehouse = "Managers/Warehouse";
+
         public const string FirstButtonPath = "UI/Buttons/1";
         public const string SecondButtonPath = "UI/Buttons/2";
         public const string ThirdButtonPath = "UI/Buttons/3";

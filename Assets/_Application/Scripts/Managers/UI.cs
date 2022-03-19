@@ -7,38 +7,37 @@ using UnityEngine.UI;
 
 namespace _Application.Scripts.Managers
 {
-    public class UI : MonoBehaviour
+    public class UI
     {
-        public static UI Instance { get; private set; }
+       // public static UI Instance { get; private set; }
         
-        private Canvas _canvas;
-        
-        [SerializeField] private List<Color> counterBackground;
-        [SerializeField] private List<Color> counterForeground;
+        private readonly Canvas _canvas;
+        private readonly ObjectPool _pool;
+        private readonly Warehouse _warehouse;
+
+        private readonly List<Color> _counterBackground;
+        private readonly List<Color> _counterForeground;
 
         private List<Planets.Base> _allPlanets = new List<Planets.Base>();
-
         private readonly List<GameObject> _countersList = new List<GameObject>();
-
         private readonly Dictionary<int, Image> _backgrounds = new Dictionary<int, Image>();
         private readonly Dictionary<int, TextMeshProUGUI> _foregrounds = new Dictionary<int, TextMeshProUGUI>();
-        
+
         private GameObject _nextLevelButton;
         private GameObject _retryLevelButton;
-
         private GameObject _scientificBar;
         private GameObject _teamBar;
-
-        private ObjectPool _pool;
+        
         private readonly Vector3 _offset = new Vector3(0, -35, 0);
 
-        public void Awake()
+        public UI(Canvas canvas, ObjectPool pool, Warehouse warehouse)
         {
-            if (Instance == null) 
-                Instance = this;
+            _canvas = canvas;
+            _pool = pool;
+            _warehouse = warehouse;
 
-            _canvas = GameObject.FindGameObjectWithTag("CanvasTag").GetComponent<Canvas>();
-            _pool = ObjectPool.Instance;
+            _counterBackground = _warehouse.counterBackground;
+            _counterForeground = _warehouse.counterForeground;
         }
 
         public void PrepareLevel()
@@ -158,8 +157,8 @@ namespace _Application.Scripts.Managers
         {
             int team = (int) planet.Team;
             int index = planet.ID.GetHashCode();
-            _foregrounds[index].color = counterForeground[team];
-            _backgrounds[index].color = counterBackground[team];
+            _foregrounds[index].color = _counterForeground[team];
+            _backgrounds[index].color = _counterBackground[team];
         }
         
         private void SetCounter(Planets.Base planet, int value)

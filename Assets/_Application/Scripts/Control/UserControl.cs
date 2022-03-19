@@ -6,15 +6,11 @@ namespace _Application.Scripts.Control
     public class UserControl : MonoBehaviour
     {
         private bool _isActive;
-        public static UserControl Instance;
 
         private IInputService _inputService;
 
         public void Awake()
         {
-            if (Instance==null) 
-                Instance = this;
-
             //_inputService = Game.InputService;
             //_inputService.Init(new PlanetController(Camera.main), GetComponent<SkillController>());
             _inputService = RegisterInputService();

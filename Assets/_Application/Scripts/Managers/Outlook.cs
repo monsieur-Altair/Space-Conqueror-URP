@@ -5,26 +5,23 @@ using Type = _Application.Scripts.Planets.Type;
 
 namespace _Application.Scripts.Managers
 {    
-    public class Outlook : MonoBehaviour
+    public class Outlook
     {
-        public static Outlook Instance { get; private set; }
+        private readonly List<Texture> _scientificTextures;
+        private readonly List<Texture> _attackerTextures;
+        private readonly List<Texture> _spawnerTextures;
 
+        private readonly List<Texture> _rocketsTextures;
 
-        [SerializeField] private List<Texture> scientificTextures;
-        [SerializeField] private List<Texture> attackerTextures;
-        [SerializeField] private List<Texture> spawnerTextures;
+        private readonly Material _buffedPlanetMaterial;
+        private readonly Material _buffedRocketMaterial;
 
-        [SerializeField] private List<Texture> rocketsTextures;
+        private readonly Material _basePlanetMaterial;
+        private readonly Material _baseRocketMaterial;
 
-        [SerializeField] private Material buffedPlanetMaterial;
-        [SerializeField] private Material buffedRocketMaterial;
+        private readonly Material _glassMaterial;
 
-        [SerializeField] private Material basePlanetMaterial;
-        [SerializeField] private Material baseRocketMaterial;
-
-        [SerializeField] private Material glassMaterial;
-
-
+        private readonly Warehouse _warehouse;
         
         private readonly List<List<Texture>> _allTextures=new List<List<Texture>>();
         private readonly Dictionary<int, MeshRenderer> _planetsRenderer = new Dictionary<int, MeshRenderer>();
@@ -33,13 +30,24 @@ namespace _Application.Scripts.Managers
         private const int BuffTexIndex = 1;
 
 
-        public void Awake()
+        public Outlook(Warehouse warehouse)
         {
-            if (Instance == null) 
-                Instance = this;
-            _allTextures.Add(scientificTextures);
-            _allTextures.Add(spawnerTextures);
-            _allTextures.Add(attackerTextures);
+            _warehouse = warehouse;
+
+            _scientificTextures = _warehouse.scientificTextures;
+            _attackerTextures = _warehouse.attackerTextures;
+            _spawnerTextures = _warehouse.spawnerTextures;
+            _rocketsTextures = _warehouse.rocketsTextures;
+
+            _buffedPlanetMaterial = _warehouse.buffedPlanetMaterial;
+            _buffedRocketMaterial = _warehouse.buffedRocketMaterial;
+            _basePlanetMaterial = _warehouse.basePlanetMaterial;
+            _baseRocketMaterial = _warehouse.baseRocketMaterial;
+            _glassMaterial = _warehouse.glassMaterial;
+            
+            _allTextures.Add(_scientificTextures);
+            _allTextures.Add(_spawnerTextures);
+            _allTextures.Add(_attackerTextures);
         }
        
         public void PrepareLevel(List<Planets.Base> planets)
@@ -90,11 +98,11 @@ namespace _Application.Scripts.Managers
             int team = (int)planet.Team;
             int type = (int) planet.Type;
             int index = planet.ID.GetHashCode();
-            Material mainMaterial = new Material(basePlanetMaterial)
+            Material mainMaterial = new Material(_basePlanetMaterial)
             {
                 mainTexture = _allTextures[type][team]
             };
-            Material secondMaterial = (type == (int)Type.Spawner) ? glassMaterial : null;
+            Material secondMaterial = (type == (int)Type.Spawner) ? _glassMaterial : null;
             Material[] materials = {mainMaterial, secondMaterial};
             _planetsRenderer[index].materials = materials;
         }
@@ -103,11 +111,11 @@ namespace _Application.Scripts.Managers
         {
             int team = (int) planet.Team;
             //also we can add all rockets materials to list 
-            Material buffedMaterial = planet.IsBuffed ? buffedRocketMaterial : null;
+            Material buffedMaterial = planet.IsBuffed ? _buffedRocketMaterial : null;
             
-            Material mainMaterial = new Material(baseRocketMaterial)
+            Material mainMaterial = new Material(_baseRocketMaterial)
             {
-                mainTexture = rocketsTextures[team]
+                mainTexture = _rocketsTextures[team]
             };
 
             Material[] materials = {mainMaterial, buffedMaterial};
@@ -119,7 +127,7 @@ namespace _Application.Scripts.Managers
             int index = planet.ID.GetHashCode();
             
             Material[] materials = _planetsRenderer[index].materials;
-            materials[BuffTexIndex] = buffedPlanetMaterial;
+            materials[BuffTexIndex] = _buffedPlanetMaterial;
             _planetsRenderer[index].materials = materials;
         }
 
@@ -130,7 +138,7 @@ namespace _Application.Scripts.Managers
             if (_planetsRenderer.TryGetValue(index,out MeshRenderer value))
             {
                 Material[] materials = value.materials;
-                materials[BuffTexIndex] = (planet.Type == Type.Spawner) ? glassMaterial : null;
+                materials[BuffTexIndex] = (planet.Type == Type.Spawner) ? _glassMaterial : null;
                 value.materials = materials;
             }
         }
