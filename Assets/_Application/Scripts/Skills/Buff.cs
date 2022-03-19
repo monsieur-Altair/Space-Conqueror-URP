@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using _Application.Scripts.Infrastructure.Factory;
+using _Application.Scripts.Scriptables;
 using UnityEngine;
 
 namespace _Application.Scripts.Skills
@@ -10,9 +12,9 @@ namespace _Application.Scripts.Skills
         private IBuffed _buffedEntity;
         private Coroutine _buffCoroutine;
 
-        protected override void LoadResources()
+        protected override void LoadResources(IGameFactory gameFactory, Skill resource)
         {
-            base.LoadResources();
+            base.LoadResources(gameFactory, resource);
             Scriptables.Buff res = resource as Scriptables.Buff;
             if (res != null)
             {
@@ -37,7 +39,7 @@ namespace _Application.Scripts.Skills
 
         protected override void CancelSkill()
         {
-            StopCoroutine(_buffCoroutine);
+            CoroutineRunner.StopCoroutine(_buffCoroutine);
             
             if (_buffedEntity.IsBuffed)
                 _buffedEntity.UnBuff(_buffPercent);
@@ -49,7 +51,7 @@ namespace _Application.Scripts.Skills
         }
 
         private void BuffPlanet() => 
-            _buffCoroutine = StartCoroutine(BuffThenUnBuff());
+            _buffCoroutine = CoroutineRunner.StartCoroutine(BuffThenUnBuff());
 
         private IEnumerator BuffThenUnBuff()
         {

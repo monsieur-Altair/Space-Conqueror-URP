@@ -1,53 +1,55 @@
 ﻿using System;
-using _Application.Scripts.Scriptables;
+using System.Collections;
+using System.Collections.Generic;
+using _Application.Scripts.Infrastructure;
+using _Application.Scripts.Infrastructure.Factory;
+using _Application.Scripts.Managers;
+using _Application.Scripts.Misc;
 using UnityEngine;
 
 namespace _Application.Scripts.Skills
 {
-    public abstract class Base : MonoBehaviour, ISkill
+    public abstract class Base : ISkill
     {
-        [SerializeField] 
-        protected Skill resource;
-
         public event Action CanceledSkill;
         public delegate void DecreasingCounter(float count);
+        
         protected abstract void CancelSkill();
         protected abstract void ApplySkill();
-
+        
         protected Camera MainCamera;
-        protected Managers.ObjectPool ObjectPool;
+        protected ObjectPool ObjectPool;
         protected Planets.Base SelectedPlanet;
+        
         protected float Cooldown;
         protected int Cost;
         protected bool IsOnCooldown;
         protected bool IsForAI;
         protected Planets.Team TeamConstraint;
+        protected ICoroutineRunner CoroutineRunner;
         protected delegate void UniqueActionToPlanet();
-        
-        
-        private DecreasingCounter _decreaseCounter;
 
+        private DecreasingCounter _decreaseCounter;
 
         protected Vector3 SelectedScreenPos { get; private set; }
 
-        public void Awake()
+        public void Construct(IGameFactory gameFactory, Scriptables.Skill resource)
         {
             MainCamera=Camera.main;
-            ObjectPool = Managers.ObjectPool.Instance;
+            ObjectPool = ObjectPool.Instance;
+            CoroutineRunner = GlobalObject.Instance;
+            
+            LoadResources(gameFactory, resource);
         }
-
-        public void Start() => 
-            LoadResources();
 
         public void Refresh()
         {
             if (IsOnCooldown)
             {
-                CancelInvoke(nameof(CancelSkill));
+                CoroutineRunner.CancelAllInvoked();
                 CancelSkill();
             }
         }
-        
         
         public void SetDecreasingFunction(DecreasingCounter function) => 
             _decreaseCounter = function;
@@ -74,7 +76,7 @@ namespace _Application.Scripts.Skills
                 ApplySkill();
         }
 
-        protected virtual void LoadResources()
+        protected virtual void LoadResources(IGameFactory gameFactory, Scriptables.Skill resource)
         {
             Cooldown = resource.cooldown;
             Cost = resource.cost;
@@ -93,7 +95,7 @@ namespace _Application.Scripts.Skills
             IsOnCooldown = true;
             _decreaseCounter(Cost);
             action();
-            Invoke(nameof(CancelSkill), Cooldown);
+            CoroutineRunner.InvokeWithDelay(CancelSkill,Cooldown);
         }
         
         protected void OnCanceledSkill()

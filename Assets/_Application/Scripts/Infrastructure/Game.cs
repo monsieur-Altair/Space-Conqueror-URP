@@ -8,7 +8,7 @@ namespace _Application.Scripts.Infrastructure
     public class Game
     {
         public readonly StateMachine StateMachine;
-        public Game(ICoroutineRunner coroutineRunner) => 
-            StateMachine = new StateMachine(new SceneLoader(coroutineRunner), AllServices.Instance);
+        public Game(MonoBehaviour behaviour) => 
+            StateMachine = new StateMachine(new SceneLoader(behaviour), AllServices.Instance);
     }
 }

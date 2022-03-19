@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections;
 using _Application.Scripts.Control;
+using _Application.Scripts.Infrastructure.Factory;
+using _Application.Scripts.Scriptables;
 using UnityEngine;
 
 namespace _Application.Scripts.Skills
 {
     public class Ice : Base
     {
-        [SerializeField] private GameObject icePrefab;
         public static event Action DeletingFreezingZone;
 
         private const float PlanetLayHeight = 0.66f;
@@ -18,14 +19,14 @@ namespace _Application.Scripts.Skills
         private Plane _plane;
         private Coroutine _spawnCoroutine;
 
-        protected override void LoadResources()
+        protected override void LoadResources(IGameFactory gameFactory, Skill resource)
         {
-            base.LoadResources();
+            base.LoadResources(gameFactory, resource);
             Scriptables.Ice res = resource as Scriptables.Ice;
             if (res != null) 
                 _duration = res.duration;
 
-            _freezingObject = Instantiate(icePrefab);
+            _freezingObject = gameFactory.CreateIce();
             
             _freezingZone = _freezingObject.GetComponent<Zone>(); 
             _freezingZone.SetTriggerFunction(FreezingEnteredObjects);
@@ -37,8 +38,8 @@ namespace _Application.Scripts.Skills
         protected override void CancelSkill()
         {
             //wasn't tested well
-            CancelInvoke(nameof(CancelSkill));
-            StopCoroutine(_spawnCoroutine);
+            CoroutineRunner.CancelAllInvoked();
+            CoroutineRunner.StopCoroutine(_spawnCoroutine);
             DeletingFreezingZone?.Invoke();
             _freezingObject.SetActive(false);
             
@@ -49,9 +50,9 @@ namespace _Application.Scripts.Skills
         protected override void ApplySkill()
         {
             IsOnCooldown = true;
-            _spawnCoroutine = StartCoroutine(SpawnFreezingZone(SelectedScreenPos));
+            _spawnCoroutine = CoroutineRunner.StartCoroutine(SpawnFreezingZone(SelectedScreenPos));
             Planets.Scientific.DecreaseScientificCount(Cost);
-            Invoke(nameof(CancelSkill), Cooldown);
+            CoroutineRunner.InvokeWithDelay(CancelSkill,Cooldown);
         }
 
         private IEnumerator SpawnFreezingZone(Vector3 pos)

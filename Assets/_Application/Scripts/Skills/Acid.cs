@@ -1,15 +1,16 @@
 ﻿using System.Collections;
+using _Application.Scripts.Infrastructure.Factory;
+using _Application.Scripts.Infrastructure.Services;
+using _Application.Scripts.Scriptables;
 using UnityEngine;
 
 namespace _Application.Scripts.Skills
 {
     public class Acid : Base
     {
-        [SerializeField] 
-        private GameObject acidPrefab;
-        
         private readonly Vector3 _offset = new Vector3(0.8f, 3, 0);
         private readonly Quaternion _rotation = Quaternion.Euler(-90f,0,0);
+        
         private GameObject _acidRain;
         private Coroutine _damagingByAcid;
         private ParticleSystem _acidParticles;
@@ -18,9 +19,9 @@ namespace _Application.Scripts.Skills
         private float _hitDamage;
         private int _hitCount;
         
-        protected override void LoadResources()
+        protected override void LoadResources(IGameFactory gameFactory, Skill resource)
         {
-            base.LoadResources();
+            base.LoadResources(gameFactory, resource);
             Scriptables.Acid res = resource as Scriptables.Acid;
             if (res != null)
             {
@@ -30,19 +31,17 @@ namespace _Application.Scripts.Skills
                 _hitDamage = res.damage / _hitCount;
             }
             
-            _acidRain = Instantiate(acidPrefab);
-            if (_acidRain == null)
-                throw new MyException("cannot instantiate acid prefab");
+            _acidRain = gameFactory.CreateAcid();
             _acidParticles = _acidRain.transform.GetChild(0).GetComponent<ParticleSystem>();
-            if (_acidParticles == null)
-                throw new MyException("cannot get particle system");
         }
 
         protected override void CancelSkill()
         {
+            Debug.LogError("ACID CANCELED");
+            
             if(_acidParticles.isPlaying)
                 _acidParticles.Stop();
-            StopCoroutine(_damagingByAcid);
+            CoroutineRunner.StopCoroutine(_damagingByAcid);
             SelectedPlanet = null;
             IsOnCooldown = false;
             OnCanceledSkill();
@@ -63,8 +62,8 @@ namespace _Application.Scripts.Skills
         {
             _acidRain.transform.position = SelectedPlanet.transform.position +_offset;
             _acidRain.transform.rotation = _rotation;
-            _acidParticles.Play();                                                                              
-            _damagingByAcid = StartCoroutine(nameof(DamagePlanetByRain));
+            _acidParticles.Play();
+            _damagingByAcid = CoroutineRunner.StartCoroutine(DamagePlanetByRain());
         }
 
         private IEnumerator DamagePlanetByRain()

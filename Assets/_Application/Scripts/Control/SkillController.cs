@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using _Application.Scripts.Infrastructure.AssetManagement;
+using _Application.Scripts.Infrastructure.Factory;
+using _Application.Scripts.Infrastructure.Services;
 using UnityEngine;
 using Button = UnityEngine.UI.Button;
 
@@ -41,19 +44,25 @@ namespace _Application.Scripts.Control
             
             SelectedSkillName = SkillName.None;
             
-            _call = GetComponent<Skills.Call>();
+            IGameFactory gameFactory = AllServices.Instance.GetSingle<IGameFactory>();
+            
+            _call = new Skills.Call();
+            _call.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.CallResourcePath));
             _call.SetTeamConstraint(Planets.Team.Blue);
             _call.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
-            
-            _buff = GetComponent<Skills.Buff>();
+
+            _buff = new Skills.Buff();
+            _buff.Construct(gameFactory,gameFactory.CreateSkillResource(AssetPaths.BuffResourcePath));
             _buff.SetTeamConstraint(Planets.Team.Blue);
             _buff.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
-            
-            _acid = GetComponent<Skills.Acid>();
+
+            _acid = new Skills.Acid();
+            _acid.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AcidResourcePath));
             _acid.SetTeamConstraint(Planets.Team.Blue);
             _acid.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
-            
-            _ice = GetComponent<Skills.Ice>();
+
+            _ice = new Skills.Ice();
+            _ice.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.IceResourcePath));
         }
         
         public void AdjustSkillButtons(List<Button> createdButtons)

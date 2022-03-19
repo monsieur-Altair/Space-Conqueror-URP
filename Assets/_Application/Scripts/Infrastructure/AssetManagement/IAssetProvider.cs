@@ -9,6 +9,6 @@ namespace _Application.Scripts.Infrastructure.AssetManagement
         public T Instantiate<T>(string path);
         public GameObject InstantiateUI(string path, Canvas canvas);
         public T InstantiateUI<T>(string path, Canvas canvas);
-
+        T InstantiateScriptable<T>(string path) where T : ScriptableObject;
     }
 }

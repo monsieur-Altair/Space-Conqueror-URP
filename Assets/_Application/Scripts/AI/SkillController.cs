@@ -1,4 +1,7 @@
-﻿using _Application.Scripts.Planets;
+﻿using _Application.Scripts.Infrastructure.AssetManagement;
+using _Application.Scripts.Infrastructure.Factory;
+using _Application.Scripts.Infrastructure.Services;
+using _Application.Scripts.Planets;
 using _Application.Scripts.Skills;
 using UnityEngine;
 using Base = _Application.Scripts.Planets.Base;
@@ -7,9 +10,6 @@ namespace AI
 {
     public class SkillController : MonoBehaviour
     {
-
-        [SerializeField] private GameObject aiSkills;
-     
         private Call _call;
         private Buff _buff;
         private Acid _acid;
@@ -17,22 +17,27 @@ namespace AI
 
         public void InitSkills()
         {
-            _call = aiSkills.GetComponent<Call>();
+            //_call = aiSkills.GetComponent<Call>();
+            IGameFactory gameFactory = AllServices.Instance.GetSingle<IGameFactory>();
+            
+            _call = new Call();
+            _call.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AICallResourcePath));
             _call.SetTeamConstraint(Team.Red);
             _call.SetDecreasingFunction(DecreaseAISciCounter);
 
-            _buff = aiSkills.GetComponent<Buff>();
+            _buff = new Buff();
+            _buff.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AIBuffResourcePath));
             _buff.SetTeamConstraint(Team.Red);
             _buff.SetDecreasingFunction(DecreaseAISciCounter);
 
-            _acid = aiSkills.GetComponent<Acid>();
+            _acid = new Acid();
+            _acid.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AIAcidResourcePath));
             _acid.SetTeamConstraint(Team.Red);
             _acid.SetDecreasingFunction(DecreaseAISciCounter);
 
-            _ice = aiSkills.GetComponent<Ice>();
+            _ice = new Ice();
+            _ice.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AIIceResourcePath));
 
-            if (_acid == null || _buff == null || _call == null || _ice == null)
-                throw new MyException("cannot get skill component, AI");
         }
 
         private static void DecreaseAISciCounter(float value)

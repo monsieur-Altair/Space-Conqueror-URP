@@ -7,13 +7,13 @@ namespace _Application.Scripts.Infrastructure
 {
     public class SceneLoader
     {
-        private readonly ICoroutineRunner _coroutineRunner;
+        private readonly MonoBehaviour _behaviour;
         
-        public SceneLoader(ICoroutineRunner coroutineRunner) 
-            => _coroutineRunner = coroutineRunner;
+        public SceneLoader(MonoBehaviour behaviour) 
+            => _behaviour = behaviour;
         
         public void Load(string name, Action onLoaded=null) => 
-            _coroutineRunner.StartCoroutine(LoadScene(name, onLoaded));
+            _behaviour.StartCoroutine(LoadScene(name, onLoaded));
 
         private IEnumerator LoadScene(string name, Action onLoaded = null)
         {

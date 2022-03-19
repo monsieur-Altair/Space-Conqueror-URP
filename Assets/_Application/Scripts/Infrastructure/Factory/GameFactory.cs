@@ -43,6 +43,18 @@ namespace _Application.Scripts.Infrastructure.Factory
             mainManager.StartGame();
         }
 
+        public GameObject CreateAcid() => 
+            _assetProvider.Instantiate(AssetPaths.AcidPrefabPath);
+
+        public GameObject CreateIndicator() =>  
+            _assetProvider.Instantiate(AssetPaths.IndicatorPrefabPath);
+
+        public GameObject CreateIce() => 
+            _assetProvider.Instantiate(AssetPaths.IcePrefabPath);
+
+        public Scriptables.Skill CreateSkillResource(string path) => 
+            _assetProvider.InstantiateScriptable<Scriptables.Skill>(path);
+
         private GameObject CreateScientificBar() => 
             _assetProvider.InstantiateUI(AssetPaths.ScientificBarPath, _canvas);
 

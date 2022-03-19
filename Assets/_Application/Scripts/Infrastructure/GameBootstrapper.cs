@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace _Application.Scripts.Infrastructure
 {
-    public class GameBootstrapper : MonoBehaviour, ICoroutineRunner
+    public class GameBootstrapper : MonoBehaviour
     {
         [SerializeField] private Button playButton;
         private Game _game;

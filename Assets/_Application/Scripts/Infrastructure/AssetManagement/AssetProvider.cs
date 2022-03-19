@@ -13,6 +13,9 @@ namespace _Application.Scripts.Infrastructure.AssetManagement
         public T Instantiate<T>(string path) => 
             Instantiate(path).GetComponent<T>();
 
+        public T InstantiateScriptable<T>(string path) where T : ScriptableObject =>
+            Resources.Load<T>(path);
+
         public GameObject InstantiateUI(string path, Canvas canvas)
         {
             GameObject prefab = Resources.Load<GameObject>(path);

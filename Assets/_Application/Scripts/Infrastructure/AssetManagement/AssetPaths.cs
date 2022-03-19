@@ -3,9 +3,7 @@
     public static class AssetPaths
     {
         public const string PoolPath = "Managers/Object Pool";
-        public const string OutlookPath = "Managers/Outlook Manager";
         public const string AIPath = "Managers/AI";
-        public const string UIPath = "Managers/UI Manager";
         public const string UserControlPath = "Managers/User Control";
         public const string MainManagerPath = "Managers/Main Manager";
         public const string Warehouse = "Managers/Warehouse";
@@ -18,5 +16,20 @@
         public const string RetryButtonsPath = "UI/Buttons/Retry";
         public const string TeamBarPath = "UI/Bars/Team bar";
         public const string ScientificBarPath = "UI/Bars/Scientific bar";
+
+        public const string AcidPrefabPath = "Skills/Acid rain";
+        public const string IndicatorPrefabPath = "Skills/Lamp";
+        public const string IcePrefabPath = "Skills/Ice";
+        
+        public const string CallResourcePath = "Scriptables/Player/Call";
+        public const string BuffResourcePath = "Scriptables/Player/Buff";
+        public const string AcidResourcePath = "Scriptables/Player/Acid";
+        public const string IceResourcePath = "Scriptables/Player/Ice";
+        
+        public const string AICallResourcePath = "Scriptables/AI/AI Call";
+        public const string AIBuffResourcePath = "Scriptables/AI/AI Buff";
+        public const string AIAcidResourcePath = "Scriptables/AI/AI Acid";
+        public const string AIIceResourcePath = "Scriptables/AI/AI Ice";
+        
     }
 }
