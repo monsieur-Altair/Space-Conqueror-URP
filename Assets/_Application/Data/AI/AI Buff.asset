@@ -15,4 +15,4 @@ MonoBehaviour:
   cooldown: 8
   cost: 10
   buffPercent: 70
-  duration: 3
+  duration: 1

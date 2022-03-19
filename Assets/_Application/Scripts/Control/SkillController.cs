@@ -16,23 +16,23 @@ namespace _Application.Scripts.Control
     }
     public class SkillController : MonoBehaviour
     {
-        private List<Button> _buttons;
-
-        private static SkillController _instance;
-
         private const int Buff = 0;
         private const int Acid = 1;
         private const int Ice = 2;
         private const int Call = 3;
+        
+        private List<Button> _buttons;
+        private bool _isActive;
 
-        public SkillName SelectedSkillName { get; private set; }
+        private static SkillController _instance;
+
         private Skills.Call _call;
         private Skills.Buff _buff;
         private Skills.Acid _acid;
         private Skills.Ice _ice;
-        
-        private bool _isActive;
 
+
+        public SkillName SelectedSkillName { get; private set; }
 
         public void Awake()
         {
@@ -94,16 +94,12 @@ namespace _Application.Scripts.Control
         {
             if(!_isActive) 
                 return;
-
-            // if(!button.enabled)
-            //     return;
             
             if (SelectedSkillName == SkillName.None)
             {
                 int index = _buttons.IndexOf(button);
                 BlockButton(button);
                 StartCoroutine((SwitchWithWaiting(index)));
-                //SelectedSkillName = (SkillName)index;
             }
             else
             {

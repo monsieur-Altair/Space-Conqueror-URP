@@ -18,8 +18,8 @@ namespace _Application.Scripts.Managers
 
         private List<Planets.Base> _allPlanets = new List<Planets.Base>();
 
-        private List<GameObject> _countersList;
-        
+        private readonly List<GameObject> _countersList = new List<GameObject>();
+
         private readonly Dictionary<int, Image> _backgrounds = new Dictionary<int, Image>();
         private readonly Dictionary<int, TextMeshProUGUI> _foregrounds = new Dictionary<int, TextMeshProUGUI>();
         
@@ -39,8 +39,6 @@ namespace _Application.Scripts.Managers
 
             _canvas = GameObject.FindGameObjectWithTag("CanvasTag").GetComponent<Canvas>();
             _pool = ObjectPool.Instance;
-            
-            _countersList = new List<GameObject>();
         }
 
         public void PrepareLevel()
@@ -116,7 +114,6 @@ namespace _Application.Scripts.Managers
             _allPlanets.Clear();
             _foregrounds.Clear();
             _backgrounds.Clear();
-            //_countersList.Clear();
         }
 
         private void FillLists()

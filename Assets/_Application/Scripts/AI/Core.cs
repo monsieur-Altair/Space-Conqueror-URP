@@ -1,9 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Net.Sockets;
 using _Application.Scripts.Planets;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -32,13 +28,8 @@ namespace AI
         {
             if (Instance == null)
                 Instance = this;
-            // Debug.Log("address "+LocalIPAddress());
-            // Debug.Log("addressV4 "+GetIP(ADDRESSFAM.IPv4));
-            // Debug.Log("addressV6 "+GetIP(ADDRESSFAM.IPv6));
-            // Debug.Log("localV4 "+GetLocalIPv4());
             
             AllPlanets = new List<List<Base>>();
-            
 
             Own = (int) Team.Red;
             Enemy = (int) Team.Blue;

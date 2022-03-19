@@ -26,7 +26,7 @@ namespace _Application.Scripts.Managers
             StartCoroutine(DeleteAllLevel());
             currentLevelNumber++;
             if (currentLevelNumber == levels.Length)
-                currentLevelNumber--;
+                currentLevelNumber = 0;
         }
 
         public void RestartLevel()
@@ -38,23 +38,20 @@ namespace _Application.Scripts.Managers
         public GameObject GetCurrentLay() => 
             _currentLevel;
 
-        private static int _callCount;
-
         public IEnumerator InstantiateLevel()
         {
-            if(_callCount!=0)
-                yield return StartCoroutine(DeleteAllLevel());
+            yield return StartCoroutine(DeleteAllLevel());
             _currentLevel = Instantiate(levels[currentLevelNumber], _instantiatePos, Quaternion.identity);
             _currentLevel.SetActive(true);
-             //Debug.Log("BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKE");
             navMeshSurfaceObj.BuildNavMesh();
             _currentLevel.gameObject.transform.SetParent(gameObject.transform.parent);
-            _callCount ++;
         }
 
         private IEnumerator DeleteAllLevel()
         {
-            Destroy(_currentLevel.gameObject);
+            if(_currentLevel!=null)
+                Destroy(_currentLevel.gameObject);
+                //_currentLevel.gameObject.SetActive(false);
             yield break;
         }
     }

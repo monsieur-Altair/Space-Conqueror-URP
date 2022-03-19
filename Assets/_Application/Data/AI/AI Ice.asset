@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cooldown: 7
   cost: 15
-  duration: 3
+  duration: 1

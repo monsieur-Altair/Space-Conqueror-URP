@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cooldown: 12
   cost: 15
-  duration: 4
+  duration: 1
   damage: 35
   hitCount: 17
