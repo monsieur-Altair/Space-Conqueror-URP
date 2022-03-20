@@ -4,7 +4,6 @@
     {
         public const string PoolPath = "Managers/Object Pool";
         public const string UserControlPath = "Managers/User Control";
-        public const string MainManagerPath = "Managers/Main Manager";
         public const string Warehouse = "Managers/Warehouse";
 
         public const string FirstButtonPath = "UI/Buttons/1";
@@ -28,7 +27,6 @@
         public const string AICallResourcePath = "Scriptables/AI/AI Call";
         public const string AIBuffResourcePath = "Scriptables/AI/AI Buff";
         public const string AIAcidResourcePath = "Scriptables/AI/AI Acid";
-        public const string AIIceResourcePath = "Scriptables/AI/AI Ice";
         
     }
 }

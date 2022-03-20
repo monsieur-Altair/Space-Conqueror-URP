@@ -48,10 +48,10 @@ namespace _Application.Scripts.Managers
             _counterForeground = _warehouse.counterForeground;
         }
 
-        public void PrepareLevel()
+        public void PrepareLevel(List<Planets.Base> allPlanets)
         {
             ClearList();
-            _allPlanets = new List<Planets.Base>(Main.Instance.AllPlanets);
+            _allPlanets = new List<Planets.Base>(allPlanets);
             FillLists();
         }
 

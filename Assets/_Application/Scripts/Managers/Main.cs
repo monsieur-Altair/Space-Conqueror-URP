@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using _Application.Scripts.Control;
+using _Application.Scripts.Infrastructure;
 using UnityEngine;
 
 namespace _Application.Scripts.Managers
@@ -13,58 +14,46 @@ namespace _Application.Scripts.Managers
         GameOver
     }
 
-    public class Main : MonoBehaviour
+    public class Main
     {
-        public static Main Instance;
-
-        private ObjectPool _objectPool;
-        private Levels _levelsManager;
-        private AI.Core _core;
-        private UserControl _userControl;
-        private Outlook _outlook;
-        private UI _ui;
-        private TeamManager _teamManager;
+        private readonly UI _ui;
+        private readonly AI.Core _core;
+        private readonly Outlook _outlook;
+        private readonly Levels _levelsManager;
+        private readonly ObjectPool _objectPool;
+        private readonly UserControl _userControl;
+        private readonly TeamManager _teamManager;
+        private readonly ICoroutineRunner _coroutineRunner;
         
         private GameObject _planetsLay;
         private bool _isWin;
         private GameStates _currentGameState;
-
         
-        public List<Planets.Base> AllPlanets { get; private set; }
+        private List<Planets.Base> _allPlanets;
 
-        public void Awake()
+        public Main(Levels levelsManager, TeamManager teamManager, ICoroutineRunner coroutineRunner,
+            AI.Core core, ObjectPool pool ,Outlook  outlook, UI ui, UserControl userControl)
         {
-            if (Instance == null) 
-                Instance = this;
-
-            AllPlanets = new List<Planets.Base>();
-
-            _teamManager = new TeamManager();
-            
-            _levelsManager=Levels.Instance;
+            _allPlanets = new List<Planets.Base>();
+            _teamManager = teamManager;
+            _coroutineRunner = coroutineRunner;
+            _levelsManager = levelsManager;
 
             Planets.Base.Conquered += _teamManager.UpdateObjectsCount;
             _teamManager.GameEnded += EndGame;
-        }
-
-        public void OnDisable()
-        {
-            _ui.RemoveBehaviours(_teamManager);
-        }
-
-        public void OnDestroy()
-        {
-            _teamManager.GameEnded -= EndGame;
-        }
-
-        public void Construct(AI.Core core, ObjectPool pool ,Outlook  outlook, UI ui, UserControl userControl)
-        {
+            
             _core = core;
             _objectPool = pool;
             _outlook = outlook;
             _ui = ui;
             _userControl = userControl;
             _ui.SetUIBehaviours(_teamManager, RetryLevel, LoadNextLevel);
+        }
+
+        public void Destroy()
+        {
+            _ui.RemoveBehaviours(_teamManager);
+            _teamManager.GameEnded -= EndGame;
         }
         
         public void StartGame()
@@ -75,16 +64,16 @@ namespace _Application.Scripts.Managers
 
         private void PrepareLevel()
         {
-            AllPlanets = _planetsLay.GetComponentsInChildren<Planets.Base>().ToList();
+            _allPlanets = _planetsLay.GetComponentsInChildren<Planets.Base>().ToList();
             
-            foreach (Planets.Base planet in AllPlanets)
+            foreach (Planets.Base planet in _allPlanets)
             {
                 planet.gameObject.SetActive(true);
                 planet.Init();
                 planet.LaunchingUnit += SpawnUnit;
             }
             
-            _teamManager.FillTeamCount(AllPlanets);
+            _teamManager.FillTeamCount(_allPlanets);
         }
 
         private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
@@ -97,7 +86,7 @@ namespace _Application.Scripts.Managers
                 case GameStates.Gameplay:
                 {
                     _ui.ShowGameplayUI();
-                    StartCoroutine(StartGameplay());
+                    _coroutineRunner.StartCoroutine(StartGameplay());
                     break;
                 }
                 case GameStates.GameOver:
@@ -116,6 +105,8 @@ namespace _Application.Scripts.Managers
 
         private void EndGame(bool isWin)
         {
+            _coroutineRunner.CancelAllInvoked();
+            
             _isWin = isWin;
             _currentGameState = GameStates.GameOver;
             UpdateState();
@@ -124,13 +115,13 @@ namespace _Application.Scripts.Managers
         private IEnumerator StartGameplay()
         {
             ClearLists();
-            yield return StartCoroutine(_levelsManager.InstantiateLevel());
+            yield return _coroutineRunner.StartCoroutine(_levelsManager.InstantiateLevel());
             _planetsLay = _levelsManager.GetCurrentLay();
             PrepareLevel();
-            _core.Init(AllPlanets);
+            _core.Init(_allPlanets);
             _core.Enable();
-            _outlook.PrepareLevel(AllPlanets);
-            _ui.PrepareLevel();
+            _outlook.PrepareLevel(_allPlanets);
+            _ui.PrepareLevel(_allPlanets);
             
             Planets.Scientific.DischargeScientificCount();//sci-count = 0
             
@@ -140,25 +131,23 @@ namespace _Application.Scripts.Managers
 
         private void ClearLists()
         {
-            foreach (Planets.Base planet in AllPlanets) 
+            foreach (Planets.Base planet in _allPlanets) 
                 planet.LaunchingUnit -= SpawnUnit;
 
             _teamManager.Clear();
-            AllPlanets.Clear();
+            _allPlanets.Clear();
         }
 
         private void LoadNextLevel()
         {
             _levelsManager.SwitchToNextLevel();
-            _currentGameState = GameStates.Gameplay;
-            UpdateState();
+            StartGame();
         }
 
         private void RetryLevel()
         {
             _levelsManager.RestartLevel();
-            _currentGameState = GameStates.Gameplay;
-            UpdateState();
+            StartGame();
         }
     }
 }

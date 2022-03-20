@@ -43,7 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d31eff27f8842b79efbce01f80cacaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  navMeshSurfaceObj: {fileID: 0}
+  navMeshSurfaceObj: {fileID: 9000496251955602916, guid: 384706829610f8349847408ecb65f710, type: 3}
   levels:
   - {fileID: 4071430356184442372, guid: 97b2abb5366b3cb48821977a19dc87e4, type: 3}
   - {fileID: 4071430356184442372, guid: 77d254cc15f5a334799baf70abb4e301, type: 3}

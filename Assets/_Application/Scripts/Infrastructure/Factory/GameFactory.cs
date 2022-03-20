@@ -18,18 +18,26 @@ namespace _Application.Scripts.Infrastructure.Factory
         {
             _canvas = GameObject.FindGameObjectWithTag("CanvasTag").GetComponent<Canvas>();
             
+            ICoroutineRunner coroutineRunner = GlobalObject.Instance;
             Warehouse warehouse = _assetProvider.Instantiate<Warehouse>(AssetPaths.Warehouse);
             ObjectPool pool = _assetProvider.Instantiate<ObjectPool>(AssetPaths.PoolPath);
 
             AI.SkillController aiSkillController = new AI.SkillController(this, pool);
-            AI.Core aiManager = new AI.Core(GlobalObject.Instance, aiSkillController);
+            AI.Core aiManager = new AI.Core(coroutineRunner, aiSkillController);
             
             Outlook outlookManager = new Outlook(warehouse);
             Control.UserControl userControl = CreateUserControl(pool, out var playerSkillController);
             UI uiManager = CreateUI(pool, warehouse, playerSkillController);
 
-            Main mainManager = _assetProvider.Instantiate<Main>(AssetPaths.MainManagerPath);
-            mainManager.Construct(aiManager, pool ,outlookManager, uiManager, userControl);
+            Main mainManager = new Main(Levels.Instance, 
+                new TeamManager(), 
+                coroutineRunner,
+                aiManager, 
+                pool,
+                outlookManager, 
+                uiManager, 
+                userControl);
+            
             mainManager.StartGame();
         }
 
