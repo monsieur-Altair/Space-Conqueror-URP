@@ -4,20 +4,21 @@ using UnityEngine;
 
 namespace _Application.Scripts.Managers
 {
+    public enum PoolObjectType
+    {
+        ScientificRocket = 0,
+        SpawnerRocket = 1,
+        AttackerRocket = 2,
+        ScientificPlanet = 3,
+        SpawnerPlanet = 4,
+        AttackerPlanet = 5,
+        Counter = 6
+    }
     public class ObjectPool : MonoBehaviour
     {
-        private Dictionary<int, Queue<GameObject>> _poolDictionary;
-
-        public enum PoolObjectType
-        {
-            ScientificRocket = 0,
-            SpawnerRocket = 1,
-            AttackerRocket = 2,
-            ScientificPlanet = 3,
-            SpawnerPlanet = 4,
-            AttackerPlanet = 5,
-            Counter = 6
-        }
+        public List<Pool> pools;
+        
+        private readonly Dictionary<int, Queue<GameObject>> _poolDictionary = new Dictionary<int, Queue<GameObject>>();
 
         [Serializable]
         public class Pool
@@ -25,15 +26,6 @@ namespace _Application.Scripts.Managers
             public PoolObjectType poolObjectType;
             public GameObject prefab;
             public int size;
-        }
-        
-        public List<Pool> pools;
-        public static ObjectPool Instance;
-        public void Awake()
-        {
-            if (Instance == null)
-                Instance = this;
-            _poolDictionary = new Dictionary<int, Queue<GameObject>>();
         }
 
         public void Start()

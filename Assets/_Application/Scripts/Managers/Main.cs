@@ -47,12 +47,6 @@ namespace _Application.Scripts.Managers
             _teamManager.GameEnded += EndGame;
         }
 
-        public void OnEnable()
-        {
-            _core = AI.Core.Instance;
-            _objectPool = ObjectPool.Instance;
-        }
-
         public void OnDisable()
         {
             _ui.RemoveBehaviours(_teamManager);
@@ -63,8 +57,10 @@ namespace _Application.Scripts.Managers
             _teamManager.GameEnded -= EndGame;
         }
 
-        public void Construct(Outlook  outlook, UI ui, UserControl userControl)
+        public void Construct(AI.Core core, ObjectPool pool ,Outlook  outlook, UI ui, UserControl userControl)
         {
+            _core = core;
+            _objectPool = pool;
             _outlook = outlook;
             _ui = ui;
             _userControl = userControl;
@@ -91,7 +87,7 @@ namespace _Application.Scripts.Managers
             _teamManager.FillTeamCount(AllPlanets);
         }
 
-        private Units.Base SpawnUnit(ObjectPool.PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
+        private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
             _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.Base>();
 
         private void UpdateState()
@@ -109,6 +105,7 @@ namespace _Application.Scripts.Managers
                     _userControl.Disable();
                     _objectPool.DisableAllUnitsInScene();
                     _core.Disable();
+                    _ui.DisableSkillUI();
                     _ui.ShowGameOverUI(_isWin);
                     break;
                 }
@@ -137,6 +134,7 @@ namespace _Application.Scripts.Managers
             
             Planets.Scientific.DischargeScientificCount();//sci-count = 0
             
+            _ui.EnableSkillUI();
             _userControl.Enable();
         }
 

@@ -35,7 +35,7 @@ namespace _Application.Scripts.Planets
         public event Action<Base> Buffed;
         public event Action<Base> UnBuffed;
         public event Action<Base, Units.Base> LaunchedUnit;
-        public event Func<ObjectPool.PoolObjectType, Vector3, Quaternion, Units.Base> LaunchingUnit;
+        public event Func<PoolObjectType, Vector3, Quaternion, Units.Base> LaunchingUnit;
         
 
         private const float Speed = 20.0f;
@@ -119,7 +119,7 @@ namespace _Application.Scripts.Planets
         {
             CalculateLaunchPositions( out Vector3 launchPos,out Vector3 destPos,this,destination);
 
-            ObjectPool.PoolObjectType poolObjectType = (ObjectPool.PoolObjectType)((int) Type);
+            PoolObjectType poolObjectType = (PoolObjectType)((int) Type);
             Quaternion rotation = Quaternion.LookRotation(destPos - launchPos);
 
             Units.Base unit = LaunchingUnit?.Invoke(poolObjectType, launchPos, rotation);

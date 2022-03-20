@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using _Application.Scripts.Infrastructure.Factory;
-using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Scriptables;
 using UnityEngine;
 
@@ -37,8 +36,6 @@ namespace _Application.Scripts.Skills
 
         protected override void CancelSkill()
         {
-            Debug.LogError("ACID CANCELED");
-            
             if(_acidParticles.isPlaying)
                 _acidParticles.Stop();
             CoroutineRunner.StopCoroutine(_damagingByAcid);

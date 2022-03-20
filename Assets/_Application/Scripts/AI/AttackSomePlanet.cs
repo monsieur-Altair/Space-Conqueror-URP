@@ -1,71 +1,62 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using _Application.Scripts.Infrastructure;
 using _Application.Scripts.Planets;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace AI
+namespace _Application.Scripts.AI
 {
-    public class AttackSomePlanet : MonoBehaviour, IAction
+    public class AttackSomePlanet : IAction
     {
-        [SerializeField]private int buffProbability = 40;
-        [SerializeField]private int acidProbability = 40;
-        [SerializeField]private int callProbability = 40;
+        private const int BuffProbability = 100;
+        private const int AcidProbability = 40;
+        private const int CallProbability = 40;
         
-        
+        private const int MinCountForLaunch = 1;//inclusive
+        private const int MaxCountForLaunch = 3;//inclusive
+        private const float DelayAfterCasting = 2.0f;
+
+        private readonly ICoroutineRunner _coroutineRunner;
+        private readonly SkillController _skillController;
+
         private List<List<Base>> _allPlanets;
-        private Core _core;
         private Base _target;
         private readonly List<Base> _planetsForLaunch = new List<Base>();
         private Vector3 _mainPos;
         private int _countForLaunch;
-        private const int MINCountForLaunch = 1;//inclusive
-        private const int MAXCountForLaunch = 3;//inclusive
         private bool _isCastedSkill;
-        private SkillController _skillController;
-        private const float DelayAfterCasting = 2.0f;
 
 
-        public void InitAction()
+        public AttackSomePlanet(ICoroutineRunner coroutineRunner, SkillController skillController)
         {
-            if (_core==null)
-            {
-                _core = Core.Instance;
-            }
-            _allPlanets = _core.AllPlanets;
-            _mainPos = _core.MainPos;
+            _skillController = skillController;
+            _coroutineRunner = coroutineRunner;
+        }
+        
+        public void InitAction(List<List<Base>> planets, Vector3 mainPos)
+        {
+            _allPlanets = planets;
+            _mainPos = mainPos;
             _isCastedSkill = false;
-
-            if (_skillController==null)
-            {
-                _skillController = GetComponent<SkillController>();
-                if (_skillController==null)
-                {
-                    throw new MyException("skill controller = null");
-                }
-                _skillController.InitSkills();
-            }
-            
         }
 
         public void Execute()
         {
             _planetsForLaunch.Clear();
-            _countForLaunch = Random.Range(MINCountForLaunch, MAXCountForLaunch+1);
+            _countForLaunch = Random.Range(MinCountForLaunch, MaxCountForLaunch+1);
             
             TryToCall();
             if(!_isCastedSkill)
-                StartCoroutine(LaunchToTarget());
+                _coroutineRunner.StartCoroutine(LaunchToTarget());
             
             _isCastedSkill = false;
 
         }
 
-       
-
         private IEnumerator LaunchToTarget()
         {
-            yield return StartCoroutine(FindAllPlanetsToAttack());
+            yield return _coroutineRunner.StartCoroutine(FindAllPlanetsToAttack());
             foreach (Base planet in _planetsForLaunch)
             {
                 if((int)planet.Team==Core.Own)
@@ -75,95 +66,12 @@ namespace AI
 
         }
 
-        private int FindTargetTeam()
-        {
-            int enemyCount = _allPlanets[Core.Enemy].Count;
-            int neutralCount = _allPlanets[Core.Neutral].Count;
-            int hundredPercent = enemyCount + neutralCount;
-            int randomType = Random.Range(1, hundredPercent + 1);
-            
-            if (enemyCount <= 2 && neutralCount != 0)
-                return Core.Neutral;
-            
-            return (randomType <= enemyCount) ? Core.Enemy : Core.Neutral;
-        }
-
-        private bool ApplyDecision(float probability)
-        {
-            int result = Random.Range(1, 101);
-            return result <= probability;
-        }
-        
-        private IEnumerator FindTarget()
-        {
-            int teamForAttack = FindTargetTeam();
-            yield return null;
-            
-            float minDistance = float.PositiveInfinity;
-
-            foreach (Base possibleTarget in _allPlanets[teamForAttack])
-            {
-                float distance = Vector3.Distance(_mainPos, possibleTarget.transform.position);
-                if (distance < minDistance)
-                {
-                    minDistance = distance;
-                    _target = possibleTarget;
-                }
-
-                yield return null;
-            }
-
-            TryToAcid();
-
-            yield return null;
-        }
-
-        private void TryToAcid()
-        {
-            if (_isCastedSkill) 
-                return;
-            
-            bool isApplied = ApplyDecision(acidProbability);
-
-            if (isApplied)
-            {
-                _skillController.AttackByAcid(_target);
-                _isCastedSkill = true;
-            }
-        }
-        
-        private void TryToCall()
-        {
-            if (_isCastedSkill) 
-                return;
-            
-            bool isApplied = ApplyDecision(callProbability);
-            if (isApplied)
-            {
-                var randomIndex = Random.Range(0, _allPlanets[Core.Own].Count);
-                _target = _allPlanets[Core.Own][randomIndex];
-                _skillController.Call(_target);
-                _isCastedSkill = true;
-            }
-        }
-
-        private void TryToBuff()
-        {
-            if (_isCastedSkill)
-                return;
-            
-            bool isApplied = ApplyDecision(buffProbability);
-            if (isApplied)
-            {
-                int randomIndex = Random.Range(0, _planetsForLaunch.Count);
-                _skillController.BuffPlanet(_planetsForLaunch[randomIndex]);
-                _isCastedSkill = true;
-            }
-        }
-        
         private IEnumerator FindAllPlanetsToAttack()
         {
-            yield return StartCoroutine(FindTarget());
+            yield return _coroutineRunner.StartCoroutine(FindTarget());
+            
+            TryToAcid();
+            yield return null;
             
             Vector3 launchPos = _target.transform.position;
             List<KeyValuePair<Base, float>> dataForLaunch = new List<KeyValuePair<Base, float>>();
@@ -195,10 +103,96 @@ namespace AI
             TryToBuff();
 
             if (_isCastedSkill)
-            {
                 yield return new WaitForSeconds(DelayAfterCasting);
+        }
+
+        private IEnumerator FindTarget()
+        {
+            int teamForAttack = FindTargetTeam();
+            yield return null;
+            
+            float minDistance = float.PositiveInfinity;
+
+            foreach (Base possibleTarget in _allPlanets[teamForAttack])
+            {
+                float distance = Vector3.Distance(_mainPos, possibleTarget.transform.position);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    _target = possibleTarget;
+                }
+
+                yield return null;
             }
         }
 
+        private int FindTargetTeam()
+        {
+            int enemyCount = _allPlanets[Core.Enemy].Count;
+            int neutralCount = _allPlanets[Core.Neutral].Count;
+            int hundredPercent = enemyCount + neutralCount;
+            int randomType = Random.Range(1, hundredPercent + 1);
+            
+            if (enemyCount <= 2 && neutralCount != 0)
+                return Core.Neutral;
+            
+            return (randomType <= enemyCount) ? Core.Enemy : Core.Neutral;
+        }
+
+        private void TryToAcid()
+        {
+            Debug.Log("Try to acid");
+            if (_isCastedSkill) 
+                return;
+            
+            bool isApplied = ApplyDecision(AcidProbability, _skillController.Acid.Cost);
+            Debug.Log($"Is acid applied? {isApplied}");
+
+            if (isApplied)
+            {
+                _skillController.AttackByAcid(_target);
+                _isCastedSkill = true;
+            }
+        }
+
+        private void TryToCall()
+        {
+            Debug.Log("Try to call");
+            if (_isCastedSkill) 
+                return;
+
+            bool isApplied = ApplyDecision(CallProbability, _skillController.Call.Cost);
+            Debug.Log($"Is call applied? {isApplied}");
+            if (isApplied)
+            {
+                int randomIndex = Random.Range(0, _allPlanets[Core.Own].Count);
+                _target = _allPlanets[Core.Own][randomIndex];
+                _skillController.CallSupply(_target);
+                _isCastedSkill = true;
+            }
+        }
+
+        private void TryToBuff()
+        {
+            Debug.Log("Try to buff");
+            if (_isCastedSkill)
+                return;
+
+            bool isApplied = ApplyDecision(BuffProbability, _skillController.Buff.Cost);
+            Debug.Log($"Is buff applied? {isApplied}");
+
+            if (isApplied)
+            {
+                int randomIndex = Random.Range(0, _planetsForLaunch.Count);
+                _skillController.BuffPlanet(_planetsForLaunch[randomIndex]);
+                _isCastedSkill = true;
+            }
+        }
+
+        private static bool ApplyDecision(float probability, float skillCost)
+        {
+            int result = Random.Range(1, 101);
+            return result <= probability; // && skillCost <= Core.ScientificCount; //makes the AI more pressing
+        }
     }
 }

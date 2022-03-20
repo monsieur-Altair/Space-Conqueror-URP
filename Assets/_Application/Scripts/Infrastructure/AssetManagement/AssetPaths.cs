@@ -3,7 +3,6 @@
     public static class AssetPaths
     {
         public const string PoolPath = "Managers/Object Pool";
-        public const string AIPath = "Managers/AI";
         public const string UserControlPath = "Managers/User Control";
         public const string MainManagerPath = "Managers/Main Manager";
         public const string Warehouse = "Managers/Warehouse";

@@ -1,5 +1,4 @@
-﻿using _Application.Scripts.Infrastructure.Services;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace _Application.Scripts.Control
 {
@@ -9,11 +8,11 @@ namespace _Application.Scripts.Control
 
         private IInputService _inputService;
 
-        public void Awake()
+        public void Init(PlanetController planetController ,SkillController skillController)
         {
             //_inputService = Game.InputService;
             //_inputService.Init(new PlanetController(Camera.main), GetComponent<SkillController>());
-            _inputService = RegisterInputService();
+            _inputService = RegisterInputService(planetController ,skillController);
             //_inputService = AllServices.Instance.Single<IInputService>();
         }
 
@@ -25,26 +24,23 @@ namespace _Application.Scripts.Control
             _inputService.HandleInput();
         }
 
-        public void Disable()
-        {
+        public void Disable() => 
             _isActive = false;
-            _inputService.Disable();
-        }
-        
+
         public void Enable()
         {
             _isActive = true;
-            _inputService.Enable();
+            _inputService.Refresh();
         }
 
-        private IInputService RegisterInputService()
+        private static IInputService RegisterInputService(PlanetController planetController ,SkillController skillController)
         {
             IInputService service;
             if (Application.isEditor)
                 service = new StandaloneInput();
             else
                 service = new MobileInput();
-            service.Init(new PlanetController(Camera.main),GetComponent<SkillController>());
+            service.Init(planetController, skillController);
             return service;
         }
     }

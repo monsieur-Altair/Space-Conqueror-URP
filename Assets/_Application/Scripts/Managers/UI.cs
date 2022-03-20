@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using _Application.Scripts.Misc;
 using TMPro;
 using UnityEngine;
@@ -9,11 +10,10 @@ namespace _Application.Scripts.Managers
 {
     public class UI
     {
-       // public static UI Instance { get; private set; }
-        
         private readonly Canvas _canvas;
         private readonly ObjectPool _pool;
         private readonly Warehouse _warehouse;
+        private readonly Control.SkillController _skillController;
 
         private readonly List<Color> _counterBackground;
         private readonly List<Color> _counterForeground;
@@ -28,14 +28,22 @@ namespace _Application.Scripts.Managers
         private GameObject _scientificBar;
         private GameObject _teamBar;
         
-        private readonly Vector3 _offset = new Vector3(0, -35, 0);
+        private List<Button> _skillButtons;
 
-        public UI(Canvas canvas, ObjectPool pool, Warehouse warehouse)
+        private readonly Vector3 _offset = new Vector3(0, -35, 0);
+        private bool _isSkillButtonsActive;
+
+        private const int BuffIndex = 0;
+        private const int AcidIndex = 1;
+        private const int IceIndex = 2;
+        private const int CallIndex = 3;
+
+        public UI(Canvas canvas, ObjectPool pool, Warehouse warehouse, Control.SkillController skillController)
         {
             _canvas = canvas;
             _pool = pool;
             _warehouse = warehouse;
-
+            _skillController = skillController;
             _counterBackground = _warehouse.counterBackground;
             _counterForeground = _warehouse.counterForeground;
         }
@@ -46,14 +54,23 @@ namespace _Application.Scripts.Managers
             _allPlanets = new List<Planets.Base>(Main.Instance.AllPlanets);
             FillLists();
         }
+
+        public void EnableSkillUI() => 
+            _isSkillButtonsActive = true;
+
+        public void DisableSkillUI() => 
+            _isSkillButtonsActive = false;
+
         
-        public void SetButtons(GameObject retryButton, GameObject nextLevelButton)
+        public void SetButtons(List<Button> skillButtons, GameObject retryButton, GameObject nextLevelButton)
         {
             _retryLevelButton = retryButton;
             _nextLevelButton = nextLevelButton;
 
             _retryLevelButton.SetActive(false);
             _nextLevelButton.SetActive(false);
+
+            _skillButtons = skillButtons;
         }
 
         public void SetUIBehaviours(TeamManager teamManager ,UnityAction retryLevelBehaviour, UnityAction loadNextLevelBehaviour)
@@ -61,6 +78,8 @@ namespace _Application.Scripts.Managers
             _retryLevelButton.GetComponent<Button>().onClick.AddListener(retryLevelBehaviour);
             _nextLevelButton.GetComponent<Button>().onClick.AddListener(loadNextLevelBehaviour);
 
+            AdjustSkillButtons();
+            
             teamManager.TeamCountUpdated += _teamBar.GetComponent<TeamProgressBar>().FillTeamCount;
             Planets.Scientific.ScientificCountUpdated += _scientificBar.GetComponent<ScientificBar>().FillScientificCount;
         }
@@ -99,6 +118,41 @@ namespace _Application.Scripts.Managers
             _teamBar.SetActive(false);
         }
 
+        private void AdjustSkillButtons()
+        {
+            foreach (Button button in _skillButtons) 
+                button.onClick.AddListener(() => { PressHandler(button); });
+
+            _skillController.Acid.CanceledSkill += ()=> UnblockButton(_skillButtons[AcidIndex]);
+            _skillController.Buff.CanceledSkill += ()=> UnblockButton(_skillButtons[BuffIndex]);
+            _skillController.Call.CanceledSkill += ()=> UnblockButton(_skillButtons[CallIndex]);
+            _skillController.Ice.CanceledSkill += ()=> UnblockButton(_skillButtons[IceIndex]);
+        }
+
+        private void PressHandler(Button button)
+        {
+            if(!_isSkillButtonsActive) 
+                return;
+            
+            if (_skillController.IsSkillNotSelected)
+            {
+                int index = _skillButtons.IndexOf(button);
+                BlockButton(button);
+                GlobalObject.Instance.StartCoroutine((SwitchWithWaiting(index)));
+            }
+            else
+            {
+                _skillController.ClearSelectedSkill();
+                UnblockButton(button);
+            }
+        }
+
+        private IEnumerator SwitchWithWaiting(int index)
+        {
+            //if not use waiting, touch "handle release" will be worked immediately
+            yield return new WaitForSeconds(0.1f);//0.1s is finger lift time
+            _skillController.SetSelectedSkill(index);
+        }
 
         private void ClearList()
         {
@@ -140,7 +194,7 @@ namespace _Application.Scripts.Managers
         private GameObject SpawnCounterTo(Planets.Base planet)
         {
             Vector3 counterPos = GetCounterPos(planet);
-            GameObject counter = _pool.GetObject(ObjectPool.PoolObjectType.Counter, counterPos, Quaternion.identity);
+            GameObject counter = _pool.GetObject(PoolObjectType.Counter, counterPos, Quaternion.identity);
             counter.transform.SetParent(_canvas.transform);
             _countersList.Add(counter);
             return counter;
@@ -165,6 +219,18 @@ namespace _Application.Scripts.Managers
         {
             int index = planet.ID.GetHashCode();
             _foregrounds[index].text = value.ToString();
+        }
+        
+        private static void BlockButton(Button button)
+        {
+            button.image.color = Color.red;
+            button.enabled = false;
+        }
+
+        private static void UnblockButton(Button button)
+        {
+            button.enabled = true;
+            button.image.color = Color.white;
         }
 
     }

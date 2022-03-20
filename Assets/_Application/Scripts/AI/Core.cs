@@ -1,95 +1,76 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using _Application.Scripts.Planets;
+using _Application.Scripts.Infrastructure;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 
-namespace AI
+namespace _Application.Scripts.AI
 { 
-    public class Core : MonoBehaviour
+    public class Core
     {
         public static float ScientificCount;
-        public Vector3 MainPos { get; private set; }
-        public List<List<Base>> AllPlanets { get; private set; }
-        public static int Own, Enemy, Neutral;
-        public static Core Instance { get; private set; }
+        
+        public const int Own = (int) Planets.Team.Red;
+        public const int Enemy = (int) Planets.Team.Blue;
+        public const int Neutral = (int) Planets.Team.White;
 
-        [SerializeField] private GameObject allActions;
+        private readonly List<List<Planets.Base>> _allPlanets;
+        private readonly IAction _attackByRocket;
+        private readonly ICoroutineRunner _coroutineRunner;
 
-        private Base _mainPlanet;
-        private bool _isActive;
-        private IAction _attackByRocket;
         private const float MinDelay = 4.0f;
         private const float MaxDelay = 7.0f;
 
         
-        public void Awake()
+        public Core(ICoroutineRunner coroutineRunner, SkillController skillController)
         {
-            if (Instance == null)
-                Instance = this;
+            _coroutineRunner = coroutineRunner;
+            _allPlanets = new List<List<Planets.Base>>();
+            _attackByRocket = new AttackSomePlanet(_coroutineRunner, skillController);
             
-            AllPlanets = new List<List<Base>>();
-
-            Own = (int) Team.Red;
-            Enemy = (int) Team.Blue;
-            Neutral = (int) Team.White;
-
-            Base.Conquered += AdjustPlanetsList;
+            Planets.Base.Conquered += AdjustPlanetsList;
         }
 
-        public void Init(List<Base> planets)
+        public void Init(List<Planets.Base> planets)
         {
-            AllPlanets.Clear();
+            _allPlanets.Clear();
             
             for (int i = 0; i < 3; i++)
-                AllPlanets.Add(new List<Base>());
+                _allPlanets.Add(new List<Planets.Base>());
+            
+            foreach (Planets.Base planet in planets) 
+                _allPlanets[(int) planet.Team].Add(planet);
 
+            Planets.Base mainPlanet = _allPlanets[Own][0];
+            Vector3 mainPos = mainPlanet.transform.position;
 
-            foreach (Base planet in planets)
-            {
-                AllPlanets[(int)planet.Team].Add(planet);
-            }
+            _attackByRocket.InitAction(_allPlanets, mainPos);
 
-            _mainPlanet = AllPlanets[Own][0];
-            MainPos = _mainPlanet.transform.position;
-
-            _attackByRocket = allActions.GetComponent<AttackSomePlanet>();
-            _attackByRocket.InitAction();
-            if (_attackByRocket==null)
-            {
-                throw new MyException("attack by rocket = null");
-            }
-
-            ScientificCount = 0.0f;/////////////////////////////////////////////
+            ScientificCount = 0.0f;
         }
         
-        public void Enable()
-        {
-            _isActive = true;
-            StartCoroutine(DoSomeAction());
-        }
+        public void Enable() => 
+            _coroutineRunner.StartCoroutine(DoSomeAction());
 
-        public void Disable()
-        {
-            _isActive = false;
-        }
+        public void Disable() => 
+            _coroutineRunner.StopCoroutine(DoSomeAction());
 
         private IEnumerator DoSomeAction()
         {
-            while (_isActive)
+            while (true)
             {
                 float delay = Random.Range(MinDelay, MaxDelay);
+                Debug.LogError($"AI thinks {delay} seconds...");
                 yield return new WaitForSeconds(delay);
-                if(_isActive)
-                    _attackByRocket.Execute();
+                _attackByRocket.Execute();
             }
         }
 
-        private void AdjustPlanetsList(Base planet, Team oldTeam, Team newTeam)
+        private void AdjustPlanetsList(Planets.Base planet, Planets.Team oldTeam, Planets.Team newTeam)
         {
-            AllPlanets[(int) oldTeam].Remove(planet);
-            AllPlanets[(int) newTeam].Add(planet);
+            _allPlanets[(int) oldTeam].Remove(planet);
+            _allPlanets[(int) newTeam].Add(planet);
         }
     }
     

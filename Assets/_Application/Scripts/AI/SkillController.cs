@@ -1,64 +1,55 @@
 ﻿using _Application.Scripts.Infrastructure.AssetManagement;
 using _Application.Scripts.Infrastructure.Factory;
-using _Application.Scripts.Infrastructure.Services;
+using _Application.Scripts.Managers;
 using _Application.Scripts.Planets;
 using _Application.Scripts.Skills;
 using UnityEngine;
 using Base = _Application.Scripts.Planets.Base;
 
-namespace AI
+namespace _Application.Scripts.AI
 {
-    public class SkillController : MonoBehaviour
+    public class SkillController
     {
-        private Call _call;
-        private Buff _buff;
-        private Acid _acid;
-        private Ice _ice;
+        public Call Call { get; }
+        public Buff Buff { get; }
+        public Acid Acid { get; }
+        
+        private readonly ObjectPool _objectPool;
 
-        public void InitSkills()
+        public SkillController(IGameFactory gameFactory, ObjectPool objectPool)
         {
-            //_call = aiSkills.GetComponent<Call>();
-            IGameFactory gameFactory = AllServices.Instance.GetSingle<IGameFactory>();
+            _objectPool = objectPool;
             
-            _call = new Call();
-            _call.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AICallResourcePath));
-            _call.SetTeamConstraint(Team.Red);
-            _call.SetDecreasingFunction(DecreaseAISciCounter);
+            Call = new Call();
+            Call.NeedObjectFromPool += SpawnUnit;
+            Call.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AICallResourcePath));
+            Call.SetTeamConstraint(Team.Red);
+            Call.SetDecreasingFunction(DecreaseAISciCounter);
 
-            _buff = new Buff();
-            _buff.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AIBuffResourcePath));
-            _buff.SetTeamConstraint(Team.Red);
-            _buff.SetDecreasingFunction(DecreaseAISciCounter);
+            Buff = new Buff();
+            Buff.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AIBuffResourcePath));
+            Buff.SetTeamConstraint(Team.Red);
+            Buff.SetDecreasingFunction(DecreaseAISciCounter);
 
-            _acid = new Acid();
-            _acid.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AIAcidResourcePath));
-            _acid.SetTeamConstraint(Team.Red);
-            _acid.SetDecreasingFunction(DecreaseAISciCounter);
-
-            _ice = new Ice();
-            _ice.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AIIceResourcePath));
-
-        }
-
-        private static void DecreaseAISciCounter(float value)
-        {
-            AI.Core.ScientificCount -= value;
-        }
-
-        public void AttackByAcid(Base target)
-        {
-            _acid.ExecuteForAI(target);
-        }
-
-        public void BuffPlanet(Base target)
-        {
-            _buff.ExecuteForAI(target);
+            Acid = new Acid();
+            Acid.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AIAcidResourcePath));
+            Acid.SetTeamConstraint(Team.Red);
+            Acid.SetDecreasingFunction(DecreaseAISciCounter);
         }
         
-        
-        public void Call(Base target)
-        {
-            _call.ExecuteForAI(target);
-        }
+        private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
+            _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.Base>();
+
+        private static void DecreaseAISciCounter(float value) => 
+            Core.ScientificCount -= value;
+
+        public void AttackByAcid(Base target) => 
+            Acid.ExecuteForAI(target);
+
+        public void BuffPlanet(Base target) => 
+            Buff.ExecuteForAI(target);
+
+        public void CallSupply(Base target) => 
+            Call.ExecuteForAI(target);
     }   
 }

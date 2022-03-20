@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using _Application.Scripts.Infrastructure.Factory;
-using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Managers;
 using _Application.Scripts.Misc;
 using _Application.Scripts.Scriptables;
@@ -15,7 +14,7 @@ namespace _Application.Scripts.Skills
         private Coroutine _displayingIndicatorCor;
         private Units.Base _sentUnit;
         private float _callPercent;
-
+        
         protected override void LoadResources(IGameFactory gameFactory, Skill resource)
         {
             base.LoadResources(gameFactory, resource);
@@ -55,12 +54,9 @@ namespace _Application.Scripts.Skills
             Vector3 launchPos = CameraResolution.FindSpawnPoint(SelectedPlanet);
             Vector3 destPos = CalculateDestPos(launchPos, SelectedPlanet);
             
-            ObjectPool.PoolObjectType poolObjectType = (ObjectPool.PoolObjectType) ((int) SelectedPlanet.Type);
+            PoolObjectType poolObjectType = (PoolObjectType) ((int) SelectedPlanet.Type);
             
-            _sentUnit = ObjectPool.GetObject(poolObjectType,
-                    launchPos,
-                    Quaternion.LookRotation(destPos - launchPos))
-                .GetComponent<Units.Base>();
+            _sentUnit = OnNeedObjectFromPool(poolObjectType,launchPos, Quaternion.LookRotation(destPos - launchPos));
             
             SelectedPlanet.AdjustUnit(_sentUnit, _callPercent / 100.0f);
             _sentUnit.GoTo(SelectedPlanet, destPos);

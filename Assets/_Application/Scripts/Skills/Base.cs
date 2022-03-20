@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using _Application.Scripts.Infrastructure;
 using _Application.Scripts.Infrastructure.Factory;
 using _Application.Scripts.Managers;
-using _Application.Scripts.Misc;
 using UnityEngine;
 
 namespace _Application.Scripts.Skills
@@ -12,31 +9,30 @@ namespace _Application.Scripts.Skills
     public abstract class Base : ISkill
     {
         public event Action CanceledSkill;
+        public event Func<PoolObjectType, Vector3, Quaternion, Units.Base> NeedObjectFromPool;
         public delegate void DecreasingCounter(float count);
         
         protected abstract void CancelSkill();
         protected abstract void ApplySkill();
         
         protected Camera MainCamera;
-        protected ObjectPool ObjectPool;
         protected Planets.Base SelectedPlanet;
         
         protected float Cooldown;
-        protected int Cost;
         protected bool IsOnCooldown;
         protected bool IsForAI;
         protected Planets.Team TeamConstraint;
         protected ICoroutineRunner CoroutineRunner;
         protected delegate void UniqueActionToPlanet();
-
+        
         private DecreasingCounter _decreaseCounter;
 
+        public int Cost { get; private set; }
         protected Vector3 SelectedScreenPos { get; private set; }
 
         public void Construct(IGameFactory gameFactory, Scriptables.Skill resource)
         {
             MainCamera=Camera.main;
-            ObjectPool = ObjectPool.Instance;
             CoroutineRunner = GlobalObject.Instance;
             
             LoadResources(gameFactory, resource);
@@ -103,5 +99,8 @@ namespace _Application.Scripts.Skills
             if(!IsOnCooldown)
                 CanceledSkill?.Invoke();
         }
+
+        protected Units.Base OnNeedObjectFromPool(PoolObjectType type, Vector3 pos, Quaternion rotation) => 
+            NeedObjectFromPool?.Invoke(type, pos, rotation);
     }
 }

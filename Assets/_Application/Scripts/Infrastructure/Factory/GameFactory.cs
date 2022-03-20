@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using _Application.Scripts.Control;
 using _Application.Scripts.Infrastructure.AssetManagement;
 using _Application.Scripts.Managers;
 using UnityEngine;
@@ -19,27 +18,18 @@ namespace _Application.Scripts.Infrastructure.Factory
         {
             _canvas = GameObject.FindGameObjectWithTag("CanvasTag").GetComponent<Canvas>();
             
-            List<Button> skillButtons = CreateSkillButtons();
-            GameObject retryButton = CreateRetryButton();
-            GameObject nextLevelButton = CreateNextLevelButton();
-            GameObject scientificBar = CreateScientificBar();
-            GameObject teamBar = CreateTeamBar();
-
             Warehouse warehouse = _assetProvider.Instantiate<Warehouse>(AssetPaths.Warehouse);
             ObjectPool pool = _assetProvider.Instantiate<ObjectPool>(AssetPaths.PoolPath);
-            GameObject aiManager = _assetProvider.Instantiate(AssetPaths.AIPath);
+
+            AI.SkillController aiSkillController = new AI.SkillController(this, pool);
+            AI.Core aiManager = new AI.Core(GlobalObject.Instance, aiSkillController);
             
-            UI uiManager = new UI(_canvas,pool,warehouse);
             Outlook outlookManager = new Outlook(warehouse);
-            uiManager.SetButtons(retryButton, nextLevelButton);
-            uiManager.SetBars(scientificBar, teamBar);
-            
-            UserControl userControl = _assetProvider.Instantiate<UserControl>(AssetPaths.UserControlPath);
-            SkillController skillController = userControl.GetComponent<SkillController>();
-            skillController.AdjustSkillButtons(skillButtons);
+            Control.UserControl userControl = CreateUserControl(pool, out var playerSkillController);
+            UI uiManager = CreateUI(pool, warehouse, playerSkillController);
 
             Main mainManager = _assetProvider.Instantiate<Main>(AssetPaths.MainManagerPath);
-            mainManager.Construct(outlookManager, uiManager, userControl);
+            mainManager.Construct(aiManager, pool ,outlookManager, uiManager, userControl);
             mainManager.StartGame();
         }
 
@@ -55,17 +45,22 @@ namespace _Application.Scripts.Infrastructure.Factory
         public Scriptables.Skill CreateSkillResource(string path) => 
             _assetProvider.InstantiateScriptable<Scriptables.Skill>(path);
 
-        private GameObject CreateScientificBar() => 
-            _assetProvider.InstantiateUI(AssetPaths.ScientificBarPath, _canvas);
+        private UI CreateUI(ObjectPool pool, Warehouse warehouse, Control.SkillController skillController)
+        {
+            UI uiManager = new UI(_canvas, pool, warehouse, skillController);
+            uiManager.SetButtons( CreateSkillButtons(),CreateRetryButton(), CreateNextLevelButton());
+            uiManager.SetBars(CreateScientificBar(), CreateTeamBar());
+            return uiManager;
+        }
 
-        private GameObject CreateTeamBar() => 
-            _assetProvider.InstantiateUI(AssetPaths.TeamBarPath, _canvas);
-
-        private GameObject CreateNextLevelButton() => 
-            _assetProvider.InstantiateUI(AssetPaths.NextLevelButtonsPath, _canvas);
-
-        private GameObject CreateRetryButton() => 
-            _assetProvider.InstantiateUI(AssetPaths.RetryButtonsPath, _canvas);
+        private Control.UserControl CreateUserControl(ObjectPool pool, out Control.SkillController skillController)
+        {
+            Control.UserControl userControl = _assetProvider.Instantiate<Control.UserControl>(AssetPaths.UserControlPath);
+            skillController = new Control.SkillController(this, pool);
+            Control.PlanetController planetController = new Control.PlanetController(Camera.main);
+            userControl.Init(planetController, skillController);
+            return userControl;
+        }
 
         private List<Button> CreateSkillButtons()
         {
@@ -83,5 +78,17 @@ namespace _Application.Scripts.Infrastructure.Factory
 
             return buttons;
         }
+
+        private GameObject CreateScientificBar() => 
+            _assetProvider.InstantiateUI(AssetPaths.ScientificBarPath, _canvas);
+
+        private GameObject CreateTeamBar() => 
+            _assetProvider.InstantiateUI(AssetPaths.TeamBarPath, _canvas);
+
+        private GameObject CreateNextLevelButton() => 
+            _assetProvider.InstantiateUI(AssetPaths.NextLevelButtonsPath, _canvas);
+
+        private GameObject CreateRetryButton() => 
+            _assetProvider.InstantiateUI(AssetPaths.RetryButtonsPath, _canvas);
     }
 }

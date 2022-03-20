@@ -10,7 +10,7 @@ namespace _Application.Scripts.Infrastructure.AssetManagement
             return Object.Instantiate(prefab);
         }
 
-        public T Instantiate<T>(string path) => 
+        public T Instantiate<T>(string path) =>
             Instantiate(path).GetComponent<T>();
 
         public T InstantiateScriptable<T>(string path) where T : ScriptableObject =>
@@ -22,7 +22,7 @@ namespace _Application.Scripts.Infrastructure.AssetManagement
             return Object.Instantiate(prefab, canvas.transform);
         }
 
-        public T InstantiateUI<T>(string path, Canvas canvas) => 
-            InstantiateUI(path,canvas).GetComponent<T>();
+        public T InstantiateUI<T>(string path, Canvas canvas) =>
+            InstantiateUI(path, canvas).GetComponent<T>();
     }
 }

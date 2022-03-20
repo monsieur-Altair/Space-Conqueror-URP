@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d3e5c684b3d47218485125b9be09133, type: 3}
   m_Name: Acid
   m_EditorClassIdentifier: 
-  cooldown: 12
+  cooldown: 10
   cost: 15
   duration: 4
   damage: 35

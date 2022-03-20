@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8089378677498342062}
   - component: {fileID: 8089378677498342063}
-  - component: {fileID: 8089378677498342096}
   m_Layer: 0
   m_Name: User Control
   m_TagString: Untagged
@@ -42,17 +41,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e877f09be83740f0a7e3d4ab6ce001d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &8089378677498342096
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8089378677498342098}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28aa5fbf3c7640388618e4e0dcf5bd9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

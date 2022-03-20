@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using _Application.Scripts.Infrastructure.AssetManagement;
 using _Application.Scripts.Infrastructure.Factory;
-using _Application.Scripts.Infrastructure.Services;
+using _Application.Scripts.Managers;
 using UnityEngine;
-using Button = UnityEngine.UI.Button;
 
 namespace _Application.Scripts.Control
 {
@@ -17,66 +14,49 @@ namespace _Application.Scripts.Control
         Call,
         None
     }
-    public class SkillController : MonoBehaviour
+    public class SkillController
     {
-        private const int Buff = 0;
-        private const int Acid = 1;
-        private const int Ice = 2;
-        private const int Call = 3;
+        public Skills.Call Call { get; }
+        public Skills.Buff Buff { get; }
+        public Skills.Acid Acid { get; }
+        public Skills.Ice Ice { get; }
         
-        private List<Button> _buttons;
-        private bool _isActive;
+        private readonly ObjectPool _objectPool;
 
-        private static SkillController _instance;
-
-        private Skills.Call _call;
-        private Skills.Buff _buff;
-        private Skills.Acid _acid;
-        private Skills.Ice _ice;
-
-
+        public bool IsSkillNotSelected => 
+            SelectedSkillName == SkillName.None;
+        
         public SkillName SelectedSkillName { get; private set; }
 
-        public void Awake()
+        public SkillController(IGameFactory gameFactory, ObjectPool objectPool)
         {
-            if (_instance == null)
-                _instance = this;
-            
-            SelectedSkillName = SkillName.None;
-            
-            IGameFactory gameFactory = AllServices.Instance.GetSingle<IGameFactory>();
-            
-            _call = new Skills.Call();
-            _call.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.CallResourcePath));
-            _call.SetTeamConstraint(Planets.Team.Blue);
-            _call.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
+            ClearSelectedSkill();
 
-            _buff = new Skills.Buff();
-            _buff.Construct(gameFactory,gameFactory.CreateSkillResource(AssetPaths.BuffResourcePath));
-            _buff.SetTeamConstraint(Planets.Team.Blue);
-            _buff.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
+            _objectPool = objectPool;
+            
+            Call = new Skills.Call();
+            Call.NeedObjectFromPool += SpawnUnit;
+            Call.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.CallResourcePath));
+            Call.SetTeamConstraint(Planets.Team.Blue);
+            Call.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
 
-            _acid = new Skills.Acid();
-            _acid.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AcidResourcePath));
-            _acid.SetTeamConstraint(Planets.Team.Blue);
-            _acid.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
+            Buff = new Skills.Buff();
+            Buff.Construct(gameFactory,gameFactory.CreateSkillResource(AssetPaths.BuffResourcePath));
+            Buff.SetTeamConstraint(Planets.Team.Blue);
+            Buff.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
 
-            _ice = new Skills.Ice();
-            _ice.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.IceResourcePath));
+            Acid = new Skills.Acid();
+            Acid.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AcidResourcePath));
+            Acid.SetTeamConstraint(Planets.Team.Blue);
+            Acid.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
+
+            Ice = new Skills.Ice();
+            Ice.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.IceResourcePath));
         }
         
-        public void AdjustSkillButtons(List<Button> createdButtons)
-        {
-            _buttons = createdButtons;
-            foreach (Button button in _buttons) 
-                button.onClick.AddListener(() => { PressHandler(button); });
-            
-            _buff.CanceledSkill += ()=> UnblockButton(_buttons[Buff]);
-            _acid.CanceledSkill += ()=> UnblockButton(_buttons[Acid]);
-            _ice.CanceledSkill += ()=> UnblockButton(_buttons[Ice]);
-            _call.CanceledSkill += ()=> UnblockButton(_buttons[Call]);
-        }
-        
+        private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
+            _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.Base>();
+
         public void ApplySkill(Vector3 position)
         {
             if (SelectedSkillName!=SkillName.None)
@@ -87,66 +67,31 @@ namespace _Application.Scripts.Control
             }
         }
 
-        public void Disable() => 
-            _isActive = false;
-
-        public void Enable()
+        public void RefreshSkills()
         {
-            _isActive = true;
-            _acid.Refresh();
-            _buff.Refresh();
-            _call.Refresh();
-            _ice.Refresh();
+            Acid.Refresh();
+            Buff.Refresh();
+            Call.Refresh();
+            Ice.Refresh();
         }
 
-        private void PressHandler(Button button)
-        {
-            if(!_isActive) 
-                return;
-            
-            if (SelectedSkillName == SkillName.None)
-            {
-                int index = _buttons.IndexOf(button);
-                BlockButton(button);
-                StartCoroutine((SwitchWithWaiting(index)));
-            }
-            else
-            {
-                SelectedSkillName = SkillName.None;
-                UnblockButton(button);
-            }
-        }
+        public void SetSelectedSkill(int index) =>
+            SelectedSkillName = (SkillName) index;
+
+        public void ClearSelectedSkill() =>
+            SelectedSkillName = SkillName.None;
 
         private Skills.ISkill ChooseSkill()
         {
             return SelectedSkillName switch
             {
-                SkillName.Buff => _buff,
-                SkillName.Acid => _acid,
-                SkillName.Ice  => _ice,
-                SkillName.Call => _call,
+                SkillName.Buff => Buff,
+                SkillName.Acid => Acid,
+                SkillName.Ice  => Ice,
+                SkillName.Call => Call,
                 SkillName.None => null,
                 _ => throw new ArgumentOutOfRangeException()
             };
-        }
-
-        private IEnumerator SwitchWithWaiting(int index)
-        {
-            //if not use waiting, touch "handle release" will be worked immediately
-            yield return new WaitForSeconds(0.1f);//0.1s is finger lift time
-            SelectedSkillName = (SkillName)index;
-        }
-
-        private static void BlockButton(Button button)
-        {
-            button.image.color = Color.red;
-            button.enabled = false;
-        }
-
-        private static void UnblockButton(Button button)
-        {
-            button.enabled = true;
-            button.image.color = Color.white;
         }
     }
 }
