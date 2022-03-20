@@ -52,7 +52,7 @@ namespace _Application.Scripts.Managers
 
         public void Destroy()
         {
-            _ui.RemoveBehaviours(_teamManager);
+            UI.RemoveBehaviours(_teamManager);
             _teamManager.GameEnded -= EndGame;
         }
         

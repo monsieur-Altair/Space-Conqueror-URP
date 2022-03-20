@@ -31,6 +31,8 @@ namespace _Application.Scripts.Managers
         private List<Button> _skillButtons;
 
         private readonly Vector3 _offset = new Vector3(0, -35, 0);
+        private readonly Vector3 _baseCounterScale = new Vector3(1, 1, 1);
+        
         private bool _isSkillButtonsActive;
 
         private const int BuffIndex = 0;
@@ -84,7 +86,7 @@ namespace _Application.Scripts.Managers
             Planets.Scientific.ScientificCountUpdated += _scientificBar.GetComponent<ScientificBar>().FillScientificCount;
         }
 
-        public void RemoveBehaviours(TeamManager teamManager)
+        public static void RemoveBehaviours(TeamManager teamManager)
         {
             Planets.Base.Conquered -= teamManager.UpdateObjectsCount;
             //_teamManager.TeamCountUpdated -= _teamBar.GetComponent<TeamProgressBar>().FillTeamCount;
@@ -196,6 +198,7 @@ namespace _Application.Scripts.Managers
             Vector3 counterPos = GetCounterPos(planet);
             GameObject counter = _pool.GetObject(PoolObjectType.Counter, counterPos, Quaternion.identity);
             counter.transform.SetParent(_canvas.transform);
+            counter.transform.localScale = _baseCounterScale;
             _countersList.Add(counter);
             return counter;
         }
