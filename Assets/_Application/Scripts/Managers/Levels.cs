@@ -8,11 +8,11 @@ namespace _Application.Scripts.Managers
     {
         [SerializeField] private NavMeshSurface navMeshSurfaceObj;
         [SerializeField] private GameObject[] levels;
-        
-        public int currentLevelNumber;
+
+        public int CurrentLevelNumber { get;  set; }
         public static Levels Instance { get; private set; }
-        
-        private readonly Vector3 _instantiatePos = new Vector3(0,0,0);
+
+        private readonly Vector3 _instantiatePos = new Vector3(0, 0, 0);
         private GameObject _currentLevel;
 
         public void Awake()
@@ -24,9 +24,7 @@ namespace _Application.Scripts.Managers
         public void SwitchToNextLevel()
         {
             StartCoroutine(DeleteAllLevel());
-            currentLevelNumber++;
-            if (currentLevelNumber == levels.Length)
-                currentLevelNumber = 0;
+            CurrentLevelNumber++;
         }
 
         public void RestartLevel()
@@ -40,8 +38,12 @@ namespace _Application.Scripts.Managers
 
         public IEnumerator InstantiateLevel()
         {
+            if (CurrentLevelNumber >= levels.Length)
+                CurrentLevelNumber = 0;
+            
             yield return StartCoroutine(DeleteAllLevel());
-            _currentLevel = Instantiate(levels[currentLevelNumber], _instantiatePos, Quaternion.identity);
+
+            _currentLevel = Instantiate(levels[CurrentLevelNumber], _instantiatePos, Quaternion.identity);
             _currentLevel.SetActive(true);
             navMeshSurfaceObj.BuildNavMesh();
             _currentLevel.gameObject.transform.SetParent(gameObject.transform.parent);
@@ -51,7 +53,6 @@ namespace _Application.Scripts.Managers
         {
             if(_currentLevel!=null)
                 Destroy(_currentLevel.gameObject);
-                //_currentLevel.gameObject.SetActive(false);
             yield break;
         }
     }

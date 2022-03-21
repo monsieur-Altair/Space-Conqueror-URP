@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using _Application.Scripts.Infrastructure.Factory;
 using _Application.Scripts.Infrastructure.Services;
+using _Application.Scripts.Infrastructure.Services.Factory;
+using _Application.Scripts.Infrastructure.Services.Progress;
 
 namespace _Application.Scripts.Infrastructure.States
 {
@@ -15,7 +16,8 @@ namespace _Application.Scripts.Infrastructure.States
             _states = new Dictionary<Type, IBaseState>()
             {
                 [typeof(BootstrapState)] = new BootstrapState(this, sceneLoader, allServices),
-                [typeof(LoadLevelState)] = new LoadLevelState(this, sceneLoader, allServices.GetSingle<IGameFactory>()),
+                [typeof(LoadLevelState)] = new LoadLevelState(this, sceneLoader, allServices.GetSingle<IGameFactory>(),allServices.GetSingle<IProgressService>()),
+                [typeof(ReadProgressState)] = new ReadProgressState(this, allServices.GetSingle<IProgressService>(), allServices.GetSingle<IReadWriterService>()),
                 [typeof(GameLoopState)] = new GameLoopState(this)
             };
         }

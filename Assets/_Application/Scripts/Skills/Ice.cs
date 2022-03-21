@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using _Application.Scripts.Control;
-using _Application.Scripts.Infrastructure.Factory;
+using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Scriptables;
 using UnityEngine;
 

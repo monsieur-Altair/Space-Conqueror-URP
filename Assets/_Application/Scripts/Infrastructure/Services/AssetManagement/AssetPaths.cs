@@ -1,4 +1,4 @@
-﻿namespace _Application.Scripts.Infrastructure.AssetManagement
+﻿namespace _Application.Scripts.Infrastructure.Services.AssetManagement
 {
     public static class AssetPaths
     {

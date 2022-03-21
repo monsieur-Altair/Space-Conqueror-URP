@@ -1,7 +1,8 @@
 ﻿using _Application.Scripts.Control;
-using _Application.Scripts.Infrastructure.AssetManagement;
-using _Application.Scripts.Infrastructure.Factory;
 using _Application.Scripts.Infrastructure.Services;
+using _Application.Scripts.Infrastructure.Services.AssetManagement;
+using _Application.Scripts.Infrastructure.Services.Factory;
+using _Application.Scripts.Infrastructure.Services.Progress;
 using UnityEngine;
 
 namespace _Application.Scripts.Infrastructure.States
@@ -25,8 +26,8 @@ namespace _Application.Scripts.Infrastructure.States
 
         public void Enter()
         {
-            //_sceneLoader.Load(Initial, onLoaded: EnterLoadLevel);
-            _sceneLoader.Load(StartUp);
+            _sceneLoader.Load(StartUp, onLoaded: ReadProgress);
+            //_sceneLoader.Load(StartUp);
         }
 
         public void Exit()
@@ -34,13 +35,17 @@ namespace _Application.Scripts.Infrastructure.States
             
         }
 
-        private void EnterLoadLevel() => 
-            _stateMachine.Enter<LoadLevelState, string>("Main");
+        private void ReadProgress() => 
+            _stateMachine.Enter<ReadProgressState>();
 
         private void RegisterServices()
         {
             _allServices.RegisterSingle<IAssetProvider>(new AssetProvider());
             _allServices.RegisterSingle<IGameFactory>(new GameFactory(_allServices.GetSingle<IAssetProvider>()));
+            _allServices.RegisterSingle<IProgressService>(new ProgressService());
+            _allServices.RegisterSingle<IReadWriterService>(new ReadWriterService(
+                _allServices.GetSingle<IProgressService>(), 
+                _allServices.GetSingle<IGameFactory>()));
             //register input service
         }
 

@@ -1,5 +1,5 @@
-﻿using _Application.Scripts.Infrastructure.AssetManagement;
-using _Application.Scripts.Infrastructure.Factory;
+﻿using _Application.Scripts.Infrastructure.Services.AssetManagement;
+using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Managers;
 using _Application.Scripts.Planets;
 using _Application.Scripts.Skills;

@@ -1,4 +1,6 @@
-﻿using _Application.Scripts.Infrastructure.Factory;
+﻿using _Application.Scripts.Infrastructure.Services.Factory;
+using _Application.Scripts.Infrastructure.Services.Progress;
+using _Application.Scripts.Managers;
 
 namespace _Application.Scripts.Infrastructure.States
 {
@@ -7,16 +9,20 @@ namespace _Application.Scripts.Infrastructure.States
         private readonly StateMachine _stateMachine;
         private readonly SceneLoader _sceneLoader;
         private readonly IGameFactory _gameFactory;
+        private readonly IProgressService _progressService;
         //private curtain prefab
-        public LoadLevelState(StateMachine stateMachine, SceneLoader sceneLoader, IGameFactory gameFactory)
+        public LoadLevelState(StateMachine stateMachine, SceneLoader sceneLoader, 
+            IGameFactory gameFactory, IProgressService progressService)
         {
             _stateMachine = stateMachine;
             _sceneLoader = sceneLoader;
             _gameFactory = gameFactory;
+            _progressService = progressService;
         }
         
         public void Enter(string payload)
         {
+            _gameFactory.CleanUp();
             _sceneLoader.Load(payload, onLoaded: OnLoaded);
             //show curtain
         }
@@ -28,10 +34,12 @@ namespace _Application.Scripts.Infrastructure.States
 
         private void OnLoaded()
         {
-            _gameFactory.CreateWorld();
+            Main mainManager = _gameFactory.CreateWorld();
 
-            //inst planets and ui   
-            //inject all dependencies in the scene
+            foreach (IProgressReader progressReader in _gameFactory.ProgressReaders)
+                progressReader.ReadProgress(_progressService.PlayerProgress);
+
+            mainManager.StartGame();
             _stateMachine.Enter<GameLoopState>();
         }
     }

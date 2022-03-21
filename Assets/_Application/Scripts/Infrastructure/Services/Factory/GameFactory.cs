@@ -1,20 +1,34 @@
 ﻿using System.Collections.Generic;
-using _Application.Scripts.Infrastructure.AssetManagement;
+using _Application.Scripts.Infrastructure.Services.AssetManagement;
+using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Managers;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace _Application.Scripts.Infrastructure.Factory
+namespace _Application.Scripts.Infrastructure.Services.Factory
 {
     public class GameFactory : IGameFactory
     {
+        public List<IProgressReader> ProgressReaders { get; } 
+        public List<IProgressWriter> ProgressWriters { get; }
+
         private readonly IAssetProvider _assetProvider;
         private Canvas _canvas;
 
-        public GameFactory(IAssetProvider assetProvider) => 
+        public GameFactory(IAssetProvider assetProvider)
+        {
+            ProgressReaders = new List<IProgressReader>();
+            ProgressWriters = new List<IProgressWriter>();
             _assetProvider = assetProvider;
+        }
 
-        public void CreateWorld()
+        public void CleanUp()
+        {
+            ProgressReaders.Clear();
+            ProgressWriters.Clear();
+        }
+
+        public Main CreateWorld()
         {
             _canvas = GameObject.FindGameObjectWithTag("CanvasTag").GetComponent<Canvas>();
             
@@ -36,9 +50,13 @@ namespace _Application.Scripts.Infrastructure.Factory
                 pool,
                 outlookManager, 
                 uiManager, 
-                userControl);
+                userControl,
+                AllServices.Instance.GetSingle<IReadWriterService>());
             
-            mainManager.StartGame();
+            ProgressReaders.Add(mainManager);
+            ProgressWriters.Add(mainManager);
+
+            return mainManager;
         }
 
         public GameObject CreateAcid() => 
@@ -56,7 +74,7 @@ namespace _Application.Scripts.Infrastructure.Factory
         private UI CreateUI(ObjectPool pool, Warehouse warehouse, Control.SkillController skillController)
         {
             UI uiManager = new UI(_canvas, pool, warehouse, skillController);
-            uiManager.SetButtons( CreateSkillButtons(),CreateRetryButton(), CreateNextLevelButton());
+            uiManager.SetButtons(CreateSkillButtons(),CreateRetryButton(), CreateNextLevelButton());
             uiManager.SetBars(CreateScientificBar(), CreateTeamBar());
             return uiManager;
         }

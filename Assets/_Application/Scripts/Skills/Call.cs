@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using _Application.Scripts.Infrastructure.Factory;
+using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Managers;
 using _Application.Scripts.Misc;
 using _Application.Scripts.Scriptables;

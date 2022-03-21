@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using _Application.Scripts.Control;
 using _Application.Scripts.Infrastructure;
+using _Application.Scripts.Infrastructure.Services;
+using _Application.Scripts.Infrastructure.Services.Progress;
+using _Application.Scripts.SavedData;
 using UnityEngine;
 
 namespace _Application.Scripts.Managers
@@ -14,7 +17,7 @@ namespace _Application.Scripts.Managers
         GameOver
     }
 
-    public class Main
+    public class Main : IProgressWriter, IProgressReader
     {
         private readonly UI _ui;
         private readonly AI.Core _core;
@@ -24,30 +27,35 @@ namespace _Application.Scripts.Managers
         private readonly UserControl _userControl;
         private readonly TeamManager _teamManager;
         private readonly ICoroutineRunner _coroutineRunner;
+        private readonly IReadWriterService _readWriterService;
         
         private GameObject _planetsLay;
         private bool _isWin;
         private GameStates _currentGameState;
         
         private List<Planets.Base> _allPlanets;
+        private int _lastCompletedLevel;
 
-        public Main(Levels levelsManager, TeamManager teamManager, ICoroutineRunner coroutineRunner,
-            AI.Core core, ObjectPool pool ,Outlook  outlook, UI ui, UserControl userControl)
+        public Main(Levels levelsManager, TeamManager teamManager, ICoroutineRunner coroutineRunner, AI.Core core, 
+            ObjectPool pool ,Outlook  outlook, UI ui, UserControl userControl, IReadWriterService readWriterService)
         {
             _allPlanets = new List<Planets.Base>();
+            
             _teamManager = teamManager;
             _coroutineRunner = coroutineRunner;
             _levelsManager = levelsManager;
-
-            Planets.Base.Conquered += _teamManager.UpdateObjectsCount;
-            _teamManager.GameEnded += EndGame;
-            
             _core = core;
             _objectPool = pool;
             _outlook = outlook;
             _ui = ui;
             _userControl = userControl;
+            _readWriterService = readWriterService;
+            
+            Planets.Base.Conquered += _teamManager.UpdateObjectsCount;
+            _teamManager.GameEnded += EndGame;
+
             _ui.SetUIBehaviours(_teamManager, RetryLevel, LoadNextLevel);
+            //levelsManager.SetCurrentLevelNumber(_lastCompletedLevel + 1);
         }
 
         public void Destroy()
@@ -61,6 +69,12 @@ namespace _Application.Scripts.Managers
             _currentGameState = GameStates.Gameplay;
             UpdateState();
         }
+
+        public void WriteProgress(PlayerProgress playerProgress) => 
+            playerProgress.levelInfo.lastCompletedLevel = _levelsManager.CurrentLevelNumber;
+
+        public void ReadProgress(PlayerProgress playerProgress) =>
+            _levelsManager.CurrentLevelNumber = playerProgress.levelInfo.lastCompletedLevel + 1;//ok
 
         private void PrepareLevel()
         {
@@ -103,11 +117,16 @@ namespace _Application.Scripts.Managers
             }
         }
 
+        private void SaveProgress() => 
+            _readWriterService.WriteProgress();
+
         private void EndGame(bool isWin)
         {
             _coroutineRunner.CancelAllInvoked();
-            
             _isWin = isWin;
+            
+            SaveProgress();
+
             _currentGameState = GameStates.GameOver;
             UpdateState();
         }

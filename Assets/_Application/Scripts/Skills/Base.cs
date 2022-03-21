@@ -1,6 +1,6 @@
 ﻿using System;
 using _Application.Scripts.Infrastructure;
-using _Application.Scripts.Infrastructure.Factory;
+using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Managers;
 using UnityEngine;
 
