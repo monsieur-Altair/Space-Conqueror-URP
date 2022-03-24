@@ -9,23 +9,23 @@ namespace _Application.Scripts.Control
             if (_skillController.SelectedSkillName != SkillName.None)
                 AffectToSkills();
             else
-                AffectToPlanet();
+                AffectToBuilding();
         }
 
-        protected override void AffectToPlanet()
+        protected override void AffectToBuilding()
         {
             Vector3 pos = Input.mousePosition;
             if (Input.GetMouseButtonUp(0))
             {
-                _planetController.HandleRelease(pos);
+                _buildingsController.HandleRelease(pos);
             }
             else if (Input.GetMouseButtonDown(0))
             {
-                _planetController.HandleClick(pos);
+                _buildingsController.HandleClick(pos);
             }
             else if(Input.GetMouseButton(0))
             {
-                _planetController.HandleMultipleSelection(pos);
+                _buildingsController.HandleMultipleSelection(pos);
             }
         }
 

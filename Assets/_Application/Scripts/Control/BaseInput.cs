@@ -3,17 +3,17 @@ namespace _Application.Scripts.Control
 {
     public abstract class BaseInput:IInputService
     {
-        protected abstract void AffectToPlanet();
+        protected abstract void AffectToBuilding();
         protected abstract void AffectToSkills();
         
-        protected PlanetController _planetController;
+        protected BuildingsController _buildingsController;
         protected SkillController _skillController;
 
         public abstract void HandleInput();
 
-        public void Init(PlanetController planetController, SkillController skillController)
+        public void Init(BuildingsController buildingsController, SkillController skillController)
         {
-            _planetController = planetController;
+            _buildingsController = buildingsController;
             _skillController = skillController;
         }
 

@@ -39,7 +39,7 @@ namespace _Application.Scripts.Skills
             if(_acidParticles.isPlaying)
                 _acidParticles.Stop();
             CoroutineRunner.StopCoroutine(_damagingByAcid);
-            SelectedPlanet = null;
+            SelectedBuilding = null;
             IsOnCooldown = false;
             OnCanceledSkill();
         }
@@ -47,33 +47,33 @@ namespace _Application.Scripts.Skills
         protected override void ApplySkill()
         {
             if(!IsForAI)
-                SelectedPlanet = RaycastForPlanet();
+                SelectedBuilding = RaycastForBuilding();
             
-            if (SelectedPlanet!=null && SelectedPlanet.Team != TeamConstraint) 
-                ApplySkillToPlanet(StartRain);
+            if (SelectedBuilding!=null && SelectedBuilding.Team != TeamConstraint) 
+                ApplySkillToBuilding(StartRain);
             else
                 OnCanceledSkill();
         }
 
         private void StartRain()
         {
-            _acidRain.transform.position = SelectedPlanet.transform.position +_offset;
+            _acidRain.transform.position = SelectedBuilding.transform.position +_offset;
             _acidRain.transform.rotation = _rotation;
             _acidParticles.Play();
-            _damagingByAcid = CoroutineRunner.StartCoroutine(DamagePlanetByRain());
+            _damagingByAcid = CoroutineRunner.StartCoroutine(DamageBuildingByRain());
         }
 
-        private IEnumerator DamagePlanetByRain()
+        private IEnumerator DamageBuildingByRain()
         {
             var count = 0;
             while (count != _hitCount)
             {
-                SelectedPlanet.DecreaseCounter(_hitDamage);
+                SelectedBuilding.DecreaseCounter(_hitDamage);
                 yield return new WaitForSeconds(_hitDuration);
                 count++;
             }
             _acidParticles.Stop();
-            SelectedPlanet = null;
+            SelectedBuilding = null;
         }
     }
 }

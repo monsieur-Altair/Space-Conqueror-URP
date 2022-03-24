@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using _Application.Scripts.Control;
 using _Application.Scripts.Infrastructure;
-using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.SavedData;
 using UnityEngine;
@@ -29,17 +28,16 @@ namespace _Application.Scripts.Managers
         private readonly ICoroutineRunner _coroutineRunner;
         private readonly IReadWriterService _readWriterService;
         
-        private GameObject _planetsLay;
+        private GameObject _buildingsLay;
         private bool _isWin;
         private GameStates _currentGameState;
         
-        private List<Planets.Base> _allPlanets;
-        private int _lastCompletedLevel;
+        private List<Buildings.Base> _allBuildings;
 
         public Main(Levels levelsManager, TeamManager teamManager, ICoroutineRunner coroutineRunner, AI.Core core, 
             ObjectPool pool ,Outlook  outlook, UI ui, UserControl userControl, IReadWriterService readWriterService)
         {
-            _allPlanets = new List<Planets.Base>();
+            _allBuildings = new List<Buildings.Base>();
             
             _teamManager = teamManager;
             _coroutineRunner = coroutineRunner;
@@ -51,7 +49,7 @@ namespace _Application.Scripts.Managers
             _userControl = userControl;
             _readWriterService = readWriterService;
             
-            Planets.Base.Conquered += _teamManager.UpdateObjectsCount;
+            Buildings.Base.Conquered += _teamManager.UpdateObjectsCount;
             _teamManager.GameEnded += EndGame;
 
             _ui.SetUIBehaviours(_teamManager, RetryLevel, LoadNextLevel);
@@ -78,16 +76,16 @@ namespace _Application.Scripts.Managers
 
         private void PrepareLevel()
         {
-            _allPlanets = _planetsLay.GetComponentsInChildren<Planets.Base>().ToList();
+            _allBuildings = _buildingsLay.GetComponentsInChildren<Buildings.Base>().ToList();
             
-            foreach (Planets.Base planet in _allPlanets)
+            foreach (Buildings.Base building in _allBuildings)
             {
-                planet.gameObject.SetActive(true);
-                planet.Init();
-                planet.LaunchingUnit += SpawnUnit;
+                building.gameObject.SetActive(true);
+                building.Init();
+                building.LaunchingUnit += SpawnUnit;
             }
             
-            _teamManager.FillTeamCount(_allPlanets);
+            _teamManager.FillTeamCount(_allBuildings);
         }
 
         private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
@@ -135,14 +133,14 @@ namespace _Application.Scripts.Managers
         {
             ClearLists();
             yield return _coroutineRunner.StartCoroutine(_levelsManager.InstantiateLevel());
-            _planetsLay = _levelsManager.GetCurrentLay();
+            _buildingsLay = _levelsManager.GetCurrentLay();
             PrepareLevel();
-            _core.Init(_allPlanets);
+            _core.Init(_allBuildings);
             _core.Enable();
-            _outlook.PrepareLevel(_allPlanets);
-            _ui.PrepareLevel(_allPlanets);
+            _outlook.PrepareLevel(_allBuildings);
+            _ui.PrepareLevel(_allBuildings);
             
-            Planets.Scientific.DischargeScientificCount();//sci-count = 0
+            Buildings.Altar.DischargeManaCount();//count = 0
             
             _ui.EnableSkillUI();
             _userControl.Enable();
@@ -150,11 +148,11 @@ namespace _Application.Scripts.Managers
 
         private void ClearLists()
         {
-            foreach (Planets.Base planet in _allPlanets) 
-                planet.LaunchingUnit -= SpawnUnit;
+            foreach (Buildings.Base building in _allBuildings) 
+                building.LaunchingUnit -= SpawnUnit;
 
             _teamManager.Clear();
-            _allPlanets.Clear();
+            _allBuildings.Clear();
         }
 
         private void LoadNextLevel()

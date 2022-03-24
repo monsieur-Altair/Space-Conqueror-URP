@@ -1,10 +1,9 @@
 ﻿using _Application.Scripts.Infrastructure.Services.AssetManagement;
 using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Managers;
-using _Application.Scripts.Planets;
 using _Application.Scripts.Skills;
 using UnityEngine;
-using Base = _Application.Scripts.Planets.Base;
+using Base = _Application.Scripts.Buildings.Base;
 
 namespace _Application.Scripts.AI
 {
@@ -23,17 +22,17 @@ namespace _Application.Scripts.AI
             Call = new Call();
             Call.NeedObjectFromPool += SpawnUnit;
             Call.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AICallResourcePath));
-            Call.SetTeamConstraint(Team.Red);
+            Call.SetTeamConstraint(Buildings.Team.Red);
             Call.SetDecreasingFunction(DecreaseAISciCounter);
 
             Buff = new Buff();
             Buff.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AIBuffResourcePath));
-            Buff.SetTeamConstraint(Team.Red);
+            Buff.SetTeamConstraint(Buildings.Team.Red);
             Buff.SetDecreasingFunction(DecreaseAISciCounter);
 
             Acid = new Acid();
             Acid.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AIAcidResourcePath));
-            Acid.SetTeamConstraint(Team.Red);
+            Acid.SetTeamConstraint(Buildings.Team.Red);
             Acid.SetDecreasingFunction(DecreaseAISciCounter);
         }
         
@@ -41,12 +40,12 @@ namespace _Application.Scripts.AI
             _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.Base>();
 
         private static void DecreaseAISciCounter(float value) => 
-            Core.ScientificCount -= value;
+            Core.ManaCount -= value;
 
         public void AttackByAcid(Base target) => 
             Acid.ExecuteForAI(target);
 
-        public void BuffPlanet(Base target) => 
+        public void BuffBuilding(Base target) => 
             Buff.ExecuteForAI(target);
 
         public void CallSupply(Base target) => 

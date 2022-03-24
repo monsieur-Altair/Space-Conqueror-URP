@@ -75,7 +75,7 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
         {
             UI uiManager = new UI(_canvas, pool, warehouse, skillController);
             uiManager.SetButtons(CreateSkillButtons(),CreateRetryButton(), CreateNextLevelButton());
-            uiManager.SetBars(CreateScientificBar(), CreateTeamBar());
+            uiManager.SetBars(CreateManaBar(), CreateTeamBar());
             return uiManager;
         }
 
@@ -83,8 +83,8 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
         {
             Control.UserControl userControl = _assetProvider.Instantiate<Control.UserControl>(AssetPaths.UserControlPath);
             skillController = new Control.SkillController(this, pool);
-            Control.PlanetController planetController = new Control.PlanetController(Camera.main);
-            userControl.Init(planetController, skillController);
+            Control.BuildingsController buildingsController = new Control.BuildingsController(Camera.main);
+            userControl.Init(buildingsController, skillController);
             return userControl;
         }
 
@@ -105,8 +105,8 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
             return buttons;
         }
 
-        private GameObject CreateScientificBar() => 
-            _assetProvider.InstantiateUI(AssetPaths.ScientificBarPath, _canvas);
+        private GameObject CreateManaBar() => 
+            _assetProvider.InstantiateUI(AssetPaths.ManaBarPath, _canvas);
 
         private GameObject CreateTeamBar() => 
             _assetProvider.InstantiateUI(AssetPaths.TeamBarPath, _canvas);

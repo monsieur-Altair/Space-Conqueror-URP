@@ -13,7 +13,7 @@
         public const string NextLevelButtonsPath = "UI/Buttons/Next level";
         public const string RetryButtonsPath = "UI/Buttons/Retry";
         public const string TeamBarPath = "UI/Bars/Team bar";
-        public const string ScientificBarPath = "UI/Bars/Scientific bar";
+        public const string ManaBarPath = "UI/Bars/Mana bar";
 
         public const string AcidPrefabPath = "Skills/Acid rain";
         public const string IndicatorPrefabPath = "Skills/Lamp";

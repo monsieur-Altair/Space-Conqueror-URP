@@ -15,7 +15,7 @@ namespace _Application.Scripts.Control
                 if (_skillController.SelectedSkillName != SkillName.None)
                     AffectToSkills();
                 else
-                    AffectToPlanet();
+                    AffectToBuilding();
             }
         }
 
@@ -31,7 +31,7 @@ namespace _Application.Scripts.Control
             }
         }
         
-        protected override void AffectToPlanet()
+        protected override void AffectToBuilding()
         {
         
             Vector3 position = _touch.position;
@@ -39,17 +39,17 @@ namespace _Application.Scripts.Control
             {
                 case TouchPhase.Began:
                 {
-                    _planetController.HandleClick(position);
+                    _buildingsController.HandleClick(position);
                     break;
                 }
                 case TouchPhase.Ended:
                 {
-                    _planetController.HandleRelease(position);
+                    _buildingsController.HandleRelease(position);
                     break;
                 }
                 case TouchPhase.Moved:
                 {
-                    _planetController.HandleMultipleSelection(position);
+                    _buildingsController.HandleMultipleSelection(position);
                     break;
                 }
                 case TouchPhase.Stationary:

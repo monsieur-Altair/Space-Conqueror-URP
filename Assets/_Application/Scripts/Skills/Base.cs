@@ -1,4 +1,5 @@
 ﻿using System;
+using _Application.Scripts.Buildings;
 using _Application.Scripts.Infrastructure;
 using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Managers;
@@ -16,14 +17,14 @@ namespace _Application.Scripts.Skills
         protected abstract void ApplySkill();
         
         protected Camera MainCamera;
-        protected Planets.Base SelectedPlanet;
+        protected Buildings.Base SelectedBuilding;
         
         protected float Cooldown;
         protected bool IsOnCooldown;
         protected bool IsForAI;
-        protected Planets.Team TeamConstraint;
+        protected Team TeamConstraint;
         protected ICoroutineRunner CoroutineRunner;
-        protected delegate void UniqueActionToPlanet();
+        protected delegate void UniqueActionToBuilding();
         
         private DecreasingCounter _decreaseCounter;
 
@@ -32,7 +33,7 @@ namespace _Application.Scripts.Skills
 
         public void Construct(IGameFactory gameFactory, Scriptables.Skill resource)
         {
-            MainCamera=Camera.main;
+            MainCamera = Camera.main;
             CoroutineRunner = GlobalObject.Instance;
             
             LoadResources(gameFactory, resource);
@@ -53,22 +54,22 @@ namespace _Application.Scripts.Skills
         public void ExecuteForPlayer(Vector3 pos)
         {
             SelectedScreenPos = pos;
-            if (Planets.Scientific.ScientificCount > Cost && !IsOnCooldown)
+            if (Altar.ManaCount > Cost && !IsOnCooldown)
                 ApplySkill();
             else
                 OnCanceledSkill();
         }
 
-        public void SetTeamConstraint(Planets.Team team)
+        public void SetTeamConstraint(Team team)
         {
-            IsForAI = (team == Planets.Team.Red);
+            IsForAI = (team == Team.Red);
             TeamConstraint = team;
         }
 
-        public void ExecuteForAI(Planets.Base planet)
+        public void ExecuteForAI(Buildings.Base planet)
         {
-            SelectedPlanet = planet;
-            if (AI.Core.ScientificCount > Cost && !IsOnCooldown) 
+            SelectedBuilding = planet;
+            if (AI.Core.ManaCount > Cost && !IsOnCooldown) 
                 ApplySkill();
         }
 
@@ -78,15 +79,15 @@ namespace _Application.Scripts.Skills
             Cost = resource.cost;
         }
 
-        protected Planets.Base RaycastForPlanet()
+        protected Buildings.Base RaycastForBuilding()
         {
             int layerMask = 1 << 0;
             layerMask = ~layerMask;
             Ray ray = MainCamera.ScreenPointToRay(SelectedScreenPos);
-            return Physics.Raycast(ray, out var hit,Mathf.Infinity, layerMask) ? hit.collider.GetComponent<Planets.Base>() : null;
+            return Physics.Raycast(ray, out var hit,Mathf.Infinity, layerMask) ? hit.collider.GetComponent<Buildings.Base>() : null;
         }
         
-        protected void ApplySkillToPlanet(UniqueActionToPlanet action)
+        protected void ApplySkillToBuilding(UniqueActionToBuilding action)
         {
             IsOnCooldown = true;
             _decreaseCounter(Cost);

@@ -5,7 +5,7 @@ namespace _Application.Scripts.Control
     public interface IInputService : IService
     {
         void HandleInput();
-        void Init(PlanetController planetController, SkillController skillController);
+        void Init(BuildingsController buildingsController, SkillController skillController);
         void Refresh();
     }
 }

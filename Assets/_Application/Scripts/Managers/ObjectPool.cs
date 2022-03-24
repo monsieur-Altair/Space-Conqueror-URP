@@ -6,12 +6,12 @@ namespace _Application.Scripts.Managers
 {
     public enum PoolObjectType
     {
-        ScientificRocket = 0,
-        SpawnerRocket = 1,
-        AttackerRocket = 2,
-        ScientificPlanet = 3,
-        SpawnerPlanet = 4,
-        AttackerPlanet = 5,
+        AltarWarrior = 0,
+        SpawnerWarrior = 1,
+        AttackerWarrior = 2,
+        AltarBuilding = 3,
+        SpawnerBuilding = 4,
+        AttackerBuilding = 5,
         Counter = 6
     }
     public class ObjectPool : MonoBehaviour

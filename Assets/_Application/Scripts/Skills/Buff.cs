@@ -27,12 +27,12 @@ namespace _Application.Scripts.Skills
         {
             if (!IsForAI)
             {
-                SelectedPlanet = RaycastForPlanet();
-                _buffedEntity = SelectedPlanet;
+                SelectedBuilding = RaycastForBuilding();
+                _buffedEntity = SelectedBuilding;
             }
 
-            if (_buffedEntity != null && SelectedPlanet.Team == TeamConstraint)
-                ApplySkillToPlanet(BuffPlanet);
+            if (_buffedEntity != null && SelectedBuilding.Team == TeamConstraint)
+                ApplySkillToBuilding(BuffBuilding);
             else
                 OnCanceledSkill();
         }
@@ -44,13 +44,13 @@ namespace _Application.Scripts.Skills
             if (_buffedEntity.IsBuffed)
                 _buffedEntity.UnBuff(_buffPercent);
             _buffedEntity = null;
-            SelectedPlanet = null;
+            SelectedBuilding = null;
             
             IsOnCooldown = false;
             OnCanceledSkill();
         }
 
-        private void BuffPlanet() => 
+        private void BuffBuilding() => 
             _buffCoroutine = CoroutineRunner.StartCoroutine(BuffThenUnBuff());
 
         private IEnumerator BuffThenUnBuff()

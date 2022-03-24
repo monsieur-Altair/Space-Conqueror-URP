@@ -9,14 +9,14 @@ namespace _Application.Scripts.AI
 { 
     public class Core
     {
-        public static float ScientificCount;
+        public static float ManaCount;
         
-        public const int Own = (int) Planets.Team.Red;
-        public const int Enemy = (int) Planets.Team.Blue;
-        public const int Neutral = (int) Planets.Team.White;
+        public const int Own = (int) Buildings.Team.Red;
+        public const int Enemy = (int) Buildings.Team.Blue;
+        public const int Neutral = (int) Buildings.Team.White;
 
-        private readonly List<List<Planets.Base>> _allPlanets;
-        private readonly IAction _attackByRocket;
+        private readonly List<List<Buildings.Base>> _allBuildings;
+        private readonly IAction _attackByWarrior;
         private readonly ICoroutineRunner _coroutineRunner;
 
         private const float MinDelay = 4.0f;
@@ -26,28 +26,28 @@ namespace _Application.Scripts.AI
         public Core(ICoroutineRunner coroutineRunner, SkillController skillController)
         {
             _coroutineRunner = coroutineRunner;
-            _allPlanets = new List<List<Planets.Base>>();
-            _attackByRocket = new AttackSomePlanet(_coroutineRunner, skillController);
+            _allBuildings = new List<List<Buildings.Base>>();
+            _attackByWarrior = new AttackSomeBuilding(_coroutineRunner, skillController);
             
-            Planets.Base.Conquered += AdjustPlanetsList;
+            Buildings.Base.Conquered += AdjustBuildingsList;
         }
 
-        public void Init(List<Planets.Base> planets)
+        public void Init(List<Buildings.Base> planets)
         {
-            _allPlanets.Clear();
+            _allBuildings.Clear();
             
             for (int i = 0; i < 3; i++)
-                _allPlanets.Add(new List<Planets.Base>());
+                _allBuildings.Add(new List<Buildings.Base>());
             
-            foreach (Planets.Base planet in planets) 
-                _allPlanets[(int) planet.Team].Add(planet);
+            foreach (Buildings.Base planet in planets) 
+                _allBuildings[(int) planet.Team].Add(planet);
 
-            Planets.Base mainPlanet = _allPlanets[Own][0];
-            Vector3 mainPos = mainPlanet.transform.position;
+            Buildings.Base mainBuilding = _allBuildings[Own][0];
+            Vector3 mainPos = mainBuilding.transform.position;
 
-            _attackByRocket.InitAction(_allPlanets, mainPos);
+            _attackByWarrior.InitAction(_allBuildings, mainPos);
 
-            ScientificCount = 0.0f;
+            ManaCount = 0.0f;
         }
         
         public void Enable() => 
@@ -63,14 +63,14 @@ namespace _Application.Scripts.AI
                 float delay = Random.Range(MinDelay, MaxDelay);
                 Debug.LogError($"AI thinks {delay} seconds...");
                 yield return new WaitForSeconds(delay);
-                _attackByRocket.Execute();
+                _attackByWarrior.Execute();
             }
         }
 
-        private void AdjustPlanetsList(Planets.Base planet, Planets.Team oldTeam, Planets.Team newTeam)
+        private void AdjustBuildingsList(Buildings.Base building, Buildings.Team oldTeam, Buildings.Team newTeam)
         {
-            _allPlanets[(int) oldTeam].Remove(planet);
-            _allPlanets[(int) newTeam].Add(planet);
+            _allBuildings[(int) oldTeam].Remove(building);
+            _allBuildings[(int) newTeam].Add(building);
         }
     }
     

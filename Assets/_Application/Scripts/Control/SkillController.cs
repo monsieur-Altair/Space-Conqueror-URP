@@ -1,4 +1,5 @@
 ﻿using System;
+using _Application.Scripts.Buildings;
 using _Application.Scripts.Infrastructure.Services.AssetManagement;
 using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Managers;
@@ -37,18 +38,18 @@ namespace _Application.Scripts.Control
             Call = new Skills.Call();
             Call.NeedObjectFromPool += SpawnUnit;
             Call.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.CallResourcePath));
-            Call.SetTeamConstraint(Planets.Team.Blue);
-            Call.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
+            Call.SetTeamConstraint(Team.Blue);
+            Call.SetDecreasingFunction(Altar.DecreaseManaCount);
 
             Buff = new Skills.Buff();
             Buff.Construct(gameFactory,gameFactory.CreateSkillResource(AssetPaths.BuffResourcePath));
-            Buff.SetTeamConstraint(Planets.Team.Blue);
-            Buff.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
+            Buff.SetTeamConstraint(Team.Blue);
+            Buff.SetDecreasingFunction(Altar.DecreaseManaCount);
 
             Acid = new Skills.Acid();
             Acid.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AcidResourcePath));
-            Acid.SetTeamConstraint(Planets.Team.Blue);
-            Acid.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
+            Acid.SetTeamConstraint(Team.Blue);
+            Acid.SetDecreasingFunction(Altar.DecreaseManaCount);
 
             Ice = new Skills.Ice();
             Ice.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.IceResourcePath));

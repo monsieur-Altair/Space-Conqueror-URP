@@ -43,26 +43,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc04737c77eb4546b1a5dcaa8585953d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scientificTextures:
-  - {fileID: 2800000, guid: 2a30ed13196ed7c4f94aac08c6edcd08, type: 3}
-  - {fileID: 2800000, guid: b66fc1a28aec0d3498050c414414974f, type: 3}
-  - {fileID: 2800000, guid: 0b01853dc476db94c91b7b57bdc75dd2, type: 3}
+  altarTextures:
+  - {fileID: 2800000, guid: 9e86640de59f6e84882428f3843eb88f, type: 3}
+  - {fileID: 2800000, guid: d53ab3d83f6649648b01400d3ee34fa7, type: 3}
+  - {fileID: 2800000, guid: 7e9a830fc9246614b8520626ac01043c, type: 3}
   attackerTextures:
-  - {fileID: 2800000, guid: a517aaa026bffc74da447c71ecea59f2, type: 3}
-  - {fileID: 2800000, guid: 3a880254bef5e9a4ebc615dac586dca5, type: 3}
-  - {fileID: 2800000, guid: 7fc3ea5aba40afa43baabe6e87cb33cf, type: 3}
+  - {fileID: 2800000, guid: 9e86640de59f6e84882428f3843eb88f, type: 3}
+  - {fileID: 2800000, guid: d53ab3d83f6649648b01400d3ee34fa7, type: 3}
+  - {fileID: 2800000, guid: 7e9a830fc9246614b8520626ac01043c, type: 3}
   spawnerTextures:
-  - {fileID: 2800000, guid: e8323f107e8f5e54aaf03e561e6fa5ab, type: 3}
-  - {fileID: 2800000, guid: bb0d2b7de97aab845bb3c9057fc52697, type: 3}
-  - {fileID: 2800000, guid: b1b215047aa0b794ca803ef7cd208b99, type: 3}
-  rocketsTextures:
-  - {fileID: 2800000, guid: 91be20a3409244a44990d00eb5b789c5, type: 3}
-  - {fileID: 2800000, guid: c6a619d64cd02864b90d13551001341b, type: 3}
-  buffedPlanetMaterial: {fileID: 2100000, guid: b3cb278440d8b2940afd8271980669be, type: 2}
-  buffedRocketMaterial: {fileID: 2100000, guid: 0e7506afdf812e248b2427c03bc59ebb, type: 2}
-  basePlanetMaterial: {fileID: 2100000, guid: 7a7049f1bd51f7b4cbc632ebfe2048ba, type: 2}
-  baseRocketMaterial: {fileID: 2100000, guid: 6fd36513260401445a68b8872d4d2edd, type: 2}
-  glassMaterial: {fileID: 2100000, guid: c734993ad8cfb5f4e8474dcff89b27e1, type: 2}
+  - {fileID: 2800000, guid: 9e86640de59f6e84882428f3843eb88f, type: 3}
+  - {fileID: 2800000, guid: d53ab3d83f6649648b01400d3ee34fa7, type: 3}
+  - {fileID: 2800000, guid: 7e9a830fc9246614b8520626ac01043c, type: 3}
+  warriorsTextures:
+  - {fileID: 2800000, guid: 9e86640de59f6e84882428f3843eb88f, type: 3}
+  - {fileID: 2800000, guid: d53ab3d83f6649648b01400d3ee34fa7, type: 3}
+  buffedBuildingMaterial: {fileID: 2100000, guid: b3cb278440d8b2940afd8271980669be, type: 2}
+  buffedWarriorMaterial: {fileID: 2100000, guid: 0e7506afdf812e248b2427c03bc59ebb, type: 2}
+  baseBuildingMaterial: {fileID: 2100000, guid: a24a30c922236f247baa7ef62013558c, type: 2}
+  baseWarriorMaterial: {fileID: 2100000, guid: 955190cea373c1e4aa7401ca90dd5e78, type: 2}
   counterBackground:
   - {r: 0, g: 0.09411766, b: 0.38431376, a: 1}
   - {r: 0.37647063, g: 0, b: 0.003921569, a: 1}
