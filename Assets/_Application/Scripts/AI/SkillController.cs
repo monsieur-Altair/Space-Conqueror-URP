@@ -1,5 +1,6 @@
 ﻿using _Application.Scripts.Infrastructure.Services.AssetManagement;
 using _Application.Scripts.Infrastructure.Services.Factory;
+using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
 using _Application.Scripts.Planets;
 using _Application.Scripts.Skills;
@@ -16,23 +17,23 @@ namespace _Application.Scripts.AI
         
         private readonly ObjectPool _objectPool;
 
-        public SkillController(IGameFactory gameFactory, ObjectPool objectPool)
+        public SkillController(IGameFactory gameFactory, IScriptableService scriptableService, ObjectPool objectPool)
         {
             _objectPool = objectPool;
             
             Call = new Call();
             Call.NeedObjectFromPool += SpawnUnit;
-            Call.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AICallResourcePath));
+            Call.Construct(gameFactory, scriptableService.AIsCall);
             Call.SetTeamConstraint(Team.Red);
             Call.SetDecreasingFunction(DecreaseAISciCounter);
 
             Buff = new Buff();
-            Buff.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AIBuffResourcePath));
+            Buff.Construct(gameFactory, scriptableService.AIsBuff);
             Buff.SetTeamConstraint(Team.Red);
             Buff.SetDecreasingFunction(DecreaseAISciCounter);
 
             Acid = new Acid();
-            Acid.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AIAcidResourcePath));
+            Acid.Construct(gameFactory, scriptableService.AIsAcid);
             Acid.SetTeamConstraint(Team.Red);
             Acid.SetDecreasingFunction(DecreaseAISciCounter);
         }

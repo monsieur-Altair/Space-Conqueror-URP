@@ -3,6 +3,7 @@ using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Infrastructure.Services.AssetManagement;
 using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Infrastructure.Services.Progress;
+using _Application.Scripts.Infrastructure.Services.Scriptables;
 using UnityEngine;
 
 namespace _Application.Scripts.Infrastructure.States
@@ -40,12 +41,21 @@ namespace _Application.Scripts.Infrastructure.States
 
         private void RegisterServices()
         {
-            _allServices.RegisterSingle<IAssetProvider>(new AssetProvider());
-            _allServices.RegisterSingle<IGameFactory>(new GameFactory(_allServices.GetSingle<IAssetProvider>()));
-            _allServices.RegisterSingle<IProgressService>(new ProgressService());
-            _allServices.RegisterSingle<IReadWriterService>(new ReadWriterService(
-                _allServices.GetSingle<IProgressService>(), 
-                _allServices.GetSingle<IGameFactory>()));
+            IAssetProvider assetProvider = _allServices.RegisterSingle<IAssetProvider>(
+                new AssetProvider());
+            
+            IScriptableService scriptableService = _allServices.RegisterSingle<IScriptableService>(
+                new ScriptableService(assetProvider));
+            scriptableService.LoadAllScriptables();
+            
+            IGameFactory factory = _allServices.RegisterSingle<IGameFactory>(
+                new GameFactory(assetProvider, scriptableService));
+            
+            IProgressService progressService = _allServices.RegisterSingle<IProgressService>(
+                new ProgressService());
+            
+            _allServices.RegisterSingle<IReadWriterService>(
+                new ReadWriterService(progressService, factory));
             //register input service
         }
 

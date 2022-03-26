@@ -9,10 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7475b95743b44dcbabbfaad5001aab0, type: 3}
-  m_Name: Planet
+  m_Script: {fileID: 11500000, guid: d4e50a4842294124a568b651a2854807, type: 3}
+  m_Name: AI Attacker Rocket
   m_EditorClassIdentifier: 
-  maxCount: 50
-  produceCount: 1
-  produceTime: 1
-  defense: 1
+  damage: 150
+  speed: 4.25

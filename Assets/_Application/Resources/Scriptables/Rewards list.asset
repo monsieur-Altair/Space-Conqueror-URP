@@ -9,11 +9,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d3e5c684b3d47218485125b9be09133, type: 3}
-  m_Name: Acid
+  m_Script: {fileID: 11500000, guid: 58f114f0f7e84394a520a015d0e56d36, type: 3}
+  m_Name: Rewards list
   m_EditorClassIdentifier: 
-  cooldown: 5
-  cost: 15
-  duration: 3
-  damage: 35
-  hitCount: 17
+  rewards:
+  - level: 0
+    money: 100
+  - level: 1
+    money: 150
+  - level: 2
+    money: 200
+  - level: 3
+    money: 300
+  - level: 4
+    money: 400
+  - level: 5
+    money: 500

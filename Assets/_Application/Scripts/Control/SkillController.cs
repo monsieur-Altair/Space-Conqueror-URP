@@ -1,6 +1,7 @@
 ﻿using System;
 using _Application.Scripts.Infrastructure.Services.AssetManagement;
 using _Application.Scripts.Infrastructure.Services.Factory;
+using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
 using UnityEngine;
 
@@ -28,7 +29,7 @@ namespace _Application.Scripts.Control
         
         public SkillName SelectedSkillName { get; private set; }
 
-        public SkillController(IGameFactory gameFactory, ObjectPool objectPool)
+        public SkillController(IGameFactory gameFactory , IScriptableService scriptableService, ObjectPool objectPool)
         {
             ClearSelectedSkill();
 
@@ -36,22 +37,22 @@ namespace _Application.Scripts.Control
             
             Call = new Skills.Call();
             Call.NeedObjectFromPool += SpawnUnit;
-            Call.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.CallResourcePath));
+            Call.Construct(gameFactory, scriptableService.PlayersCall);
             Call.SetTeamConstraint(Planets.Team.Blue);
             Call.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
 
             Buff = new Skills.Buff();
-            Buff.Construct(gameFactory,gameFactory.CreateSkillResource(AssetPaths.BuffResourcePath));
+            Buff.Construct(gameFactory,scriptableService.PlayersBuff);
             Buff.SetTeamConstraint(Planets.Team.Blue);
             Buff.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
 
             Acid = new Skills.Acid();
-            Acid.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AcidResourcePath));
+            Acid.Construct(gameFactory, scriptableService.PlayersAcid);
             Acid.SetTeamConstraint(Planets.Team.Blue);
             Acid.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
 
             Ice = new Skills.Ice();
-            Ice.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.IceResourcePath));
+            Ice.Construct(gameFactory, scriptableService.PlayersIce);
         }
         
         private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 

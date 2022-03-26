@@ -9,11 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d3e5c684b3d47218485125b9be09133, type: 3}
-  m_Name: Acid
+  m_Script: {fileID: 11500000, guid: c8198880750d404cb58a07d9e9b963d4, type: 3}
+  m_Name: AI Scientific
   m_EditorClassIdentifier: 
-  cooldown: 5
-  cost: 15
-  duration: 3
-  damage: 35
-  hitCount: 17
+  name: mana
+  maxCount: 100
+  produceCount: 1
+  produceTime: 1

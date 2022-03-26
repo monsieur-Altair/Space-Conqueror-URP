@@ -30,6 +30,8 @@ namespace _Application.Scripts.Managers
         
         private List<Button> _skillButtons;
 
+        private TextMeshProUGUI _moneyText;
+
         private readonly Vector3 _offset = new Vector3(0, -35, 0);
         private readonly Vector3 _baseCounterScale = new Vector3(1, 1, 1);
         
@@ -100,10 +102,14 @@ namespace _Application.Scripts.Managers
             _teamBar = teamBar;
         }
 
+        public void SetText(TextMeshProUGUI moneyText) => 
+            _moneyText = moneyText;
+
         public void ShowGameplayUI()
         {
             _nextLevelButton.SetActive(false);
             _retryLevelButton.SetActive(false);
+            _moneyText.gameObject.SetActive(false);
             
             _scientificBar.SetActive(true);
             _teamBar.SetActive(true);
@@ -115,10 +121,14 @@ namespace _Application.Scripts.Managers
                 _nextLevelButton.SetActive(true);
             else
                 _retryLevelButton.SetActive(true);
-            
+            _moneyText.gameObject.SetActive(true);
+
             _scientificBar.SetActive(false);
             _teamBar.SetActive(false);
         }
+
+        public void UpdateMoneyText(int money) => 
+            _moneyText.text = $"money: {money}";
 
         private void AdjustSkillButtons()
         {
@@ -192,7 +202,7 @@ namespace _Application.Scripts.Managers
             _foregrounds.Add(index, counter.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>());
             _backgrounds.Add(index, counter.GetComponentInChildren<Image>());
         }
-        
+
         private GameObject SpawnCounterTo(Planets.Base planet)
         {
             Vector3 counterPos = GetCounterPos(planet);
@@ -202,7 +212,7 @@ namespace _Application.Scripts.Managers
             _countersList.Add(counter);
             return counter;
         }
-        
+
         private Vector3 GetCounterPos(Planets.Base planet)
         {
             Vector3 pos = planet.transform.position;
@@ -217,13 +227,13 @@ namespace _Application.Scripts.Managers
             _foregrounds[index].color = _counterForeground[team];
             _backgrounds[index].color = _counterBackground[team];
         }
-        
+
         private void SetCounter(Planets.Base planet, int value)
         {
             int index = planet.ID.GetHashCode();
             _foregrounds[index].text = value.ToString();
         }
-        
+
         private static void BlockButton(Button button)
         {
             button.image.color = Color.red;
@@ -235,6 +245,5 @@ namespace _Application.Scripts.Managers
             button.enabled = true;
             button.image.color = Color.white;
         }
-
     }
 }

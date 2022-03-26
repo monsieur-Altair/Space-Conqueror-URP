@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using _Application.Scripts.Infrastructure.Services.AssetManagement;
 using _Application.Scripts.Infrastructure.Services.Progress;
+using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,13 +15,16 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
         public List<IProgressWriter> ProgressWriters { get; }
 
         private readonly IAssetProvider _assetProvider;
+        private readonly IScriptableService _scriptableService;
         private Canvas _canvas;
 
-        public GameFactory(IAssetProvider assetProvider)
+        public GameFactory(IAssetProvider assetProvider, IScriptableService scriptableService)
         {
             ProgressReaders = new List<IProgressReader>();
             ProgressWriters = new List<IProgressWriter>();
+            
             _assetProvider = assetProvider;
+            _scriptableService = scriptableService;
         }
 
         public void CleanUp()
@@ -36,11 +41,11 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
             Warehouse warehouse = _assetProvider.Instantiate<Warehouse>(AssetPaths.Warehouse);
             ObjectPool pool = _assetProvider.Instantiate<ObjectPool>(AssetPaths.PoolPath);
 
-            AI.SkillController aiSkillController = new AI.SkillController(this, pool);
+            AI.SkillController aiSkillController = new AI.SkillController(this,_scriptableService , pool);
             AI.Core aiManager = new AI.Core(coroutineRunner, aiSkillController);
             
             Outlook outlookManager = new Outlook(warehouse);
-            Control.UserControl userControl = CreateUserControl(pool, out var playerSkillController);
+            Control.UserControl userControl = CreateUserControl(pool, _scriptableService , out var playerSkillController);
             UI uiManager = CreateUI(pool, warehouse, playerSkillController);
 
             Main mainManager = new Main(Levels.Instance, 
@@ -51,7 +56,8 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
                 outlookManager, 
                 uiManager, 
                 userControl,
-                AllServices.Instance.GetSingle<IReadWriterService>());
+                AllServices.Instance.GetSingle<IReadWriterService>(),
+                AllServices.Instance.GetSingle<IScriptableService>());
             
             ProgressReaders.Add(mainManager);
             ProgressWriters.Add(mainManager);
@@ -68,25 +74,26 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
         public GameObject CreateIce() => 
             _assetProvider.Instantiate(AssetPaths.IcePrefabPath);
 
-        public Scriptables.Skill CreateSkillResource(string path) => 
-            _assetProvider.InstantiateScriptable<Scriptables.Skill>(path);
-
         private UI CreateUI(ObjectPool pool, Warehouse warehouse, Control.SkillController skillController)
         {
             UI uiManager = new UI(_canvas, pool, warehouse, skillController);
             uiManager.SetButtons(CreateSkillButtons(),CreateRetryButton(), CreateNextLevelButton());
             uiManager.SetBars(CreateScientificBar(), CreateTeamBar());
+            uiManager.SetText(CreateMoneyText());
             return uiManager;
         }
 
-        private Control.UserControl CreateUserControl(ObjectPool pool, out Control.SkillController skillController)
+        private Control.UserControl CreateUserControl(ObjectPool pool, IScriptableService scriptableService, out Control.SkillController skillController)
         {
             Control.UserControl userControl = _assetProvider.Instantiate<Control.UserControl>(AssetPaths.UserControlPath);
-            skillController = new Control.SkillController(this, pool);
+            skillController = new Control.SkillController(this, scriptableService, pool);
             Control.PlanetController planetController = new Control.PlanetController(Camera.main);
             userControl.Init(planetController, skillController);
             return userControl;
         }
+
+        private TextMeshProUGUI CreateMoneyText() => 
+            _assetProvider.InstantiateUI<TextMeshProUGUI>(AssetPaths.MoneyTextPath, _canvas);
 
         private List<Button> CreateSkillButtons()
         {

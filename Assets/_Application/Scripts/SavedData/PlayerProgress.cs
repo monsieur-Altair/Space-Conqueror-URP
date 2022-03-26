@@ -6,8 +6,12 @@ namespace _Application.Scripts.SavedData
     public class PlayerProgress
     {
         public LevelInfo levelInfo;
-
-        public PlayerProgress(int levelNumber) => 
+        public int money;
+        
+        public PlayerProgress(int levelNumber)
+        {
+            money = 0;
             levelInfo = new LevelInfo(levelNumber);
+        }
     }
 }

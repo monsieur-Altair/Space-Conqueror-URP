@@ -6,6 +6,7 @@ using _Application.Scripts.Control;
 using _Application.Scripts.Infrastructure;
 using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Infrastructure.Services.Progress;
+using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.SavedData;
 using UnityEngine;
 
@@ -28,16 +29,19 @@ namespace _Application.Scripts.Managers
         private readonly TeamManager _teamManager;
         private readonly ICoroutineRunner _coroutineRunner;
         private readonly IReadWriterService _readWriterService;
+        private readonly IScriptableService _scriptableService;
         
         private GameObject _planetsLay;
         private bool _isWin;
         private GameStates _currentGameState;
         
         private List<Planets.Base> _allPlanets;
-        private int _lastCompletedLevel;
+        
+        private int _money;
 
         public Main(Levels levelsManager, TeamManager teamManager, ICoroutineRunner coroutineRunner, AI.Core core, 
-            ObjectPool pool ,Outlook  outlook, UI ui, UserControl userControl, IReadWriterService readWriterService)
+            ObjectPool pool ,Outlook  outlook, UI ui, UserControl userControl, IReadWriterService readWriterService,
+            IScriptableService scriptableService)
         {
             _allPlanets = new List<Planets.Base>();
             
@@ -50,7 +54,8 @@ namespace _Application.Scripts.Managers
             _ui = ui;
             _userControl = userControl;
             _readWriterService = readWriterService;
-            
+            _scriptableService = scriptableService;
+
             Planets.Base.Conquered += _teamManager.UpdateObjectsCount;
             _teamManager.GameEnded += EndGame;
 
@@ -70,11 +75,18 @@ namespace _Application.Scripts.Managers
             UpdateState();
         }
 
-        public void WriteProgress(PlayerProgress playerProgress) => 
+        public void WriteProgress(PlayerProgress playerProgress)
+        {
+            playerProgress.money = _money;
             playerProgress.levelInfo.lastCompletedLevel = _levelsManager.CurrentLevelNumber;
+        }
 
-        public void ReadProgress(PlayerProgress playerProgress) =>
-            _levelsManager.CurrentLevelNumber = playerProgress.levelInfo.lastCompletedLevel + 1;//ok
+        public void ReadProgress(PlayerProgress playerProgress)
+        {
+            _money = playerProgress.money;
+            _levelsManager.CurrentLevelNumber = playerProgress.levelInfo.lastCompletedLevel + 1;
+            //ok
+        }
 
         private void PrepareLevel()
         {
@@ -124,11 +136,21 @@ namespace _Application.Scripts.Managers
         {
             _coroutineRunner.CancelAllInvoked();
             _isWin = isWin;
+
+            AddReward();
             
             SaveProgress();
 
             _currentGameState = GameStates.GameOver;
             UpdateState();
+        }
+
+        private void AddReward()
+        {
+            int lastCompletedLevel = _levelsManager.CurrentLevelNumber;
+            int rewardMoney = _isWin ? _scriptableService.RewardList.GetReward(lastCompletedLevel) : 0;
+            _money += rewardMoney;
+            _ui.UpdateMoneyText(_money);
         }
 
         private IEnumerator StartGameplay()

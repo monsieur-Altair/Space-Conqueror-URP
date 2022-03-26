@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8198880750d404cb58a07d9e9b963d4, type: 3}
-  m_Name: Scientific
+  m_Script: {fileID: 11500000, guid: d4e50a4842294124a568b651a2854807, type: 3}
+  m_Name: AI Spawner Rocket
   m_EditorClassIdentifier: 
-  name: mana
-  maxCount: 100
-  produceCount: 1
-  produceTime: 1
+  name: rocket
+  damage: 100
+  speed: 5
+  prefab: {fileID: 7719500377212768562, guid: 6c7d53166a23f4846aca68dbb2380106, type: 3}
