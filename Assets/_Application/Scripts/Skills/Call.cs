@@ -1,7 +1,7 @@
 ﻿using System.Collections;
-using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Managers;
 using _Application.Scripts.Misc;
+using _Application.Scripts.Planets;
 using _Application.Scripts.Scriptables;
 using UnityEngine;
 
@@ -14,19 +14,25 @@ namespace _Application.Scripts.Skills
         private Coroutine _displayingIndicatorCor;
         private Units.Base _sentUnit;
         private float _callPercent;
-        
-        protected override void LoadResources(IGameFactory gameFactory, Skill resource)
+
+        public Call(Team teamConstraint, DecreasingCounter function) : base(teamConstraint, function)
         {
-            base.LoadResources(gameFactory, resource);
-            Scriptables.Call res = resource as Scriptables.Call;
-            if (res != null)
-                _callPercent = res.callPercent;
-            
-            _indicator = gameFactory.CreateIndicator();
-            
+        }
+
+        public override void SetSkillObject(GameObject skillObject)
+        {
+            _indicator = skillObject;
             _indicator.SetActive(false);
         }
-      
+
+        protected override void LoadResources(Skill resource, float coefficient = 1.0f)
+        {
+            base.LoadResources(resource, coefficient);
+            Scriptables.Call res = resource as Scriptables.Call;
+            if (res != null)
+                _callPercent = res.callPercent * coefficient;
+        }
+
         protected override void ApplySkill()
         {
             if(!IsForAI)
@@ -71,7 +77,7 @@ namespace _Application.Scripts.Skills
             yield return new WaitForSeconds(1.5f);
             _indicator.SetActive(false);
         }
-        
+
         private static Vector3 CalculateDestPos(in Vector3 launchPos, Planets.Base destinationPlanet)
         {
             Vector3 destPos = destinationPlanet.transform.position;

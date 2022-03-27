@@ -18,6 +18,7 @@ namespace _Application.Scripts.AI
         private readonly List<List<Planets.Base>> _allPlanets;
         private readonly IAction _attackByRocket;
         private readonly ICoroutineRunner _coroutineRunner;
+        private readonly SkillController _skillController;
 
         private const float MinDelay = 4.0f;
         private const float MaxDelay = 7.0f;
@@ -27,7 +28,8 @@ namespace _Application.Scripts.AI
         {
             _coroutineRunner = coroutineRunner;
             _allPlanets = new List<List<Planets.Base>>();
-            _attackByRocket = new AttackSomePlanet(_coroutineRunner, skillController);
+            _skillController = skillController;
+            _attackByRocket = new AttackSomePlanet(_coroutineRunner, _skillController);
             
             Planets.Base.Conquered += AdjustPlanetsList;
         }
@@ -45,6 +47,7 @@ namespace _Application.Scripts.AI
             Planets.Base mainPlanet = _allPlanets[Own][0];
             Vector3 mainPos = mainPlanet.transform.position;
 
+            _skillController.Refresh();
             _attackByRocket.InitAction(_allPlanets, mainPos);
 
             ScientificCount = 0.0f;

@@ -1,5 +1,7 @@
-﻿using _Application.Scripts.Scriptables;
+﻿using _Application.Scripts.SavedData;
+using _Application.Scripts.Scriptables;
 using _Application.Scripts.Scriptables.Rewards;
+using _Application.Scripts.Scriptables.Upgrades;
 
 namespace _Application.Scripts.Infrastructure.Services.Scriptables
 {
@@ -30,6 +32,9 @@ namespace _Application.Scripts.Infrastructure.Services.Scriptables
         Buff AIsBuff { get; }
         Call AIsCall { get; }
         
+        UpgradeInfo RainUpgradeInfo { get; }
+        
         void LoadAllScriptables();
+        UpgradeInfo GetUpgradeInfo(UpgradeType upgradeType);
     }
 }

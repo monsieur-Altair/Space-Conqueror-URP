@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using _Application.Scripts.Misc;
+using _Application.Scripts.Upgrades;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -23,19 +24,21 @@ namespace _Application.Scripts.Managers
         private readonly Dictionary<int, Image> _backgrounds = new Dictionary<int, Image>();
         private readonly Dictionary<int, TextMeshProUGUI> _foregrounds = new Dictionary<int, TextMeshProUGUI>();
 
+        private GameObject _toUpgradeMenuButton;
         private GameObject _nextLevelButton;
         private GameObject _retryLevelButton;
         private GameObject _scientificBar;
         private GameObject _teamBar;
-        
+
         private List<Button> _skillButtons;
 
         private TextMeshProUGUI _moneyText;
 
         private readonly Vector3 _offset = new Vector3(0, -35, 0);
         private readonly Vector3 _baseCounterScale = new Vector3(1, 1, 1);
-        
+
         private bool _isSkillButtonsActive;
+        private GameObject _upgradeMenu;
 
         private const int BuffIndex = 0;
         private const int AcidIndex = 1;
@@ -65,23 +68,29 @@ namespace _Application.Scripts.Managers
         public void DisableSkillUI() => 
             _isSkillButtonsActive = false;
 
-        
-        public void SetButtons(List<Button> skillButtons, GameObject retryButton, GameObject nextLevelButton)
+        public void SetButtons(List<Button> skillButtons, GameObject retryButton, GameObject nextLevelButton, GameObject toUpgradeMenuButton)
         {
             _retryLevelButton = retryButton;
             _nextLevelButton = nextLevelButton;
-
+            _toUpgradeMenuButton = toUpgradeMenuButton;
+            
+            _toUpgradeMenuButton.SetActive(false);
             _retryLevelButton.SetActive(false);
             _nextLevelButton.SetActive(false);
 
             _skillButtons = skillButtons;
         }
 
-        public void SetUIBehaviours(TeamManager teamManager ,UnityAction retryLevelBehaviour, UnityAction loadNextLevelBehaviour)
+        public void SetUIBehaviours(TeamManager teamManager ,UnityAction retryLevelBehaviour, 
+            UnityAction loadNextLevelBehaviour, UnityAction toUpgradeMenuBehaviour, UnityAction backToGame)
         {
             _retryLevelButton.GetComponent<Button>().onClick.AddListener(retryLevelBehaviour);
             _nextLevelButton.GetComponent<Button>().onClick.AddListener(loadNextLevelBehaviour);
+            _toUpgradeMenuButton.GetComponent<Button>().onClick.AddListener(toUpgradeMenuBehaviour);
 
+            _upgradeMenu.GetComponent<UpgradeMenuController>().backButton.onClick.AddListener(backToGame);
+
+            
             AdjustSkillButtons();
             
             teamManager.TeamCountUpdated += _teamBar.GetComponent<TeamProgressBar>().FillTeamCount;
@@ -95,7 +104,7 @@ namespace _Application.Scripts.Managers
             //null refs?
             //Planets.Scientific.ScientificCountUpdated -= _scientificBar.GetComponent<ScientificBar>().FillScientificCount;
         }
-        
+
         public void SetBars(GameObject scientificBar, GameObject teamBar)
         {
             _scientificBar = scientificBar;
@@ -105,14 +114,46 @@ namespace _Application.Scripts.Managers
         public void SetText(TextMeshProUGUI moneyText) => 
             _moneyText = moneyText;
 
+        public void SetUpgradeMenu(GameObject upgradeMenu)
+        {
+            _upgradeMenu = upgradeMenu;
+            _upgradeMenu.SetActive(false);
+        }
+
+        public void HideSkillsButtons()
+        {
+            foreach (Button skillButton in _skillButtons) 
+                skillButton.gameObject.SetActive(false);
+        }
+
+        public void ShowSkillsButtons()
+        {
+            foreach (Button skillButton in _skillButtons) 
+                skillButton.gameObject.SetActive(true);
+        }
+
+        public void HideUpgradeMenu()
+        {
+            _upgradeMenu.SetActive(false);
+        }
+
+        public void ShowUpgradeMenu()
+        {
+            _upgradeMenu.SetActive(true);
+        }
+
         public void ShowGameplayUI()
         {
+            _scientificBar.SetActive(true);
+            _teamBar.SetActive(true);
+        }
+
+        public void HideGameOverUI()
+        {
+            _toUpgradeMenuButton.SetActive(false);
             _nextLevelButton.SetActive(false);
             _retryLevelButton.SetActive(false);
             _moneyText.gameObject.SetActive(false);
-            
-            _scientificBar.SetActive(true);
-            _teamBar.SetActive(true);
         }
 
         public void ShowGameOverUI(bool isWin)
@@ -121,8 +162,13 @@ namespace _Application.Scripts.Managers
                 _nextLevelButton.SetActive(true);
             else
                 _retryLevelButton.SetActive(true);
+            
+            _toUpgradeMenuButton.SetActive(true);
             _moneyText.gameObject.SetActive(true);
+        }
 
+        public void HideGameplayUI()
+        {
             _scientificBar.SetActive(false);
             _teamBar.SetActive(false);
         }

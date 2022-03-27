@@ -17,7 +17,10 @@ namespace _Application.Scripts.Control
             _skillController = skillController;
         }
 
-        public void Refresh() => 
+        public void Refresh()
+        {
             _skillController.RefreshSkills();
+            _skillController.ReloadSkills();
+        }
     }
 }

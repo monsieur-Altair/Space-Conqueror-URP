@@ -1,7 +1,7 @@
 ﻿using System;
 using _Application.Scripts.Infrastructure;
-using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Managers;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace _Application.Scripts.Skills
@@ -30,14 +30,19 @@ namespace _Application.Scripts.Skills
         public int Cost { get; private set; }
         protected Vector3 SelectedScreenPos { get; private set; }
 
-        public void Construct(IGameFactory gameFactory, Scriptables.Skill resource)
+        public Base(Planets.Team? teamConstraint, [CanBeNull] DecreasingCounter function)
         {
             MainCamera=Camera.main;
             CoroutineRunner = GlobalObject.Instance;
-            
-            LoadResources(gameFactory, resource);
+            _decreaseCounter = function;
+            SetTeamConstraint(teamConstraint);
         }
 
+        public void Reload(Scriptables.Skill resource, float coefficient = 1.0f)
+        {
+            LoadResources(resource, coefficient);
+        }
+        
         public void Refresh()
         {
             if (IsOnCooldown)
@@ -46,9 +51,6 @@ namespace _Application.Scripts.Skills
                 CancelSkill();
             }
         }
-        
-        public void SetDecreasingFunction(DecreasingCounter function) => 
-            _decreaseCounter = function;
 
         public void ExecuteForPlayer(Vector3 pos)
         {
@@ -59,10 +61,18 @@ namespace _Application.Scripts.Skills
                 OnCanceledSkill();
         }
 
-        public void SetTeamConstraint(Planets.Team team)
+        public virtual void SetSkillObject(GameObject skillObject)
         {
-            IsForAI = (team == Planets.Team.Red);
-            TeamConstraint = team;
+            
+        }
+
+        public void SetTeamConstraint(Planets.Team? team)
+        {
+            if (team != null)
+            {
+                IsForAI = (team == Planets.Team.Red);
+                TeamConstraint = (Planets.Team) team; 
+            }
         }
 
         public void ExecuteForAI(Planets.Base planet)
@@ -72,10 +82,12 @@ namespace _Application.Scripts.Skills
                 ApplySkill();
         }
 
-        protected virtual void LoadResources(IGameFactory gameFactory, Scriptables.Skill resource)
+        protected virtual void LoadResources(Scriptables.Skill resource,
+            float coefficient = 1.0f)
         {
-            Cooldown = resource.cooldown;
-            Cost = resource.cost;
+            float decreasingCoefficient = (2.0f - coefficient);
+            Cooldown = resource.cooldown * decreasingCoefficient;
+            Cost = (int)(resource.cost * decreasingCoefficient);
         }
 
         protected Planets.Base RaycastForPlanet()

@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using _Application.Scripts.Infrastructure.Services.Factory;
+using _Application.Scripts.Planets;
 using _Application.Scripts.Scriptables;
 using UnityEngine;
 
@@ -17,21 +17,29 @@ namespace _Application.Scripts.Skills
         private float _duration;
         private float _hitDamage;
         private int _hitCount;
-        
-        protected override void LoadResources(IGameFactory gameFactory, Skill resource)
+
+        public Acid(Team teamConstraint, DecreasingCounter function) : base(teamConstraint, function)
         {
-            base.LoadResources(gameFactory, resource);
+        }
+
+        public override void SetSkillObject(GameObject skillObject)
+        {
+            _acidRain = skillObject;
+            _acidParticles = _acidRain.transform.GetChild(0).GetComponent<ParticleSystem>();
+        }
+
+        protected override void LoadResources(Skill resource, float coefficient = 1.0f)
+        {
+            base.LoadResources(resource, coefficient);
             Scriptables.Acid res = resource as Scriptables.Acid;
             if (res != null)
             {
-                _duration =res.duration;
+                float decreasingCoefficient = 2.0f - coefficient; 
+                _duration = res.duration * decreasingCoefficient;
                 _hitCount = res.hitCount;
                 _hitDuration = _duration / _hitCount;
-                _hitDamage = res.damage / _hitCount;
+                _hitDamage = res.damage * coefficient / _hitCount;
             }
-            
-            _acidRain = gameFactory.CreateAcid();
-            _acidParticles = _acidRain.transform.GetChild(0).GetComponent<ParticleSystem>();
         }
 
         protected override void CancelSkill()

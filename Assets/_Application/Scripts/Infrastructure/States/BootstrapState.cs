@@ -49,7 +49,7 @@ namespace _Application.Scripts.Infrastructure.States
             scriptableService.LoadAllScriptables();
             
             IGameFactory factory = _allServices.RegisterSingle<IGameFactory>(
-                new GameFactory(assetProvider, scriptableService));
+                new GameFactory(_allServices , assetProvider, scriptableService));
             
             IProgressService progressService = _allServices.RegisterSingle<IProgressService>(
                 new ProgressService());

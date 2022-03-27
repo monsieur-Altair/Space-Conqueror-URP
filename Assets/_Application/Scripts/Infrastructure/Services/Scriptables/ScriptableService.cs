@@ -1,6 +1,9 @@
-﻿using _Application.Scripts.Infrastructure.Services.AssetManagement;
+﻿using System;
+using _Application.Scripts.Infrastructure.Services.AssetManagement;
+using _Application.Scripts.SavedData;
 using _Application.Scripts.Scriptables;
 using _Application.Scripts.Scriptables.Rewards;
+using _Application.Scripts.Scriptables.Upgrades;
 using UnityEngine;
 
 namespace _Application.Scripts.Infrastructure.Services.Scriptables
@@ -46,11 +49,11 @@ namespace _Application.Scripts.Infrastructure.Services.Scriptables
         public Acid AIsAcid { get; private set; }
         public Buff AIsBuff { get; private set; }
         public Call AIsCall { get; private set; }
-        
-        
 
         #endregion
-        
+
+        public UpgradeInfo RainUpgradeInfo { get; private set; }
+
 
         public ScriptableService(IAssetProvider assetProvider) => 
             _assetProvider = assetProvider;
@@ -60,6 +63,21 @@ namespace _Application.Scripts.Infrastructure.Services.Scriptables
             LoadRewards();
             LoadAllPlayerStats();
             LoadAllAIStats();
+            LoadAllUpgradesInfo();
+        }
+
+        public UpgradeInfo GetUpgradeInfo(UpgradeType upgradeType)
+        {
+            return upgradeType switch
+            {
+                UpgradeType.Rain => RainUpgradeInfo,
+                _ => throw new ArgumentOutOfRangeException(nameof(upgradeType), upgradeType, null)
+            };
+        }
+
+        private void LoadAllUpgradesInfo()
+        {
+            RainUpgradeInfo = _assetProvider.InstantiateScriptable<UpgradeInfo>(AssetPaths.RainUpgradesPath);
         }
 
         private void LoadAllAIStats()

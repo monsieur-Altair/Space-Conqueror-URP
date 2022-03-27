@@ -1,5 +1,4 @@
-﻿using _Application.Scripts.Infrastructure.Services.AssetManagement;
-using _Application.Scripts.Infrastructure.Services.Factory;
+﻿using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
 using _Application.Scripts.Planets;
@@ -14,36 +13,41 @@ namespace _Application.Scripts.AI
         public Call Call { get; }
         public Buff Buff { get; }
         public Acid Acid { get; }
-        
+
+        private readonly IScriptableService _scriptableService;
         private readonly ObjectPool _objectPool;
 
         public SkillController(IGameFactory gameFactory, IScriptableService scriptableService, ObjectPool objectPool)
         {
+            _scriptableService = scriptableService;
             _objectPool = objectPool;
             
-            Call = new Call();
+            Call = new Call(Team.Red ,DecreaseAISciCounter);
             Call.NeedObjectFromPool += SpawnUnit;
-            Call.Construct(gameFactory, scriptableService.AIsCall);
-            Call.SetTeamConstraint(Team.Red);
-            Call.SetDecreasingFunction(DecreaseAISciCounter);
+            Call.SetSkillObject(gameFactory.CreateIndicator());
 
-            Buff = new Buff();
-            Buff.Construct(gameFactory, scriptableService.AIsBuff);
-            Buff.SetTeamConstraint(Team.Red);
-            Buff.SetDecreasingFunction(DecreaseAISciCounter);
+            Buff = new Buff(Team.Red ,DecreaseAISciCounter);
 
-            Acid = new Acid();
-            Acid.Construct(gameFactory, scriptableService.AIsAcid);
-            Acid.SetTeamConstraint(Team.Red);
-            Acid.SetDecreasingFunction(DecreaseAISciCounter);
+            Acid = new Acid(Team.Red ,DecreaseAISciCounter);
+            Acid.SetSkillObject(gameFactory.CreateAcid());
+
+            ReloadSkills();
+        }
+
+        private void ReloadSkills()
+        {
+            Acid.Reload(_scriptableService.AIsAcid, 1.0f);
+            Buff.Reload(_scriptableService.AIsBuff, 1.0f);
+            Call.Reload(_scriptableService.AIsCall, 1.0f);
+        }
+
+        public void Refresh()
+        {
+            Call.Refresh(); 
+            Buff.Refresh();
+            Acid.Refresh();
         }
         
-        private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
-            _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.Base>();
-
-        private static void DecreaseAISciCounter(float value) => 
-            Core.ScientificCount -= value;
-
         public void AttackByAcid(Base target) => 
             Acid.ExecuteForAI(target);
 
@@ -52,5 +56,11 @@ namespace _Application.Scripts.AI
 
         public void CallSupply(Base target) => 
             Call.ExecuteForAI(target);
+
+        private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
+            _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.Base>();
+
+        private static void DecreaseAISciCounter(float value) => 
+            Core.ScientificCount -= value;
     }   
 }

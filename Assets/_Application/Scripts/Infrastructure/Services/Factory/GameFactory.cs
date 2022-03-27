@@ -3,6 +3,7 @@ using _Application.Scripts.Infrastructure.Services.AssetManagement;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
+using _Application.Scripts.Upgrades;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,15 +15,17 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
         public List<IProgressReader> ProgressReaders { get; } 
         public List<IProgressWriter> ProgressWriters { get; }
 
+        private readonly AllServices _allServices;
         private readonly IAssetProvider _assetProvider;
         private readonly IScriptableService _scriptableService;
         private Canvas _canvas;
 
-        public GameFactory(IAssetProvider assetProvider, IScriptableService scriptableService)
+        public GameFactory(AllServices allServices ,IAssetProvider assetProvider, IScriptableService scriptableService)
         {
             ProgressReaders = new List<IProgressReader>();
             ProgressWriters = new List<IProgressWriter>();
-            
+
+            _allServices = allServices;
             _assetProvider = assetProvider;
             _scriptableService = scriptableService;
         }
@@ -56,8 +59,8 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
                 outlookManager, 
                 uiManager, 
                 userControl,
-                AllServices.Instance.GetSingle<IReadWriterService>(),
-                AllServices.Instance.GetSingle<IScriptableService>());
+                _allServices.GetSingle<IReadWriterService>(),
+                _allServices.GetSingle<IScriptableService>());
             
             ProgressReaders.Add(mainManager);
             ProgressWriters.Add(mainManager);
@@ -77,16 +80,21 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
         private UI CreateUI(ObjectPool pool, Warehouse warehouse, Control.SkillController skillController)
         {
             UI uiManager = new UI(_canvas, pool, warehouse, skillController);
-            uiManager.SetButtons(CreateSkillButtons(),CreateRetryButton(), CreateNextLevelButton());
+            uiManager.SetButtons(CreateSkillButtons(),CreateRetryButton(), CreateNextLevelButton(), CreateToUpgradeMenuButton());
             uiManager.SetBars(CreateScientificBar(), CreateTeamBar());
             uiManager.SetText(CreateMoneyText());
+            uiManager.SetUpgradeMenu(CreateUpgradeMenu());
             return uiManager;
         }
+
+        private GameObject CreateToUpgradeMenuButton() => 
+            _assetProvider.InstantiateUI(AssetPaths.ToUpgradeMenuButtonPath, _canvas);
 
         private Control.UserControl CreateUserControl(ObjectPool pool, IScriptableService scriptableService, out Control.SkillController skillController)
         {
             Control.UserControl userControl = _assetProvider.Instantiate<Control.UserControl>(AssetPaths.UserControlPath);
-            skillController = new Control.SkillController(this, scriptableService, pool);
+            skillController = new Control.SkillController(_allServices.GetSingle<IProgressService>(),
+                this, scriptableService, pool);
             Control.PlanetController planetController = new Control.PlanetController(Camera.main);
             userControl.Init(planetController, skillController);
             return userControl;
@@ -111,6 +119,9 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
 
             return buttons;
         }
+
+        private GameObject CreateUpgradeMenu() => 
+            _assetProvider.InstantiateUI(AssetPaths.UpgradeMenuPath, _canvas);
 
         private GameObject CreateScientificBar() => 
             _assetProvider.InstantiateUI(AssetPaths.ScientificBarPath, _canvas);

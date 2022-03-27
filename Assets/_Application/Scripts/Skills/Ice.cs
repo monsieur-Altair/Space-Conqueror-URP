@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using _Application.Scripts.Control;
-using _Application.Scripts.Infrastructure.Services.Factory;
+using _Application.Scripts.Planets;
 using _Application.Scripts.Scriptables;
 using UnityEngine;
 
@@ -19,20 +19,27 @@ namespace _Application.Scripts.Skills
         private Plane _plane;
         private Coroutine _spawnCoroutine;
 
-        protected override void LoadResources(IGameFactory gameFactory, Skill resource)
+        public Ice() : base(null, null)
         {
-            base.LoadResources(gameFactory, resource);
-            Scriptables.Ice res = resource as Scriptables.Ice;
-            if (res != null) 
-                _duration = res.duration;
+        }
 
-            _freezingObject = gameFactory.CreateIce();
-            
+        public override void SetSkillObject(GameObject skillObject)
+        {
+            _freezingObject = skillObject;
+             
             _freezingZone = _freezingObject.GetComponent<Zone>(); 
             _freezingZone.SetTriggerFunction(FreezingEnteredObjects);
             
             _freezingObject.SetActive(false);
             _plane = new Plane(Vector3.up, new Vector3(0, PlanetLayHeight, 0));
+        }
+
+        protected override void LoadResources(Skill resource, float coefficient = 1.0f)
+        {
+            base.LoadResources(resource, coefficient);
+            Scriptables.Ice res = resource as Scriptables.Ice;
+            if (res != null) 
+                _duration = res.duration * coefficient;
         }
 
         protected override void CancelSkill()
