@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
 using _Application.Scripts.Infrastructure.Services;
-using _Application.Scripts.Infrastructure.Services.AssetManagement;
 using _Application.Scripts.Infrastructure.Services.Progress;
-using _Application.Scripts.Managers;
-using _Application.Scripts.Misc;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -35,12 +32,14 @@ namespace _Application.Scripts.Upgrades
             {
                 _progressReaders.Add(upgradeController);
                 _progressWriters.Add(upgradeController);
+                
                 upgradeController.TriedPurchaseUpgrade += (cost) =>
                 {
                     if ((_money - cost) >= 0)
                     {
                         _money -= cost;
                         AllServices.Instance.GetSingle<IProgressService>().PlayerProgress.money = _money;//////////////////////////////
+                        Managers.Main._money = _money;//////////////////////////////////////////////////////////////////////
                         moneyText.text = $"money: {_money}";
                         upgradeController.ApplyPurchase();
                     }
@@ -64,7 +63,7 @@ namespace _Application.Scripts.Upgrades
                 upgradeController.Refresh();
             }
 
-            _money = _progressService.PlayerProgress.money;//ошибка, старое значение
+            _money = _progressService.PlayerProgress.money;
             moneyText.text = $"money: {_money}";
         }
 
@@ -72,16 +71,13 @@ namespace _Application.Scripts.Upgrades
         {
             foreach (IProgressWriter progressWriter in _progressWriters)
                 progressWriter.WriteProgress(_progressService.PlayerProgress);
-//вызывается ли при выходе из игры??????
+
             _progressService.PlayerProgress.money = _money;
             
-            GlobalObject.Instance.StopAllCoroutines();
+            Managers.GlobalObject.Instance.StopAllCoroutines();
         }
         
-        private void OnDestroy()
-        {
+        private void OnDestroy() => 
             _readWriterService.WriteProgress();
-            //PlayerPrefs.SetString("PlayerProgress", _progressService.PlayerProgress.ConvertToJson());//////////////////
-        }
     }
 }

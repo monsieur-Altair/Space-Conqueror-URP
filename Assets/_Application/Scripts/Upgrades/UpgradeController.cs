@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections;
 using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Infrastructure.Services.Progress;
@@ -31,16 +32,9 @@ namespace _Application.Scripts.Upgrades
         [SerializeField] 
         private UpgradeType upgradeType;
 
-        private int _numberOfCompletedCells;//starts from 0
+        private int _numberOfCompletedCells;
         private int _cost;
         private UpgradeInfo _upgradeInfo;
-        
-        
-        // on enable - read progress, update improved
-        // on disable - write progress
-        
-        // need player progress, money, 
-        
 
         public void Init()
         {
@@ -51,13 +45,19 @@ namespace _Application.Scripts.Upgrades
         public void Refresh()
         {
             improvedBar.fillAmount = _numberOfCompletedCells / (float) cellCount;
-            costText.text = _cost.ToString();
+
+            if(_cost<0)
+                addButton.gameObject.SetActive(false);
+            else
+                costText.text = _cost.ToString();
         }
 
         public void ReadProgress(PlayerProgress playerProgress)
         {
-            _numberOfCompletedCells = playerProgress.GetAchievedUpgrade(upgradeType).numberOfCompletedCells;
-            _cost = _upgradeInfo.GetUpgradeStats(_numberOfCompletedCells).cost;
+            AchievedUpgrades achievedUpgrades = playerProgress.GetAchievedUpgrade(upgradeType);
+            _numberOfCompletedCells = achievedUpgrades.numberOfCompletedCells;
+            SingleUpgradeStats? stats = _upgradeInfo.GetUpgradeStats(_numberOfCompletedCells);
+            _cost = stats?.cost ?? -1;
         }
 
         public void WriteProgress(PlayerProgress playerProgress)
@@ -72,22 +72,32 @@ namespace _Application.Scripts.Upgrades
             _numberOfCompletedCells++;
             float startFill = improvedBar.fillAmount;
             float lastFill = _numberOfCompletedCells / (float) cellCount;
+
+            SingleUpgradeStats? stats = _upgradeInfo.GetUpgradeStats(_numberOfCompletedCells);
             
-            _cost = _upgradeInfo.GetUpgradeStats(_numberOfCompletedCells).cost;
-            costText.text = _cost.ToString();
+            if (stats != null)
+            {
+                _cost = (int) (stats?.cost);
+                costText.text = _cost.ToString();
+            }
+            else
+            {
+                addButton.gameObject.SetActive(false);
+            }
+            
 
             GlobalObject.Instance.StartCoroutine(PurchaseAnimation(startFill, lastFill));
         }
 
         private IEnumerator PurchaseAnimation(float startFill, float lastFill)
         {
-            int countOfCalls = 100;
+            int countOfCalls = 20;
             float delta = (lastFill - startFill) / countOfCalls;
             while (countOfCalls != 0)
             {
                 countOfCalls--;
                 improvedBar.fillAmount += delta;
-                yield return null;
+                yield return new WaitForSeconds(0.025f);
             }
         }
 
@@ -97,9 +107,13 @@ namespace _Application.Scripts.Upgrades
                 TriedPurchaseUpgrade(_cost);
         }
 
-        private float GetAdditionalCoefficient() =>
-            (_numberOfCompletedCells == 0) 
-                ? 0.0f 
-                : _upgradeInfo.GetUpgradeStats(_numberOfCompletedCells - 1).upgradeCoefficient;
+        private float GetAdditionalCoefficient()
+        {
+            if (_numberOfCompletedCells == 0)
+                return 0.0f;
+            
+            SingleUpgradeStats? stats = _upgradeInfo.GetUpgradeStats(_numberOfCompletedCells - 1);
+            return stats?.upgradeCoefficient ?? 0.0f;
+        }
     }
 }

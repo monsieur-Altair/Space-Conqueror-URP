@@ -34,8 +34,8 @@ namespace _Application.Scripts.Skills
             Scriptables.Acid res = resource as Scriptables.Acid;
             if (res != null)
             {
-                float decreasingCoefficient = 2.0f - coefficient; 
-                _duration = res.duration * decreasingCoefficient;
+               // float decreasingCoefficient = 2.0f - coefficient; 
+                _duration = res.duration;//*decreasingCoefficient
                 _hitCount = res.hitCount;
                 _hitDuration = _duration / _hitCount;
                 _hitDamage = res.damage * coefficient / _hitCount;

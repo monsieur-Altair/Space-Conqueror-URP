@@ -9,8 +9,10 @@ namespace _Application.Scripts.Scriptables.Upgrades
     {
         public SingleUpgradeStats[] upgradesStats;
 
-        public SingleUpgradeStats GetUpgradeStats(int number) => 
-            upgradesStats.First(stats => stats.number == number);
+        public SingleUpgradeStats? GetUpgradeStats(int number) => 
+            number < upgradesStats.Length 
+                ? upgradesStats.First(stats => stats.number == number) 
+                : (SingleUpgradeStats?) null;
     }
 
     [Serializable]

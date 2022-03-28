@@ -14,22 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   upgradesStats:
   - number: 0
-    cost: 150
+    cost: 50
     upgradeCoefficient: 0.2
     minCountOfTries: 1
     maxCountOfTries: 2
   - number: 1
-    cost: 300
+    cost: 100
     upgradeCoefficient: 0.4
     minCountOfTries: 2
     maxCountOfTries: 3
   - number: 2
-    cost: 500
+    cost: 200
     upgradeCoefficient: 0.6
     minCountOfTries: 5
     maxCountOfTries: 8
   - number: 3
-    cost: 600
+    cost: 300
     upgradeCoefficient: 0.7
     minCountOfTries: 6
     maxCountOfTries: 10
