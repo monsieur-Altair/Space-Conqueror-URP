@@ -1,37 +1,36 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
-namespace Planets
+namespace _Application.Scripts.Planets
 {
     public class Scientific : Base
     {
         [SerializeField] private Scriptables.Scientific scientific;
 
-        public static int MaxCountScientific { get; set; }
-        private float ProduceCountScientific { get; set; }
-        private float ProduceTimeScientific { get; set; }
+        public static event Action<float, int> ScientificCountUpdated; 
+        
+        private static int _maxCountScientific;
+        private float _produceCountScientific;
+        private float _produceTimeScientific;
+        
         public static float ScientificCount { get; private set; }
 
         public static void DecreaseScientificCount(float value)
         {
             ScientificCount -= value;
-        }
-        
-        protected override void LoadResources()
-        {
-            base.LoadResources();
-            LoadScientificRes();
+            ScientificCountUpdated?.Invoke(ScientificCount, _maxCountScientific);
         }
 
         public static void DischargeScientificCount()
         {
             ScientificCount = 0;
+            ScientificCountUpdated?.Invoke(ScientificCount, _maxCountScientific);
         }
-        
-        private void LoadScientificRes()
+
+        protected override void LoadResources()
         {
-            MaxCountScientific = scientific.maxCount;
-            ProduceCountScientific = scientific.produceCount;
-            ProduceTimeScientific = scientific.produceTime;
+            base.LoadResources();
+            LoadScientificRes();
         }
 
         protected override void IncreaseResources()
@@ -40,25 +39,36 @@ namespace Planets
             IncreaseScientificRes();
         }
 
+        private void LoadScientificRes()
+        {
+            _maxCountScientific = scientific.maxCount;
+            _produceCountScientific = scientific.produceCount;
+            _produceTimeScientific = scientific.produceTime;
+        }
+
         private void IncreaseScientificRes()
         {
-            
             //CHANGE FOR EVERY TEAM
-            if (Team == Team.Blue)
-            {
-                ScientificCount += ProduceCountScientific / ProduceTimeScientific * Time.deltaTime;
-                if (ScientificCount > MaxCountScientific)
-                    ScientificCount = MaxCountScientific;
-            }
+            if (Team == Team.Blue) 
+                IncreaseForPlayer();
 
-            if (Team == Team.Red)
-            {
-                AI.Core.ScientificCount+=ProduceCountScientific / ProduceTimeScientific * Time.deltaTime;
-                if (AI.Core.ScientificCount > MaxCountScientific)
-                    AI.Core.ScientificCount = MaxCountScientific;
-            }
-                
-           
+            if (Team == Team.Red) 
+                IncreaseForAI();
+        }
+
+        private void IncreaseForAI()
+        {
+            AI.Core.ScientificCount += _produceCountScientific / _produceTimeScientific * Time.deltaTime;
+            if (AI.Core.ScientificCount > _maxCountScientific)
+                AI.Core.ScientificCount = _maxCountScientific;
+        }
+
+        private void IncreaseForPlayer()
+        {
+            ScientificCount += _produceCountScientific / _produceTimeScientific * Time.deltaTime;
+            if (ScientificCount > _maxCountScientific)
+                ScientificCount = _maxCountScientific;
+            ScientificCountUpdated?.Invoke(ScientificCount, _maxCountScientific);
         }
     }
 }

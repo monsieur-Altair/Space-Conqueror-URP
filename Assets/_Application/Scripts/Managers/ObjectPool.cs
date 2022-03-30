@@ -2,22 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Managers
+namespace _Application.Scripts.Managers
 {
+    public enum PoolObjectType
+    {
+        ScientificRocket = 0,
+        SpawnerRocket = 1,
+        AttackerRocket = 2,
+        ScientificPlanet = 3,
+        SpawnerPlanet = 4,
+        AttackerPlanet = 5,
+        Counter = 6
+    }
     public class ObjectPool : MonoBehaviour
     {
-        private Dictionary<int, Queue<GameObject>> _poolDictionary;
-
-        public enum PoolObjectType
-        {
-            ScientificRocket = 0,
-            SpawnerRocket = 1,
-            AttackerRocket = 2,
-            ScientificPlanet = 3,
-            SpawnerPlanet = 4,
-            AttackerPlanet = 5,
-            Counter = 6
-        }
+        public List<Pool> pools;
+        
+        private readonly Dictionary<int, Queue<GameObject>> _poolDictionary = new Dictionary<int, Queue<GameObject>>();
 
         [Serializable]
         public class Pool
@@ -25,15 +26,6 @@ namespace Managers
             public PoolObjectType poolObjectType;
             public GameObject prefab;
             public int size;
-        }
-        
-        public List<Pool> pools;
-        public static ObjectPool Instance;
-        public void Awake()
-        {
-            if (Instance == null)
-                Instance = this;
-            _poolDictionary = new Dictionary<int, Queue<GameObject>>();
         }
 
         public void Start()
@@ -55,9 +47,7 @@ namespace Managers
         {
             int hash=type.GetHashCode();
             if (_poolDictionary.ContainsKey(hash) == false)
-            {
                 throw new MyException("doesn't exist key value");
-            }
 
             GameObject obj = _poolDictionary[hash].Dequeue();
             obj.SetActive(true);
@@ -69,7 +59,7 @@ namespace Managers
             return obj;
         }
 
-        public bool DisableAllUnitsInScene()
+        public void DisableAllUnitsInScene()
         {
             foreach (KeyValuePair<int, Queue<GameObject>> pair in _poolDictionary)
             {
@@ -79,7 +69,6 @@ namespace Managers
                         unit.SetActive(false);
                 }
             }
-            return false;
         }
     }
 }

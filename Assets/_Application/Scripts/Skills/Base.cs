@@ -1,115 +1,118 @@
-﻿using _Application.Scripts.Control;
-using Scriptables;
+﻿using System;
+using _Application.Scripts.Infrastructure;
+using _Application.Scripts.Managers;
+using JetBrains.Annotations;
 using UnityEngine;
-using UnityEngine.UI;
 
-namespace Skills
+namespace _Application.Scripts.Skills
 {
-    [DefaultExecutionOrder(1000)]
-    public abstract class Base : MonoBehaviour, ISkill
+    public abstract class Base : ISkill
     {
-        [SerializeField] protected Skill resource;
-        protected Vector3 SelectedScreenPos { get; private set; }
-        protected SkillController SkillController;
-        protected Camera MainCamera;
-        protected Managers.ObjectPool ObjectPool;
-        protected Planets.Base SelectedPlanet;
-        protected abstract void ApplySkill();
-        protected abstract void CancelSkill();
-        protected bool IsOnCooldown = false;
-        protected bool IsForAI = false;
-        protected Planets.Team TeamConstraint; 
-        protected delegate void UniqueActionToPlanet();
+        public event Action CanceledSkill;
+        public event Func<PoolObjectType, Vector3, Quaternion, Units.Base> NeedObjectFromPool;
         public delegate void DecreasingCounter(float count);
-
+        
+        protected abstract void CancelSkill();
+        protected abstract void ApplySkill();
+        
+        protected Camera MainCamera;
+        protected Planets.Base SelectedPlanet;
+        
+        protected float Cooldown;
+        protected bool IsOnCooldown;
+        protected bool IsForAI;
+        protected Planets.Team TeamConstraint;
+        protected ICoroutineRunner CoroutineRunner;
+        protected delegate void UniqueActionToPlanet();
+        
         private DecreasingCounter _decreaseCounter;
-        public float Cooldown { get; private set; }
+
         public int Cost { get; private set; }
+        protected Vector3 SelectedScreenPos { get; private set; }
 
-        private Button _button; 
-        public void Start()
+        public Base(Planets.Team? teamConstraint, [CanBeNull] DecreasingCounter function)
         {
-            SkillController = SkillController.Instance;
-            if (SkillController == null)
-                throw new MyException("can't get skill controller");
             MainCamera=Camera.main;
-            if(MainCamera==null)
-                throw new MyException("can't get main camera");
-            ObjectPool = Managers.ObjectPool.Instance;
-            if (ObjectPool == null)
-                throw new MyException("can't get object pool");
-            _button = GetComponent<Button>();
-            if(_button!=null)
-                _button.onClick.AddListener(() => { SkillController.PressHandler(_button);});
-            
-            SkillController.CanceledSelection += UnblockButton;
-            
-            LoadResources();
-        }
-
-        protected virtual void LoadResources()
-        {
-            Cooldown = resource.cooldown;
-            Cost = resource.cost;
-        }
-
-        public void SetDecreasingFunction(DecreasingCounter function)
-        {
+            CoroutineRunner = GlobalObject.Instance;
             _decreaseCounter = function;
+            SetTeamConstraint(teamConstraint);
+        }
+
+        public void Reload(Scriptables.Skill resource, float coefficient = 1.0f)
+        {
+            LoadResources(resource, coefficient);
         }
         
+        public void Refresh()
+        {
+            if (IsOnCooldown)
+            {
+                CoroutineRunner.CancelAllInvoked();
+                CancelSkill();
+            }
+        }
+
         public void ExecuteForPlayer(Vector3 pos)
         {
             SelectedScreenPos = pos;
             if (Planets.Scientific.ScientificCount > Cost && !IsOnCooldown)
                 ApplySkill();
             else
-                UnblockButton();
+                OnCanceledSkill();
         }
 
-        public void SetTeamConstraint(Planets.Team team)
+        public virtual void SetSkillObject(GameObject skillObject)
         {
-            IsForAI = (team == Planets.Team.Red);
-            TeamConstraint = team;
+            
+        }
+
+        public void SetTeamConstraint(Planets.Team? team)
+        {
+            if (team != null)
+            {
+                IsForAI = (team == Planets.Team.Red);
+                TeamConstraint = (Planets.Team) team; 
+            }
         }
 
         public void ExecuteForAI(Planets.Base planet)
         {
             SelectedPlanet = planet;
-            if (AI.Core.ScientificCount > Cost && !IsOnCooldown)
-            {
+            if (AI.Core.ScientificCount > Cost && !IsOnCooldown) 
                 ApplySkill();
-            }
+        }
+
+        protected virtual void LoadResources(Scriptables.Skill resource,
+            float coefficient = 1.0f)
+        {
+            float decreasingCoefficient = (2.0f - coefficient);
+            Cooldown = resource.cooldown * decreasingCoefficient;
+            Cost = (int)(resource.cost * decreasingCoefficient);
         }
 
         protected Planets.Base RaycastForPlanet()
         {
             int layerMask = 1 << 0;
             layerMask = ~layerMask;
-            var ray = MainCamera.ScreenPointToRay(SelectedScreenPos);
+            Ray ray = MainCamera.ScreenPointToRay(SelectedScreenPos);
             return Physics.Raycast(ray, out var hit,Mathf.Infinity, layerMask) ? hit.collider.GetComponent<Planets.Base>() : null;
         }
         
-        protected void UnblockButton()
-        {
-            if (!IsOnCooldown && _button != null)
-                _button.image.color = Color.white;
-        }
-
         protected void ApplySkillToPlanet(UniqueActionToPlanet action)
         {
-            if (SelectedPlanet != null)
-            {
-                IsOnCooldown = true;
-                _decreaseCounter(Cost);
-                action();
-                Invoke(nameof(CancelSkill), Cooldown);
-            }
-            else
-            {
-                UnblockButton();
-            }
+            IsOnCooldown = true;
+            _decreaseCounter(Cost);
+            action();
+            CoroutineRunner.InvokeWithDelay(CancelSkill,Cooldown);
         }
         
+        protected void OnCanceledSkill()
+        {
+            if(!IsOnCooldown)
+                CanceledSkill?.Invoke();
+        }
+
+        protected Units.Base OnNeedObjectFromPool(PoolObjectType type, Vector3 pos, Quaternion rotation) => 
+            NeedObjectFromPool?.Invoke(type, pos, rotation);
     }
 }

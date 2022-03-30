@@ -4,37 +4,43 @@ namespace _Application.Scripts.Control
 {
     public class UserControl : MonoBehaviour
     {
-        public bool isActive;///////////////////////////////////////////
-        public static UserControl Instance;
+        private bool _isActive;
 
         private IInputService _inputService;
 
-        public void Awake()
+        public void Init(PlanetController planetController ,SkillController skillController)
         {
-            if (Instance==null) 
-                Instance = this;
-
             //_inputService = Game.InputService;
             //_inputService.Init(new PlanetController(Camera.main), GetComponent<SkillController>());
-            _inputService = RegisterInputService();
+            _inputService = RegisterInputService(planetController ,skillController);
+            //_inputService = AllServices.Instance.Single<IInputService>();
         }
 
         public void Update()
         {
-            if(!isActive)
+            if(!_isActive)
                 return;
             
             _inputService.HandleInput();
         }
 
-        private IInputService RegisterInputService()
+        public void Disable() => 
+            _isActive = false;
+
+        public void Enable()
+        {
+            _isActive = true;
+            _inputService.Refresh();
+        }
+
+        private static IInputService RegisterInputService(PlanetController planetController ,SkillController skillController)
         {
             IInputService service;
             if (Application.isEditor)
                 service = new StandaloneInput();
             else
                 service = new MobileInput();
-            service.Init(new PlanetController(Camera.main),GetComponent<SkillController>());
+            service.Init(planetController, skillController);
             return service;
         }
     }

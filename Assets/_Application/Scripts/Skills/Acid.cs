@@ -1,40 +1,57 @@
 ﻿using System.Collections;
+using _Application.Scripts.Planets;
+using _Application.Scripts.Scriptables;
 using UnityEngine;
 
-namespace Skills
+namespace _Application.Scripts.Skills
 {
     public class Acid : Base
     {
-
-        [SerializeField] private GameObject acidPrefab;
-        private GameObject _acidRain;
-        private ParticleSystem _acidParticles;
+        private readonly Vector3 _offset = new Vector3(0.8f, 3, 0);
+        private readonly Quaternion _rotation = Quaternion.Euler(-90f,0,0);
         
-        private readonly Vector3 _offset = new Vector3(1, 3, 0);
-        public float HitDuration { get; private set; }
-        public float Duration { get; private set; }
-        public float HitDamage { get; private set; }
-        public int HitCount { get; private set; }
-        protected override void LoadResources()
+        private GameObject _acidRain;
+        private Coroutine _damagingByAcid;
+        private ParticleSystem _acidParticles;
+        private float _hitDuration;
+        private float _duration;
+        private float _hitDamage;
+        private int _hitCount;
+
+        public Acid(Team teamConstraint, DecreasingCounter function) : base(teamConstraint, function)
         {
-            base.LoadResources();
-            var res = resource as Scriptables.Acid;
+        }
+
+        public override void SetSkillObject(GameObject skillObject)
+        {
+            _acidRain = skillObject;
+            _acidParticles = _acidRain.transform.GetChild(0).GetComponent<ParticleSystem>();
+        }
+
+        protected override void LoadResources(Skill resource, float coefficient = 1.0f)
+        {
+            base.LoadResources(resource, coefficient);
+            Scriptables.Acid res = resource as Scriptables.Acid;
             if (res != null)
             {
-                Duration =res.duration;
-                HitCount = res.hitCount;
-                HitDuration = Duration / HitCount;
-                HitDamage = res.damage / HitCount;
+                float decreasingCoefficient = 2.0f - coefficient; 
+                _duration = res.duration * decreasingCoefficient;
+                _hitCount = res.hitCount;
+                _hitDuration = _duration / _hitCount;
+                _hitDamage = res.damage * coefficient / _hitCount;
             }
-            
-            _acidRain = Instantiate(acidPrefab);
-            if (_acidRain == null)
-                throw new MyException("cannot instantiate acid prefab");
-            _acidParticles = _acidRain.transform.GetChild(0).GetComponent<ParticleSystem>();
-            if (_acidParticles == null)
-                throw new MyException("cannot get particle system");
         }
-        
+
+        protected override void CancelSkill()
+        {
+            if(_acidParticles.isPlaying)
+                _acidParticles.Stop();
+            CoroutineRunner.StopCoroutine(_damagingByAcid);
+            SelectedPlanet = null;
+            IsOnCooldown = false;
+            OnCanceledSkill();
+        }
+
         protected override void ApplySkill()
         {
             if(!IsForAI)
@@ -43,35 +60,28 @@ namespace Skills
             if (SelectedPlanet!=null && SelectedPlanet.Team != TeamConstraint) 
                 ApplySkillToPlanet(StartRain);
             else
-                UnblockButton();
+                OnCanceledSkill();
         }
 
         private void StartRain()
         {
             _acidRain.transform.position = SelectedPlanet.transform.position +_offset;
-            _acidRain.transform.rotation = Quaternion.identity;
-            _acidParticles.Play();                                                                              
-            StartCoroutine(nameof(DamagePlanetByRain));
+            _acidRain.transform.rotation = _rotation;
+            _acidParticles.Play();
+            _damagingByAcid = CoroutineRunner.StartCoroutine(DamagePlanetByRain());
         }
-        
+
         private IEnumerator DamagePlanetByRain()
         {
             var count = 0;
-            while (count != HitCount)
+            while (count != _hitCount)
             {
-                SelectedPlanet.DecreaseCounter(HitDamage);
-                yield return new WaitForSeconds(HitDuration);
+                SelectedPlanet.DecreaseCounter(_hitDamage);
+                yield return new WaitForSeconds(_hitDuration);
                 count++;
             }
             _acidParticles.Stop();
             SelectedPlanet = null;
-        }
-
-        protected override void CancelSkill()
-        {
-            IsOnCooldown = false;
-            
-            UnblockButton();
         }
     }
 }

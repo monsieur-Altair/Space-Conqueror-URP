@@ -1,43 +1,68 @@
-﻿
-using Planets;
+﻿using System.Collections;
+using _Application.Scripts.Planets;
+using _Application.Scripts.Scriptables;
 using UnityEngine;
 
-namespace Skills
+namespace _Application.Scripts.Skills
 {
     public class Buff : Base
     {
-        public float BuffPercent { get; private set; }
+        private float _duration;
+        private float _buffPercent;
 
-        protected override void LoadResources()
+        private IBuffed _buffedEntity;
+        private Coroutine _buffCoroutine;
+
+        public Buff(Team teamConstraint, DecreasingCounter function) : base(teamConstraint, function)
         {
-            base.LoadResources();
-            var res = resource as Scriptables.Buff;
-            if(res!=null)
-                BuffPercent = res.buffPercent;
+        }
+
+        protected override void LoadResources(Skill resource, float coefficient = 1.0f)
+        {
+            base.LoadResources(resource, coefficient);
+            Scriptables.Buff res = resource as Scriptables.Buff;
+            if (res != null)
+            {
+                _duration = res.duration * coefficient;
+                _buffPercent = res.buffPercent * coefficient;
+            }
         }
 
         protected override void ApplySkill()
         {
-            if(!IsForAI)
+            if (!IsForAI)
+            {
                 SelectedPlanet = RaycastForPlanet();
+                _buffedEntity = SelectedPlanet;
+            }
 
-            if (SelectedPlanet!=null && SelectedPlanet.Team == TeamConstraint)
+            if (_buffedEntity != null && SelectedPlanet.Team == TeamConstraint)
                 ApplySkillToPlanet(BuffPlanet);
             else
-                UnblockButton();
+                OnCanceledSkill();
         }
 
-        private void BuffPlanet()
-        {
-            SelectedPlanet.Buff(BuffPercent);
-        }
-        
         protected override void CancelSkill()
         {
-            IsOnCooldown = false;
-            SelectedPlanet.UnBuff(BuffPercent);
+            CoroutineRunner.StopCoroutine(_buffCoroutine);
+            
+            if (_buffedEntity.IsBuffed)
+                _buffedEntity.UnBuff(_buffPercent);
+            _buffedEntity = null;
             SelectedPlanet = null;
-            UnblockButton();
+            
+            IsOnCooldown = false;
+            OnCanceledSkill();
+        }
+
+        private void BuffPlanet() => 
+            _buffCoroutine = CoroutineRunner.StartCoroutine(BuffThenUnBuff());
+
+        private IEnumerator BuffThenUnBuff()
+        {
+            _buffedEntity.Buff(_buffPercent);
+            yield return new WaitForSeconds(_duration);
+            _buffedEntity.UnBuff(_buffPercent);
         }
     }
 }

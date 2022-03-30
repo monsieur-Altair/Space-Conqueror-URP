@@ -1,8 +1,10 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+using _Application.Scripts.Infrastructure.Services.Factory;
+using _Application.Scripts.Infrastructure.Services.Progress;
+using _Application.Scripts.Infrastructure.Services.Scriptables;
+using _Application.Scripts.Managers;
+using _Application.Scripts.SavedData;
 using UnityEngine;
-using Button = UnityEngine.UI.Button;
 
 namespace _Application.Scripts.Control
 {
@@ -14,111 +16,94 @@ namespace _Application.Scripts.Control
         Call,
         None
     }
-    
-    public class SkillController : MonoBehaviour
+    public class SkillController
     {
-        [SerializeField] private List<Button> buttons;
-        
-        public static SkillController Instance;
-        public bool IsSelectedSkill { get; private set; }
-        public event Action CanceledSelection;
+        public Skills.Call Call { get; }
+        public Skills.Buff Buff { get; }
+        public Skills.Acid Acid { get; }
+        public Skills.Ice Ice { get; }
 
-        private const int Buff = 0;
-        private const int Acid = 1;
-        private const int Ice = 2;
-        private const int Call = 3;
-        
-        private SkillName _selectedSkillName;
-        private Skills.Call _call;
-        private Skills.Buff _buff;
-        private Skills.Acid _acid;
-        private Skills.Ice _ice;
+        private readonly IProgressService _progressService;
+        private readonly IScriptableService _scriptableService;
+        private readonly ObjectPool _objectPool;
 
+        public bool IsSkillNotSelected => 
+            SelectedSkillName == SkillName.None;
         
-        public void Awake()
+        public SkillName SelectedSkillName { get; private set; }
+
+        public SkillController(IProgressService progressService ,IGameFactory gameFactory, 
+            IScriptableService scriptableService, ObjectPool objectPool)
         {
-            if (Instance == null)
-                Instance = this;
-        }
+            ClearSelectedSkill();
 
-        public void Start()
-        {
-            IsSelectedSkill = false;
-            _selectedSkillName = SkillName.None;
+            _progressService = progressService;
+            _scriptableService = scriptableService;
+            _objectPool = objectPool;
             
-            _call = buttons[Call].GetComponent<Skills.Call>();
-            _call.SetTeamConstraint(Planets.Team.Blue);
-            _call.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
             
-            _buff = buttons[Buff].GetComponent<Skills.Buff>();
-            _buff.SetTeamConstraint(Planets.Team.Blue);
-            _buff.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
+            Call = new Skills.Call(Planets.Team.Blue, Planets.Scientific.DecreaseScientificCount);
+            Call.NeedObjectFromPool += SpawnUnit;
+            Call.SetSkillObject(gameFactory.CreateIndicator());
+
+            Buff = new Skills.Buff(Planets.Team.Blue, Planets.Scientific.DecreaseScientificCount);
+
+            Acid = new Skills.Acid(Planets.Team.Blue, Planets.Scientific.DecreaseScientificCount);
+            Acid.SetSkillObject(gameFactory.CreateAcid());
+
+            Ice = new Skills.Ice();
+            Ice.SetSkillObject(gameFactory.CreateIce());
             
-            _acid = buttons[Acid].GetComponent<Skills.Acid>();
-            _acid.SetTeamConstraint(Planets.Team.Blue);
-            _acid.SetDecreasingFunction(Planets.Scientific.DecreaseScientificCount);
-            
-            _ice = buttons[Ice].GetComponent<Skills.Ice>();
+            ReloadSkills();
         }
         
+        private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
+            _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.Base>();
+
         public void ApplySkill(Vector3 position)
         {
-            if (IsSelectedSkill)
+            if (SelectedSkillName!=SkillName.None)
             {
                 Skills.ISkill skill= ChooseSkill();
                 skill.ExecuteForPlayer(position);
-                OnCanceledSelection();
+                SelectedSkillName = SkillName.None;
             }
         }
 
-        public void PressHandler(Button button)
+        public void ReloadSkills()
         {
-            if(!UserControl.Instance.isActive)//////////////////////////////////
-                return;
-            
-            if (!IsSelectedSkill)
-            {
-                BlockButton(button);
-                StartCoroutine(nameof(SwitchWithWaiting));
-            }
-            else
-            {
-                OnCanceledSelection();
-            }
+            float upgradeCoefficient = _progressService.PlayerProgress.GetAchievedUpgrade(UpgradeType.Rain).upgradeCoefficient;
+            Acid.Reload(_scriptableService.PlayersAcid, upgradeCoefficient);
+            Buff.Reload(_scriptableService.PlayersBuff, 1.0f);
+            Call.Reload(_scriptableService.PlayersCall, 1.0f);
+            Ice.Reload(_scriptableService.PlayersIce, 1.0f);
         }
+
+        public void RefreshSkills()
+        {
+            Acid.Refresh();
+            Buff.Refresh();
+            Call.Refresh();
+            Ice.Refresh();
+        }
+
+        public void SetSelectedSkill(int index) =>
+            SelectedSkillName = (SkillName) index;
+
+        public void ClearSelectedSkill() =>
+            SelectedSkillName = SkillName.None;
 
         private Skills.ISkill ChooseSkill()
         {
-            return _selectedSkillName switch
+            return SelectedSkillName switch
             {
-                SkillName.Buff => _buff,
-                SkillName.Acid => _acid,
-                SkillName.Ice  => _ice,
-                SkillName.Call => _call,
+                SkillName.Buff => Buff,
+                SkillName.Acid => Acid,
+                SkillName.Ice  => Ice,
+                SkillName.Call => Call,
                 SkillName.None => null,
                 _ => throw new ArgumentOutOfRangeException()
             };
-        }
-
-        private IEnumerator SwitchWithWaiting()
-        {
-            //if not use waiting, touch "handle release" will be worked immediately
-            yield return new WaitForSeconds(0.1f);//0.1s is finger lift time
-            IsSelectedSkill = true;
-        }
-
-        private void BlockButton(Button button)////////////////////////////////////////////
-        {
-            int index = buttons.IndexOf(button);
-            _selectedSkillName = (SkillName)index;
-            button.image.color=Color.red;
-        }
-
-        private void OnCanceledSelection()
-        {
-            CanceledSelection?.Invoke();
-            _selectedSkillName = SkillName.None;
-            IsSelectedSkill = false;
         }
     }
 }

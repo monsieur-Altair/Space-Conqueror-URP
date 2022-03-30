@@ -1,56 +1,66 @@
-﻿using UnityEngine;
+﻿using _Application.Scripts.Infrastructure.Services.Factory;
+using _Application.Scripts.Infrastructure.Services.Scriptables;
+using _Application.Scripts.Managers;
+using _Application.Scripts.Planets;
+using _Application.Scripts.Skills;
+using UnityEngine;
+using Base = _Application.Scripts.Planets.Base;
 
-namespace AI
+namespace _Application.Scripts.AI
 {
-    public class SkillController : MonoBehaviour
+    public class SkillController
     {
+        public Call Call { get; }
+        public Buff Buff { get; }
+        public Acid Acid { get; }
 
-        [SerializeField] private GameObject aiSkills;
-     
-        private Skills.Call _call;
-        private Skills.Buff _buff;
-        private Skills.Acid _acid;
-        private Skills.Ice _ice;
+        private readonly IScriptableService _scriptableService;
+        private readonly ObjectPool _objectPool;
 
-        public void InitSkills()
+        public SkillController(IGameFactory gameFactory, IScriptableService scriptableService, ObjectPool objectPool)
         {
-            _call = aiSkills.GetComponent<Skills.Call>();
-            _call.SetTeamConstraint(Planets.Team.Red);
-            _call.SetDecreasingFunction(DecreaseAISciCounter);
+            _scriptableService = scriptableService;
+            _objectPool = objectPool;
+            
+            Call = new Call(Team.Red ,DecreaseAISciCounter);
+            Call.NeedObjectFromPool += SpawnUnit;
+            Call.SetSkillObject(gameFactory.CreateIndicator());
 
-            _buff = aiSkills.GetComponent<Skills.Buff>();
-            _buff.SetTeamConstraint(Planets.Team.Red);
-            _buff.SetDecreasingFunction(DecreaseAISciCounter);
+            Buff = new Buff(Team.Red ,DecreaseAISciCounter);
 
-            _acid = aiSkills.GetComponent<Skills.Acid>();
-            _acid.SetTeamConstraint(Planets.Team.Red);
-            _acid.SetDecreasingFunction(DecreaseAISciCounter);
+            Acid = new Acid(Team.Red ,DecreaseAISciCounter);
+            Acid.SetSkillObject(gameFactory.CreateAcid());
 
-            _ice = aiSkills.GetComponent<Skills.Ice>();
-
-            if (_acid == null || _buff == null || _call == null || _ice == null)
-                throw new MyException("cannot get skill component, AI");
+            ReloadSkills();
         }
 
-        private static void DecreaseAISciCounter(float value)
+        private void ReloadSkills()
         {
-            AI.Core.ScientificCount -= value;
+            Acid.Reload(_scriptableService.AIsAcid, 1.0f);
+            Buff.Reload(_scriptableService.AIsBuff, 1.0f);
+            Call.Reload(_scriptableService.AIsCall, 1.0f);
         }
 
-        public void AttackByAcid(Planets.Base target)
+        public void Refresh()
         {
-            _acid.ExecuteForAI(target);
-        }
-
-        public void BuffPlanet(Planets.Base target)
-        {
-            _buff.ExecuteForAI(target);
+            Call.Refresh(); 
+            Buff.Refresh();
+            Acid.Refresh();
         }
         
-        
-        public void Call(Planets.Base target)
-        {
-            _call.ExecuteForAI(target);
-        }
+        public void AttackByAcid(Base target) => 
+            Acid.ExecuteForAI(target);
+
+        public void BuffPlanet(Base target) => 
+            Buff.ExecuteForAI(target);
+
+        public void CallSupply(Base target) => 
+            Call.ExecuteForAI(target);
+
+        private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
+            _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.Base>();
+
+        private static void DecreaseAISciCounter(float value) => 
+            Core.ScientificCount -= value;
     }   
 }

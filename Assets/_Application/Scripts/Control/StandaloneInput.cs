@@ -6,7 +6,7 @@ namespace _Application.Scripts.Control
     {
         public override void HandleInput()
         {
-            if (_skillController.IsSelectedSkill)
+            if (_skillController.SelectedSkillName != SkillName.None)
                 AffectToSkills();
             else
                 AffectToPlanet();

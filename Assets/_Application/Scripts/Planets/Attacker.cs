@@ -1,17 +1,15 @@
-﻿using Scriptables;
+﻿using _Application.Scripts.Scriptables;
 using UnityEngine;
 
-namespace Planets
+namespace _Application.Scripts.Planets
 {
     public class Attacker : Base
     {
         [SerializeField] private Unit resourceBullet;
         private UnitInf _bulletInf;
 
-        public void Start()
-        {
+        public void Start() => 
             _bulletInf = new UnitInf();
-        }
 
         protected override void LoadResources()
         {
@@ -20,9 +18,9 @@ namespace Planets
             if (resourceBullet == null)
                 throw new MyException("bullet info = null");
             
-            _bulletInf.Damage = resourceBullet.damage;
-            _bulletInf.Speed = resourceBullet.speed;
-            _bulletInf.Team = Team;
+            _bulletInf.UnitDamage = resourceBullet.damage;
+            _bulletInf.UnitSpeed = resourceBullet.speed;
+            _bulletInf.UnitTeam = Team;
             _bulletInf.UnitCount = 1;
             
         }

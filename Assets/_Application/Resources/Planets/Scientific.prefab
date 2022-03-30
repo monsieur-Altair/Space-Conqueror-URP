@@ -59,7 +59,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77127332bcea4bdd857364099bc29f24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 5
+  team: 2
   type: 0
   resourceUnit: {fileID: 11400000, guid: ef4201503508ce24eba422d5c1d0f314, type: 2}
   resourcePlanet: {fileID: 11400000, guid: 8c95948abc54c2b498e16d0999756e1e, type: 2}

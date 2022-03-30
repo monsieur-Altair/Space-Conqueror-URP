@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aee018bd9d549f5b9dc5e72d3e48bf4, type: 3}
+  m_Name: Rain info
+  m_EditorClassIdentifier: 
+  upgradesStats:
+  - number: 0
+    cost: 150
+    upgradeCoefficient: 0.2
+    minCountOfTries: 1
+    maxCountOfTries: 2
+  - number: 1
+    cost: 300
+    upgradeCoefficient: 0.4
+    minCountOfTries: 2
+    maxCountOfTries: 3
+  - number: 2
+    cost: 500
+    upgradeCoefficient: 0.6
+    minCountOfTries: 5
+    maxCountOfTries: 8
+  - number: 3
+    cost: 600
+    upgradeCoefficient: 0.7
+    minCountOfTries: 6
+    maxCountOfTries: 10

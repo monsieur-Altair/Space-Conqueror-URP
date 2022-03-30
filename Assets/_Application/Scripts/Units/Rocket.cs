@@ -1,15 +1,14 @@
-﻿
-using _Application.Scripts.Units;
+﻿using _Application.Scripts.Skills;
 
-namespace Units
+namespace _Application.Scripts.Units
 {
-    public class Rocket : Base, Skills.IFreezable
+    public class Rocket : Base, IFreezable
     {
-        private Planets.Base.UnitInf _unitInf;
+        private _Application.Scripts.Planets.Base.UnitInf _unitInf;
         
         protected override void TargetInRange()
         {
-            Skills.Ice.DeletingFreezingZone -= Unfreeze;
+            Ice.DeletingFreezingZone -= Unfreeze;
         
             if(Target!=null)
                 Target.AttackedByUnit(this);
@@ -18,46 +17,32 @@ namespace Units
             Target = null;
         }
 
-        public void OnDisable()
-        {
-            Skills.Ice.DeletingFreezingZone -= Unfreeze;
-        }
+        public void OnDisable() => 
+            Ice.DeletingFreezingZone -= Unfreeze;
 
-        public override void SetData(in Planets.Base.UnitInf unitInf)
-        {
+        public override void SetData(in _Application.Scripts.Planets.Base.UnitInf unitInf) => 
             _unitInf = unitInf;
-        }
 
-        public override Planets.Team GETTeam() => _unitInf.Team;
+        public override Planets.Team GetTeam() => 
+            _unitInf.UnitTeam;
 
-        protected override void SetSpeed()
-        {
-            Agent.speed = _unitInf.Speed;
-        }
+        protected override void SetSpeed() => 
+            Agent.speed = _unitInf.UnitSpeed;
 
         public override float CalculateAttack(Planets.Team planetTeam, float defence)
         {
-            //damage in percent
-            if (_unitInf.Team == planetTeam)
+            if (_unitInf.UnitTeam == planetTeam)
                 return _unitInf.UnitCount;
-            return -1.0f*_unitInf.Damage / (100.0f * defence) * _unitInf.UnitCount;
+            return -1.0f * _unitInf.UnitDamage / (100.0f * defence) * _unitInf.UnitCount;
         }
 
-        public override float GetActualCount(float countAfterAttack)
-        {
-            return countAfterAttack / (_unitInf.Damage/100.0f);
-        }
+        public override float GetActualCount(float countAfterAttack) => 
+            countAfterAttack / (_unitInf.UnitDamage/100.0f);
 
-        public void Freeze()
-        {
+        public void Freeze() => 
             Agent.isStopped = true;
-        }
 
-        public void Unfreeze()
-        { 
+        public void Unfreeze() => 
             Agent.isStopped = false;
-        }
-        
-        
     }
 }

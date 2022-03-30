@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Scriptables
+namespace _Application.Scripts.Scriptables
 {    
     [CreateAssetMenu(fileName = "new acid resource", menuName = "Resources/Acid resource")]
     public class Acid : Skill

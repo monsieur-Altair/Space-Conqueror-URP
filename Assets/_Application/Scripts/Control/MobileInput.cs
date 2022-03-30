@@ -12,7 +12,7 @@ namespace _Application.Scripts.Control
             if (Input.touchCount > 0)
             {
                 _touch = Input.GetTouch(0);
-                if (_skillController.IsSelectedSkill)
+                if (_skillController.SelectedSkillName != SkillName.None)
                     AffectToSkills();
                 else
                     AffectToPlanet();
@@ -52,6 +52,10 @@ namespace _Application.Scripts.Control
                     _planetController.HandleMultipleSelection(position);
                     break;
                 }
+                case TouchPhase.Stationary:
+                    break;
+                case TouchPhase.Canceled:
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
