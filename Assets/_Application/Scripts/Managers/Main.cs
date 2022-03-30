@@ -28,7 +28,6 @@ namespace _Application.Scripts.Managers
         private readonly UserControl _userControl;
         private readonly TeamManager _teamManager;
         private readonly ICoroutineRunner _coroutineRunner;
-       // private readonly IReadWriterService _readWriterService;
         private readonly IScriptableService _scriptableService;
         
         private GameObject _planetsLay;
@@ -37,7 +36,7 @@ namespace _Application.Scripts.Managers
         
         private List<Planets.Base> _allPlanets;
         
-        private int _money;
+        public static int _money; /////////////////////////////////////////////////////////////////////////
         private int _lastCompletedLevel;
 
         public Main(Levels levelsManager, TeamManager teamManager, ICoroutineRunner coroutineRunner, AI.Core core, 
@@ -54,14 +53,12 @@ namespace _Application.Scripts.Managers
             _outlook = outlook;
             _ui = ui;
             _userControl = userControl;
-         //   _readWriterService = readWriterService;
             _scriptableService = scriptableService;
 
             Planets.Base.Conquered += _teamManager.UpdateObjectsCount;
             _teamManager.GameEnded += EndGame;
 
             _ui.SetUIBehaviours(_teamManager, RetryLevel, LoadNextLevel, ToUpgradeMenuBehaviour, BackToGame);
-            //levelsManager.SetCurrentLevelNumber(_lastCompletedLevel + 1);
         }
 
         private void BackToGame()
@@ -141,6 +138,7 @@ namespace _Application.Scripts.Managers
                 }
                 case GameStates.GameOver:
                 {
+                    _userControl.Refresh();
                     _userControl.Disable();
                     _objectPool.DisableAllUnitsInScene();
                     _core.Disable();
@@ -177,7 +175,6 @@ namespace _Application.Scripts.Managers
         {
             int rewardMoney = _isWin ? _scriptableService.RewardList.GetReward(_lastCompletedLevel) : 0;
             
-           // _money = AllServices.Instance.GetSingle<IProgressService>().PlayerProgress.money;///////////////////////////
             _money += rewardMoney;
             AllServices.Instance.GetSingle<IProgressService>().PlayerProgress.money = _money;//////////////////////////////
             _ui.UpdateMoneyText(_money);
@@ -194,9 +191,10 @@ namespace _Application.Scripts.Managers
             _outlook.PrepareLevel(_allPlanets);
             _ui.PrepareLevel(_allPlanets);
             
-            Planets.Scientific.DischargeScientificCount();//sci-count = 0
+            Planets.Scientific.DischargeScientificCount();
             
             _ui.EnableSkillUI();
+            _userControl.Reload();
             _userControl.Enable();
         }
 

@@ -288,6 +288,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 276536841092425612}
     m_Modifications:
+    - target: {fileID: 1455262667294142318, guid: 1f361aaf0874f59409cbc1be7cd00958, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7448764740245009270, guid: 1f361aaf0874f59409cbc1be7cd00958, type: 3}
       propertyPath: m_Name
       value: Rain
@@ -386,6 +390,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7448764740245009271, guid: 1f361aaf0874f59409cbc1be7cd00958, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7499627549641265049, guid: 1f361aaf0874f59409cbc1be7cd00958, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8946043162501275409, guid: 1f361aaf0874f59409cbc1be7cd00958, type: 3}
+      propertyPath: m_RaycastTarget
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

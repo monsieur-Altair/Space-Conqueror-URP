@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rewards:
   - level: 0
-    money: 100
+    money: 650
   - level: 1
     money: 150
   - level: 2
