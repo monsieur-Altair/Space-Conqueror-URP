@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aee018bd9d549f5b9dc5e72d3e48bf4, type: 3}
+  m_Name: Building defence info
+  m_EditorClassIdentifier: 
+  upgradesStats:
+  - number: 0
+    cost: 50
+    upgradeCoefficient: 0.078
+  - number: 1
+    cost: 100
+    upgradeCoefficient: 0.212
+  - number: 2
+    cost: 200
+    upgradeCoefficient: 0.409
+  - number: 3
+    cost: 500
+    upgradeCoefficient: 0.7

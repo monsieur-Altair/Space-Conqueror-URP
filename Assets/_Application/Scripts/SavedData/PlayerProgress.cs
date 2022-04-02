@@ -20,6 +20,7 @@ namespace _Application.Scripts.SavedData
 
         public AchievedUpgrades GetAchievedUpgrade(UpgradeType upgradeType) => 
             achievedUpgrades.First(upgrades => upgrades.upgradeType == upgradeType);
+        //achievedUpgrades[(int)upgradeType];
 
         private void CreateAchieveUpgrades()
         {

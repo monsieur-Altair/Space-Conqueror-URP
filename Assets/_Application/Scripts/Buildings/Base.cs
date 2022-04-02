@@ -1,6 +1,8 @@
 using System;
+using _Application.Scripts.Infrastructure.Services.Progress;
+using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
-using _Application.Scripts.Scriptables;
+using _Application.Scripts.SavedData;
 using _Application.Scripts.Skills;
 using UnityEngine;
 using Ice = _Application.Scripts.Skills.Ice;
@@ -26,8 +28,6 @@ namespace _Application.Scripts.Buildings
     {
         [SerializeField] private Team team;
         [SerializeField] private Type type;
-        [SerializeField] private Unit resourceUnit;
-        [SerializeField] private Building resourceBuilding;
 
         public static event Action<Base, Team, Team> Conquered;
         public event Action<Base, int> CountChanged;
@@ -37,19 +37,18 @@ namespace _Application.Scripts.Buildings
         public event Action<Base, Units.Base> LaunchedUnit;
         public event Func<PoolObjectType, Vector3, Quaternion, Units.Base> LaunchingUnit;
         
+        private static int _id;
 
-        private const float Speed = 20.0f;
-        private const float LaunchCoefficient = 0.5f;
+        protected IScriptableService ScriptableService;
+        protected IProgressService ProgressService;
         
-        private float _count;
+        //private const float Speed = 20.0f;
+        private const float LaunchCoefficient = 0.5f;
+
         private UnitInf _unitInf;
         private bool _isFrozen;
-
-        private static int _id;
         
-        public int ID { get; private set; }
-        public float BuildingsRadius { get; private set; }
-
+        private float _count;
         private float _maxCount;
         private float _produceCount;
         private float _produceTime;
@@ -57,6 +56,8 @@ namespace _Application.Scripts.Buildings
         private float _reducingSpeed;
 
 
+        public int ID { get; private set; }
+        public float BuildingsRadius { get; private set; }
         public Team Team { get; private set; }
         public Type Type { get; private set; }
         public bool IsBuffed { get; private set; }
@@ -77,8 +78,14 @@ namespace _Application.Scripts.Buildings
                 IncreaseResources();
         }
 
-        public void Init()
+        public void OnDestroy() => 
+            Ice.DeletingFreezingZone -= Unfreeze;
+
+        public void Construct(IScriptableService scriptableService, IProgressService progressService)
         {
+            ScriptableService = scriptableService;
+            ProgressService = progressService;
+            
             _count = 0.0f;
             CountChanged?.Invoke(this, (int) _count);
             
@@ -87,7 +94,59 @@ namespace _Application.Scripts.Buildings
             _unitInf = new UnitInf();
             
             BuildingsRadius = GetComponent<SphereCollider>().radius;
-            LoadResources();
+
+            Team availableTeam = (team == Team.White) ? Team.Red : team;
+
+            Scriptables.Building infoAboutBuilding = ScriptableService.GetBuildingInfo(availableTeam, type);
+            Scriptables.Unit infoAboutUnit = ScriptableService.GetUnitInfo(availableTeam, type);
+            
+            LoadResources(infoAboutBuilding, infoAboutUnit);
+        }
+
+        protected virtual void LoadResources(Scriptables.Building infoAboutBuilding, Scriptables.Unit infoAboutUnit)
+        {
+            PlayerProgress playerProgress = ProgressService.PlayerProgress;
+            
+            Team = team;
+            Type = type;
+            
+            //bad practice
+            float buildingDefenceCoefficient = (team == Team.Blue)
+                ? playerProgress.GetAchievedUpgrade(UpgradeType.BuildingDefence).upgradeCoefficient
+                : 1.0f;
+
+            float buildingMaxCountCoefficient = (team == Team.Blue)
+                ? ProgressService.PlayerProgress.GetAchievedUpgrade(UpgradeType.BuildingMaxCount).upgradeCoefficient
+                : 1.0f;
+            //
+            
+            _maxCount = infoAboutBuilding.maxCount * buildingMaxCountCoefficient;
+            _produceCount = infoAboutBuilding.produceCount;
+            _produceTime = infoAboutBuilding.produceTime;
+            _defense = infoAboutBuilding.defense * buildingDefenceCoefficient;
+            _reducingSpeed = infoAboutBuilding.reducingSpeed;
+            
+            
+            
+            //bad practice
+            float unitSpeedCoefficient = (team == Team.Blue)
+                ? playerProgress.GetAchievedUpgrade(UpgradeType.UnitSpeed).upgradeCoefficient
+                : 1.0f;
+
+            float unitAttackCoefficient = (team == Team.Blue)
+                ? ProgressService.PlayerProgress.GetAchievedUpgrade(UpgradeType.UnitAttack).upgradeCoefficient
+                : 1.0f;
+            //
+            
+            _unitInf.UnitSpeed = infoAboutUnit.speed * unitSpeedCoefficient;
+            _unitInf.UnitDamage = infoAboutUnit.damage * unitAttackCoefficient;
+            _unitInf.UnitTeam = Team;
+
+            if (Team == Team.White)
+            {
+                _count = _maxCount;
+                CountChanged?.Invoke(this, (int) _count);
+            }
         }
 
         public void Buff(float percent)
@@ -103,15 +162,12 @@ namespace _Application.Scripts.Buildings
             IsBuffed = false;
             UnBuffed?.Invoke(this);
         }
-        
+
         public void Freeze() => 
             _isFrozen = true;
 
         public void Unfreeze() => 
             _isFrozen = false;
-
-        public void OnDestroy() => 
-            Ice.DeletingFreezingZone -= Unfreeze;
 
         public void LaunchUnit(Base destination)
         {
@@ -145,7 +201,7 @@ namespace _Application.Scripts.Buildings
             LaunchedUnit?.Invoke(this, unit);
             unit.SetData(in _unitInf);
         }
-        
+
         public void AdjustUnit(Units.Base unit, float supplyCoefficient)
         {
             SetUnitCount(supplyCoefficient);
@@ -167,28 +223,6 @@ namespace _Application.Scripts.Buildings
                 SwitchTeam(unitTeam);
             }
             CountChanged?.Invoke(this, (int)_count);
-        }
-
-        protected virtual void LoadResources()
-        {
-            _maxCount = resourceBuilding.maxCount;
-            _produceCount = resourceBuilding.produceCount;
-            _produceTime = resourceBuilding.produceTime;
-            _defense = resourceBuilding.defense;
-            _reducingSpeed = resourceBuilding.reducingSpeed;
-            
-            Team = team;
-            Type = type;
-            
-            _unitInf.UnitSpeed = resourceUnit.speed;
-            _unitInf.UnitDamage = resourceUnit.damage;
-            _unitInf.UnitTeam = Team;
-
-            if (Team == Team.White)
-            {
-                _count = _maxCount;
-                CountChanged?.Invoke(this, (int) _count);
-            }
         }
 
         protected virtual void IncreaseResources()
@@ -216,8 +250,11 @@ namespace _Application.Scripts.Buildings
         private void SwitchTeam(Team newTeam)
         {
             team = newTeam;
-            //reset resources
-            LoadResources();
+
+            Scriptables.Building infoAboutBuilding = ScriptableService.GetBuildingInfo(newTeam , type);
+            Scriptables.Unit infoAboutUnit = ScriptableService.GetUnitInfo(newTeam, type);
+
+            LoadResources(infoAboutBuilding, infoAboutUnit);
 
             TeamChanged?.Invoke(this);
         }

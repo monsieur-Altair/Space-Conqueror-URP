@@ -29,20 +29,20 @@ namespace _Application.Scripts.Managers
         private readonly TeamManager _teamManager;
         private readonly ICoroutineRunner _coroutineRunner;
         private readonly IScriptableService _scriptableService;
-        private readonly IReadWriterService _readWriterService;
-        
+        private readonly IProgressService _progressService;
+
         private GameObject _buildingsLay;
         private bool _isWin;
         private GameStates _currentGameState;
-        
+
         private List<Buildings.Base> _allBuildings;
-        
+
         public static int _money; /////////////////////////////////////////////////////////////////////////
         private int _lastCompletedLevel;
 
         public Main(Levels levelsManager, TeamManager teamManager, ICoroutineRunner coroutineRunner, AI.Core core, 
-            ObjectPool pool ,Outlook  outlook, UI ui, UserControl userControl, IReadWriterService readWriterService,
-            IScriptableService scriptableService)
+            ObjectPool pool ,Outlook  outlook, UI ui, UserControl userControl, IScriptableService scriptableService, 
+            IProgressService progressService)
         {
             _allBuildings = new List<Buildings.Base>();
             
@@ -55,9 +55,8 @@ namespace _Application.Scripts.Managers
             _ui = ui;
             _userControl = userControl;
             _scriptableService = scriptableService;
+            _progressService = progressService;
 
-            _readWriterService = readWriterService;
-            
             Buildings.Base.Conquered += _teamManager.UpdateObjectsCount;
             _teamManager.GameEnded += EndGame;
 
@@ -117,7 +116,7 @@ namespace _Application.Scripts.Managers
             foreach (Buildings.Base building in _allBuildings)
             {
                 building.gameObject.SetActive(true);
-                building.Init();
+                building.Construct(_scriptableService, _progressService);
                 building.LaunchingUnit += SpawnUnit;
             }
             

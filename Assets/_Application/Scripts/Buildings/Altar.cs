@@ -1,11 +1,12 @@
 ﻿using System;
+using _Application.Scripts.Scriptables;
 using UnityEngine;
 
 namespace _Application.Scripts.Buildings
 {
     public class Altar : Base
     {
-        [SerializeField] private Scriptables.Mana mana;
+        //[SerializeField] private Scriptables.Mana mana;
 
         public static event Action<float, int> ManaCountUpdated; 
         
@@ -27,10 +28,11 @@ namespace _Application.Scripts.Buildings
             ManaCountUpdated?.Invoke(ManaCount, _maxCountMana);
         }
 
-        protected override void LoadResources()
+        protected override void LoadResources(Building infoAboutBuilding, Unit infoAboutUnit)
         {
-            base.LoadResources();
-            LoadAltarRes();
+            base.LoadResources(infoAboutBuilding, infoAboutUnit);
+            Team availableTeam = (Team == Team.White) ? Team.Red : Team;
+            LoadAltarRes(ScriptableService.GetManaInfo(availableTeam));
         }
 
         protected override void IncreaseResources()
@@ -39,7 +41,7 @@ namespace _Application.Scripts.Buildings
             IncreaseManaRes();
         }
 
-        private void LoadAltarRes()
+        private void LoadAltarRes(Mana mana)
         {
             _maxCountMana = mana.maxCount;
             _produceCountMana = mana.produceCount;

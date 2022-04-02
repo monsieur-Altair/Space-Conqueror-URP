@@ -59,8 +59,8 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
                 outlookManager, 
                 uiManager, 
                 userControl,
-                _allServices.GetSingle<IReadWriterService>(),
-                _allServices.GetSingle<IScriptableService>());
+                _allServices.GetSingle<IScriptableService>(),
+                _allServices.GetSingle<IProgressService>());
             
             ProgressReaders.Add(mainManager);
             ProgressWriters.Add(mainManager);

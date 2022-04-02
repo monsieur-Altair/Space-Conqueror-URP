@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 
 namespace _Application.Scripts.Scriptables.Upgrades
@@ -11,26 +10,7 @@ namespace _Application.Scripts.Scriptables.Upgrades
 
         public SingleUpgradeStats? GetUpgradeStats(int number) => 
             number < upgradesStats.Length 
-                ? upgradesStats.First(stats => stats.number == number) 
+                ? upgradesStats.First(stats => stats.number == number) //upgradesStats[number]
                 : (SingleUpgradeStats?) null;
-    }
-
-    [Serializable]
-    public struct SingleUpgradeStats
-    {
-        [Min(0)]
-        public int number;
-        
-        [Min(50)]
-        public int cost;
-
-        [Range(0.0f, 0.7f)]
-        public float upgradeCoefficient;
-        
-        [Min(1)]
-        public int minCountOfTries;
-        
-        [Min(1)]
-        public int maxCountOfTries;
     }
 }

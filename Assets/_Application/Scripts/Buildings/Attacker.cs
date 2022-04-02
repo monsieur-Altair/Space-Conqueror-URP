@@ -5,25 +5,25 @@ namespace _Application.Scripts.Buildings
 {
     public class Attacker : Base
     {
-        [SerializeField] private Unit resourceBullet;
-        private UnitInf _bulletInf;
+        // [SerializeField] private Unit resourceBullet;
+        // private UnitInf _bulletInf;
 
-        public void Start() => 
-            _bulletInf = new UnitInf();
+        // public void Start() => 
+        //     _bulletInf = new UnitInf();
 
-        protected override void LoadResources()
-        {
-            base.LoadResources();
-
-            if (resourceBullet == null)
-                throw new MyException("bullet info = null");
-            
-            _bulletInf.UnitDamage = resourceBullet.damage;
-            _bulletInf.UnitSpeed = resourceBullet.speed;
-            _bulletInf.UnitTeam = Team;
-            _bulletInf.UnitCount = 1;
-            
-        }
+        // protected override void LoadResources(Building infoAboutBuilding, Unit infoAboutUnit)
+        // {
+        //     base.LoadResources(infoAboutBuilding, infoAboutUnit);
+        //
+        //     // if (resourceBullet == null)
+        //     //     throw new MyException("bullet info = null");
+        //     //
+        //     // _bulletInf.UnitDamage = resourceBullet.damage;
+        //     // _bulletInf.UnitSpeed = resourceBullet.speed;
+        //     // _bulletInf.UnitTeam = Team;
+        //     // _bulletInf.UnitCount = 1;
+        //     
+        // }
         
         // //does not work correctly
         // public void StartAttackingUnits(Units.Base unit)
