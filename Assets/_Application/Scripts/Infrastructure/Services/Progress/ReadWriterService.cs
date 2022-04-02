@@ -11,13 +11,13 @@ namespace _Application.Scripts.Infrastructure.Services.Progress
         private readonly IGameFactory _gameFactory;
         private readonly IProgressService _progressService;
 
+        private const string PlayerProgressKey = "PlayerProgress";
+
         public ReadWriterService(IProgressService progressService, IGameFactory gameFactory)
         {
             _progressService = progressService;
             _gameFactory = gameFactory;
         }
-
-        private const string PlayerProgressKey = "PlayerProgress";
 
         public PlayerProgress ReadProgress() => 
             PlayerPrefs.GetString(PlayerProgressKey)?.ConvertFromJson<PlayerProgress>();

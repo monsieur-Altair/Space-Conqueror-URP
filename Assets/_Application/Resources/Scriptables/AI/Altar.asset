@@ -10,7 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c8198880750d404cb58a07d9e9b963d4, type: 3}
+<<<<<<<< HEAD:Assets/_Application/Resources/Scriptables/AI/Altar.asset
   m_Name: Altar
+========
+  m_Name: AI Scientific
+>>>>>>>> DevMelnikov:Assets/_Application/Resources/Scriptables/AI/AI Scientific.asset
   m_EditorClassIdentifier: 
   name: mana
   maxCount: 100

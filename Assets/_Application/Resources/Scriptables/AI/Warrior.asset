@@ -10,7 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d4e50a4842294124a568b651a2854807, type: 3}
+<<<<<<<< HEAD:Assets/_Application/Resources/Scriptables/AI/Warrior.asset
   m_Name: Warrior
+========
+  m_Name: AI Spawner Rocket
+>>>>>>>> DevMelnikov:Assets/_Application/Resources/Scriptables/AI/AI Spawner Rocket.asset
   m_EditorClassIdentifier: 
   name: rocket
   damage: 100

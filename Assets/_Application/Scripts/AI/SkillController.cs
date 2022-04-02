@@ -16,32 +16,40 @@ namespace _Application.Scripts.AI
         private readonly ObjectPool _objectPool;
 
         public SkillController(IGameFactory gameFactory, ObjectPool objectPool)
+        public SkillController(IGameFactory gameFactory, IScriptableService scriptableService, ObjectPool objectPool)
         {
+            _scriptableService = scriptableService;
             _objectPool = objectPool;
             
-            Call = new Call();
+            Call = new Call(Team.Red ,DecreaseAISciCounter);
             Call.NeedObjectFromPool += SpawnUnit;
-            Call.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AICallResourcePath));
-            Call.SetTeamConstraint(Buildings.Team.Red);
-            Call.SetDecreasingFunction(DecreaseAISciCounter);
+            Call.SetSkillObject(gameFactory.CreateIndicator());
 
-            Buff = new Buff();
-            Buff.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AIBuffResourcePath));
-            Buff.SetTeamConstraint(Buildings.Team.Red);
-            Buff.SetDecreasingFunction(DecreaseAISciCounter);
+            Buff = new Buff(Team.Red ,DecreaseAISciCounter);
 
-            Acid = new Acid();
-            Acid.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AIAcidResourcePath));
-            Acid.SetTeamConstraint(Buildings.Team.Red);
-            Acid.SetDecreasingFunction(DecreaseAISciCounter);
+            Acid = new Acid(Team.Red ,DecreaseAISciCounter);
+            Acid.SetSkillObject(gameFactory.CreateAcid());
+
+            ReloadSkills();
         }
-        
-        private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
-            _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.Base>();
+
+        private void ReloadSkills()
+        {
+            Acid.Reload(_scriptableService.AIsAcid, 1.0f);
+            Buff.Reload(_scriptableService.AIsBuff, 1.0f);
+            Call.Reload(_scriptableService.AIsCall, 1.0f);
+        }
 
         private static void DecreaseAISciCounter(float value) => 
-            Core.ManaCount -= value;
-
+        	Core.ManaCount -= value;
+        
+        public void Refresh()
+        {
+            Call.Refresh(); 
+            Buff.Refresh();
+            Acid.Refresh();
+        }
+        
         public void AttackByAcid(Base target) => 
             Acid.ExecuteForAI(target);
 
@@ -50,5 +58,11 @@ namespace _Application.Scripts.AI
 
         public void CallSupply(Base target) => 
             Call.ExecuteForAI(target);
+
+        private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
+            _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.Base>();
+
+        private static void DecreaseAISciCounter(float value) => 
+            Core.ScientificCount -= value;
     }   
 }

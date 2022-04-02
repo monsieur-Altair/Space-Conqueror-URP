@@ -7,5 +7,6 @@ namespace _Application.Scripts.Control
         void HandleInput();
         void Init(BuildingsController buildingsController, SkillController skillController);
         void Refresh();
+        void Reload();
     }
 }

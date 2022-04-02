@@ -1,8 +1,9 @@
 ﻿using System;
-using _Application.Scripts.Buildings;
-using _Application.Scripts.Infrastructure.Services.AssetManagement;
 using _Application.Scripts.Infrastructure.Services.Factory;
+using _Application.Scripts.Infrastructure.Services.Progress;
+using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
+using _Application.Scripts.SavedData;
 using UnityEngine;
 
 namespace _Application.Scripts.Control
@@ -21,7 +22,9 @@ namespace _Application.Scripts.Control
         public Skills.Buff Buff { get; }
         public Skills.Acid Acid { get; }
         public Skills.Ice Ice { get; }
-        
+
+        private readonly IProgressService _progressService;
+        private readonly IScriptableService _scriptableService;
         private readonly ObjectPool _objectPool;
 
         public bool IsSkillNotSelected => 
@@ -29,30 +32,29 @@ namespace _Application.Scripts.Control
         
         public SkillName SelectedSkillName { get; private set; }
 
-        public SkillController(IGameFactory gameFactory, ObjectPool objectPool)
+        public SkillController(IProgressService progressService ,IGameFactory gameFactory, 
+            IScriptableService scriptableService, ObjectPool objectPool)
         {
             ClearSelectedSkill();
 
+            _progressService = progressService;
+            _scriptableService = scriptableService;
             _objectPool = objectPool;
             
-            Call = new Skills.Call();
+            
+            Call = new Skills.Call(Planets.Team.Blue, Planets.Scientific.DecreaseScientificCount);
             Call.NeedObjectFromPool += SpawnUnit;
-            Call.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.CallResourcePath));
-            Call.SetTeamConstraint(Team.Blue);
-            Call.SetDecreasingFunction(Altar.DecreaseManaCount);
+            Call.SetSkillObject(gameFactory.CreateIndicator());
 
-            Buff = new Skills.Buff();
-            Buff.Construct(gameFactory,gameFactory.CreateSkillResource(AssetPaths.BuffResourcePath));
-            Buff.SetTeamConstraint(Team.Blue);
-            Buff.SetDecreasingFunction(Altar.DecreaseManaCount);
+            Buff = new Skills.Buff(Planets.Team.Blue, Planets.Scientific.DecreaseScientificCount);
 
-            Acid = new Skills.Acid();
-            Acid.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.AcidResourcePath));
-            Acid.SetTeamConstraint(Team.Blue);
-            Acid.SetDecreasingFunction(Altar.DecreaseManaCount);
+            Acid = new Skills.Acid(Planets.Team.Blue, Planets.Scientific.DecreaseScientificCount);
+            Acid.SetSkillObject(gameFactory.CreateAcid());
 
             Ice = new Skills.Ice();
-            Ice.Construct(gameFactory, gameFactory.CreateSkillResource(AssetPaths.IceResourcePath));
+            Ice.SetSkillObject(gameFactory.CreateIce());
+            
+            ReloadSkills();
         }
         
         private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
@@ -66,6 +68,15 @@ namespace _Application.Scripts.Control
                 skill.ExecuteForPlayer(position);
                 SelectedSkillName = SkillName.None;
             }
+        }
+
+        public void ReloadSkills()
+        {
+            float upgradeCoefficient = _progressService.PlayerProgress.GetAchievedUpgrade(UpgradeType.Rain).upgradeCoefficient;
+            Acid.Reload(_scriptableService.PlayersAcid, upgradeCoefficient);
+            Buff.Reload(_scriptableService.PlayersBuff, 1.0f);
+            Call.Reload(_scriptableService.PlayersCall, 1.0f);
+            Ice.Reload(_scriptableService.PlayersIce, 1.0f);
         }
 
         public void RefreshSkills()

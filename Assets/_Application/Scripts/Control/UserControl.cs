@@ -27,11 +27,14 @@ namespace _Application.Scripts.Control
         public void Disable() => 
             _isActive = false;
 
-        public void Enable()
-        {
+        public void Enable() => 
             _isActive = true;
+
+        public void Refresh() => 
             _inputService.Refresh();
-        }
+
+        public void Reload() =>
+            _inputService.Reload();
 
         private static IInputService RegisterInputService(BuildingsController buildingsController ,SkillController skillController)
         {

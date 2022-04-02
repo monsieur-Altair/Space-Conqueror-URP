@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using _Application.Scripts.Control;
 using _Application.Scripts.Infrastructure;
+using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Infrastructure.Services.Progress;
+using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.SavedData;
 using UnityEngine;
 
@@ -26,6 +28,7 @@ namespace _Application.Scripts.Managers
         private readonly UserControl _userControl;
         private readonly TeamManager _teamManager;
         private readonly ICoroutineRunner _coroutineRunner;
+        private readonly IScriptableService _scriptableService;
         private readonly IReadWriterService _readWriterService;
         
         private GameObject _buildingsLay;
@@ -33,9 +36,13 @@ namespace _Application.Scripts.Managers
         private GameStates _currentGameState;
         
         private List<Buildings.Base> _allBuildings;
+        
+        public static int _money; /////////////////////////////////////////////////////////////////////////
+        private int _lastCompletedLevel;
 
         public Main(Levels levelsManager, TeamManager teamManager, ICoroutineRunner coroutineRunner, AI.Core core, 
-            ObjectPool pool ,Outlook  outlook, UI ui, UserControl userControl, IReadWriterService readWriterService)
+            ObjectPool pool ,Outlook  outlook, UI ui, UserControl userControl, IReadWriterService readWriterService,
+            IScriptableService scriptableService)
         {
             _allBuildings = new List<Buildings.Base>();
             
@@ -47,13 +54,35 @@ namespace _Application.Scripts.Managers
             _outlook = outlook;
             _ui = ui;
             _userControl = userControl;
+            _scriptableService = scriptableService;
+
             _readWriterService = readWriterService;
             
             Buildings.Base.Conquered += _teamManager.UpdateObjectsCount;
             _teamManager.GameEnded += EndGame;
 
-            _ui.SetUIBehaviours(_teamManager, RetryLevel, LoadNextLevel);
-            //levelsManager.SetCurrentLevelNumber(_lastCompletedLevel + 1);
+            _ui.SetUIBehaviours(_teamManager, RetryLevel, LoadNextLevel, ToUpgradeMenuBehaviour, BackToGame);
+        }
+
+        private void BackToGame()
+        {
+            _ui.HideUpgradeMenu();
+            _ui.ShowSkillsButtons();
+            _planetsLay.SetActive(true);
+
+            _money = AllServices.Instance.GetSingle<IProgressService>().PlayerProgress.money;///////////////////////////
+            _ui.UpdateMoneyText(_money);////////////////////////////////////////////////////////////////////////////////
+            
+            _ui.ShowGameOverUI(_isWin);
+        }
+
+        private void ToUpgradeMenuBehaviour()
+        {
+            _ui.HideSkillsButtons();
+            _ui.HideGameOverUI();
+            _planetsLay.SetActive(false);
+            //hide planets
+            _ui.ShowUpgradeMenu();
         }
 
         public void Destroy()
@@ -68,11 +97,19 @@ namespace _Application.Scripts.Managers
             UpdateState();
         }
 
-        public void WriteProgress(PlayerProgress playerProgress) => 
-            playerProgress.levelInfo.lastCompletedLevel = _levelsManager.CurrentLevelNumber;
+        public void WriteProgress(PlayerProgress playerProgress)
+        {
+            playerProgress.money = _money;
+            playerProgress.levelInfo.lastCompletedLevel = _lastCompletedLevel;
+        }
 
-        public void ReadProgress(PlayerProgress playerProgress) =>
-            _levelsManager.CurrentLevelNumber = playerProgress.levelInfo.lastCompletedLevel + 1;//ok
+        public void ReadProgress(PlayerProgress playerProgress)
+        {
+            _money = playerProgress.money;
+            _lastCompletedLevel = playerProgress.levelInfo.lastCompletedLevel;
+            _levelsManager.CurrentLevelNumber = _lastCompletedLevel + 1;
+            //ok
+        }
 
         private void PrepareLevel()
         {
@@ -97,17 +134,20 @@ namespace _Application.Scripts.Managers
             { 
                 case GameStates.Gameplay:
                 {
+                    _ui.HideGameOverUI();
                     _ui.ShowGameplayUI();
                     _coroutineRunner.StartCoroutine(StartGameplay());
                     break;
                 }
                 case GameStates.GameOver:
                 {
+                    _userControl.Refresh();
                     _userControl.Disable();
                     _objectPool.DisableAllUnitsInScene();
                     _core.Disable();
                     _ui.DisableSkillUI();
                     _ui.ShowGameOverUI(_isWin);
+                    _ui.HideGameplayUI();
                     break;
                 }
                 default:
@@ -115,18 +155,32 @@ namespace _Application.Scripts.Managers
             }
         }
 
-        private void SaveProgress() => 
-            _readWriterService.WriteProgress();
+        //private void SaveProgress() => 
+            //_readWriterService.WriteProgress();
 
         private void EndGame(bool isWin)
         {
             _coroutineRunner.CancelAllInvoked();
             _isWin = isWin;
+
+            if (_isWin)
+                _lastCompletedLevel = _levelsManager.CurrentLevelNumber;
             
-            SaveProgress();
+            AddReward();
+            
+            //SaveProgress();
 
             _currentGameState = GameStates.GameOver;
             UpdateState();
+        }
+
+        private void AddReward()
+        {
+            int rewardMoney = _isWin ? _scriptableService.RewardList.GetReward(_lastCompletedLevel) : 0;
+            
+            _money += rewardMoney;
+            AllServices.Instance.GetSingle<IProgressService>().PlayerProgress.money = _money;//////////////////////////////
+            _ui.UpdateMoneyText(_money);
         }
 
         private IEnumerator StartGameplay()
@@ -143,6 +197,7 @@ namespace _Application.Scripts.Managers
             Buildings.Altar.DischargeManaCount();//count = 0
             
             _ui.EnableSkillUI();
+            _userControl.Reload();
             _userControl.Enable();
         }
 

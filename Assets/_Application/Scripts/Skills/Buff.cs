@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using _Application.Scripts.Infrastructure.Services.Factory;
+using _Application.Scripts.Planets;
 using _Application.Scripts.Scriptables;
 using UnityEngine;
 
@@ -9,17 +9,22 @@ namespace _Application.Scripts.Skills
     {
         private float _duration;
         private float _buffPercent;
+
         private IBuffed _buffedEntity;
         private Coroutine _buffCoroutine;
 
-        protected override void LoadResources(IGameFactory gameFactory, Skill resource)
+        public Buff(Team teamConstraint, DecreasingCounter function) : base(teamConstraint, function)
         {
-            base.LoadResources(gameFactory, resource);
+        }
+
+        protected override void LoadResources(Skill resource, float coefficient = 1.0f)
+        {
+            base.LoadResources(resource, coefficient);
             Scriptables.Buff res = resource as Scriptables.Buff;
             if (res != null)
             {
-                _duration = res.duration;
-                _buffPercent = res.buffPercent;
+                _duration = res.duration * coefficient;
+                _buffPercent = res.buffPercent * coefficient;
             }
         }
 

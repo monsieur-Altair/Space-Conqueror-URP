@@ -8,7 +8,7 @@
         public TService GetSingle<TService>() where TService:IService => 
             Implementation<TService>.ServiceInstance;
 
-        public void RegisterSingle<TService>(TService implementation) where TService:IService => 
+        public TService RegisterSingle<TService>(TService implementation) where TService:IService => 
             Implementation<TService>.ServiceInstance = implementation;
 
         private static class Implementation<TService> where TService:IService

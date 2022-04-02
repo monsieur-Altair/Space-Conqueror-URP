@@ -140,12 +140,12 @@ namespace _Application.Scripts.AI
 
         private void TryToAcid()
         {
-            Debug.Log("Try to acid");
+            //Debug.Log("Try to acid");
             if (_isCastedSkill) 
                 return;
             
             bool isApplied = ApplyDecision(AcidProbability, _skillController.Acid.Cost);
-            Debug.Log($"Is acid applied? {isApplied}");
+           // Debug.Log($"Is acid applied? {isApplied}");
 
             if (isApplied)
             {
@@ -156,12 +156,12 @@ namespace _Application.Scripts.AI
 
         private void TryToCall()
         {
-            Debug.Log("Try to call");
+            //Debug.Log("Try to call");
             if (_isCastedSkill) 
                 return;
 
             bool isApplied = ApplyDecision(CallProbability, _skillController.Call.Cost);
-            Debug.Log($"Is call applied? {isApplied}");
+            //Debug.Log($"Is call applied? {isApplied}");
             if (isApplied)
             {
                 int randomIndex = Random.Range(0, _allBuildings[Core.Own].Count);
@@ -173,12 +173,12 @@ namespace _Application.Scripts.AI
 
         private void TryToBuff()
         {
-            Debug.Log("Try to buff");
+           // Debug.Log("Try to buff");
             if (_isCastedSkill)
                 return;
 
             bool isApplied = ApplyDecision(BuffProbability, _skillController.Buff.Cost);
-            Debug.Log($"Is buff applied? {isApplied}");
+          //  Debug.Log($"Is buff applied? {isApplied}");
 
             if (isApplied)
             {

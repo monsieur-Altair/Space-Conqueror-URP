@@ -1,3 +1,3 @@
-﻿5. add planets to pool
-6.  ai add own balance and reload balance after conquering player planet, save-load
-7. main manager -> state machine (gameloop)
+﻿1. add planets to pool
+2. ai add own balance and reload balance after conquering player planet
+3. main manager -> state machine (gameloop)
