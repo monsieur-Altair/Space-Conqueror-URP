@@ -1643,6 +1643,30 @@ PrefabInstance:
       propertyPath: navMeshSurfaceObj
       value: 
       objectReference: {fileID: 9000496253218650848}
+    - target: {fileID: 5370934065307269283, guid: 84d6d5a45e55ace4098a9ed18bad1f0a, type: 3}
+      propertyPath: levels.Array.data[0]
+      value: 
+      objectReference: {fileID: 4071430356184442372, guid: 0c4f49044e14c3e44bd2c750de21da53, type: 3}
+    - target: {fileID: 5370934065307269283, guid: 84d6d5a45e55ace4098a9ed18bad1f0a, type: 3}
+      propertyPath: levels.Array.data[1]
+      value: 
+      objectReference: {fileID: 4071430356184442372, guid: fd6603cd004ee324a8db8d1527b493aa, type: 3}
+    - target: {fileID: 5370934065307269283, guid: 84d6d5a45e55ace4098a9ed18bad1f0a, type: 3}
+      propertyPath: levels.Array.data[2]
+      value: 
+      objectReference: {fileID: 895594771697078988, guid: d166210df5e305e4b8322eb36380dc50, type: 3}
+    - target: {fileID: 5370934065307269283, guid: 84d6d5a45e55ace4098a9ed18bad1f0a, type: 3}
+      propertyPath: levels.Array.data[3]
+      value: 
+      objectReference: {fileID: 895594771697078988, guid: 8b1253dc180e07248ab7a6ac52614a4b, type: 3}
+    - target: {fileID: 5370934065307269283, guid: 84d6d5a45e55ace4098a9ed18bad1f0a, type: 3}
+      propertyPath: levels.Array.data[4]
+      value: 
+      objectReference: {fileID: 895594771697078988, guid: 653f402dfe36bed49ba5ebaf21d1dc92, type: 3}
+    - target: {fileID: 5370934065307269283, guid: 84d6d5a45e55ace4098a9ed18bad1f0a, type: 3}
+      propertyPath: levels.Array.data[5]
+      value: 
+      objectReference: {fileID: 895594771697078988, guid: 09b585063eb818a45a52500264f52801, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 84d6d5a45e55ace4098a9ed18bad1f0a, type: 3}
 --- !u!1001 &6510474717933126660
