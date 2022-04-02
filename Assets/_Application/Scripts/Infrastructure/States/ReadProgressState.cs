@@ -25,7 +25,7 @@ namespace _Application.Scripts.Infrastructure.States
 
         public void Enter()
         {
-            _progressService.PlayerProgress = _readWriterService.ReadProgress() ?? new PlayerProgress(2);
+            _progressService.PlayerProgress = _readWriterService.ReadProgress() ?? new PlayerProgress(-1);
             //_stateMachine.Enter<LoadLevelState,string>("Main");
         }
     }
