@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
+using _Application.Scripts.Buildings;
 using _Application.Scripts.Control;
-using _Application.Scripts.Planets;
 using _Application.Scripts.Scriptables;
 using UnityEngine;
 
@@ -11,7 +11,7 @@ namespace _Application.Scripts.Skills
     {
         public static event Action DeletingFreezingZone;
 
-        private const float PlanetLayHeight = 0.66f;
+        private const float BuildingLayHeight = 0.66f;
         private float _duration;
 
         private GameObject _freezingObject;
@@ -31,7 +31,7 @@ namespace _Application.Scripts.Skills
             _freezingZone.SetTriggerFunction(FreezingEnteredObjects);
             
             _freezingObject.SetActive(false);
-            _plane = new Plane(Vector3.up, new Vector3(0, PlanetLayHeight, 0));
+            _plane = new Plane(Vector3.up, new Vector3(0, BuildingLayHeight, 0));
         }
 
         protected override void LoadResources(Skill resource, float coefficient = 1.0f)
@@ -58,7 +58,7 @@ namespace _Application.Scripts.Skills
         {
             IsOnCooldown = true;
             _spawnCoroutine = CoroutineRunner.StartCoroutine(SpawnFreezingZone(SelectedScreenPos));
-            Planets.Scientific.DecreaseScientificCount(Cost);
+            Altar.DecreaseManaCount(Cost);
             CoroutineRunner.InvokeWithDelay(CancelSkill,Cooldown);
         }
 

@@ -1,3 +1,4 @@
+using _Application.Scripts.Buildings;
 using UnityEngine;
 
 namespace _Application.Scripts.Misc
@@ -89,7 +90,7 @@ namespace _Application.Scripts.Misc
         }
 
         //calculate a min way on SCREEN (NOT WORLD) coordinates for supply
-        public static Vector3 FindSpawnPoint(Planets.Base destination)
+        public static Vector3 FindSpawnPoint(Base destination)
         {
             Vector3 destPosWorld = destination.transform.position;
             Vector3 destPosScreen = _camera.WorldToScreenPoint(destPosWorld);

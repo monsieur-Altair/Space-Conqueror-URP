@@ -1,5 +1,4 @@
-﻿using _Application.Scripts.Planets;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
 namespace _Application.Scripts.Units
@@ -12,11 +11,11 @@ namespace _Application.Scripts.Units
     public abstract class Base : MonoBehaviour
     {
         public abstract float GetActualCount(float countAfterAttack);
-        public abstract void SetData(in Planets.Base.UnitInf unitInf);
-        public abstract Planets.Team GetTeam();
-        public abstract float CalculateAttack(Team planetTeam,float defence);
+        public abstract void SetData(in Buildings.Base.UnitInf unitInf);
+        public abstract Buildings.Team GetTeam();
+        public abstract float CalculateAttack(Buildings.Team buildingTeam,float defence);
 
-        protected Planets.Base Target;
+        protected Buildings.Base Target;
         protected abstract void TargetInRange();
         protected abstract void SetSpeed();
         protected NavMeshAgent Agent;
@@ -35,7 +34,7 @@ namespace _Application.Scripts.Units
             }
         }
 
-        public void GoTo(Planets.Base destination,Vector3 destinationPos)
+        public void GoTo(Buildings.Base destination,Vector3 destinationPos)
         {
             Target = destination;
             GoTo(destinationPos);

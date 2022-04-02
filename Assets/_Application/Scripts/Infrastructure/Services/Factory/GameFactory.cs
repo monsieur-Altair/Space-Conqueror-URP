@@ -3,7 +3,7 @@ using _Application.Scripts.Infrastructure.Services.AssetManagement;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
-using _Application.Scripts.Upgrades;
+using _Application.Scripts.Scriptables;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -59,8 +59,8 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
                 outlookManager, 
                 uiManager, 
                 userControl,
-                _allServices.GetSingle<IReadWriterService>(),
-                _allServices.GetSingle<IScriptableService>());
+                _allServices.GetSingle<IScriptableService>(),
+                _allServices.GetSingle<IProgressService>());
             
             ProgressReaders.Add(mainManager);
             ProgressWriters.Add(mainManager);
@@ -77,11 +77,14 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
         public GameObject CreateIce() => 
             _assetProvider.Instantiate(AssetPaths.IcePrefabPath);
 
+        public Skill CreateSkillResource(string path) => 
+            _assetProvider.InstantiateScriptable<Skill>(path);
+
         private UI CreateUI(ObjectPool pool, Warehouse warehouse, Control.SkillController skillController)
         {
             UI uiManager = new UI(_canvas, pool, warehouse, skillController);
             uiManager.SetButtons(CreateSkillButtons(),CreateRetryButton(), CreateNextLevelButton(), CreateToUpgradeMenuButton());
-            uiManager.SetBars(CreateScientificBar(), CreateTeamBar());
+            uiManager.SetBars(CreateManaBar(), CreateTeamBar());
             uiManager.SetText(CreateMoneyText());
             uiManager.SetUpgradeMenu(CreateUpgradeMenu());
             return uiManager;
@@ -95,8 +98,8 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
             Control.UserControl userControl = _assetProvider.Instantiate<Control.UserControl>(AssetPaths.UserControlPath);
             skillController = new Control.SkillController(_allServices.GetSingle<IProgressService>(),
                 this, scriptableService, pool);
-            Control.PlanetController planetController = new Control.PlanetController(Camera.main);
-            userControl.Init(planetController, skillController);
+            Control.BuildingsController buildingsController = new Control.BuildingsController(Camera.main);
+            userControl.Init(buildingsController, skillController);
             return userControl;
         }
 
@@ -123,8 +126,8 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
         private GameObject CreateUpgradeMenu() => 
             _assetProvider.InstantiateUI(AssetPaths.UpgradeMenuPath, _canvas);
 
-        private GameObject CreateScientificBar() => 
-            _assetProvider.InstantiateUI(AssetPaths.ScientificBarPath, _canvas);
+        private GameObject CreateManaBar() => 
+            _assetProvider.InstantiateUI(AssetPaths.ManaBarPath, _canvas);
 
         private GameObject CreateTeamBar() => 
             _assetProvider.InstantiateUI(AssetPaths.TeamBarPath, _canvas);

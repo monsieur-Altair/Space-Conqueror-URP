@@ -19,6 +19,7 @@ namespace _Application.Scripts.Managers
         {
             if (Instance == null)
                 Instance = this;
+            //navMeshSurfaceObj = FindObjectOfType<NavMeshSurface>();
         }
 
         public void SwitchToNextLevel()
@@ -35,16 +36,6 @@ namespace _Application.Scripts.Managers
 
         public GameObject GetCurrentLay() => 
             _currentLevel;
-        //
-        // public void HidePlanets()
-        // {
-        //     
-        // }
-        //
-        // public void ShowPlanets()
-        // {
-        //     
-        // }
         
         public IEnumerator InstantiateLevel()
         {
@@ -56,6 +47,7 @@ namespace _Application.Scripts.Managers
             _currentLevel = Instantiate(levels[CurrentLevelNumber], _instantiatePos, Quaternion.identity);
             _currentLevel.SetActive(true);
             navMeshSurfaceObj.BuildNavMesh();
+            //yield return new WaitForSeconds(0.3f);
             _currentLevel.gameObject.transform.SetParent(gameObject.transform.parent);
         }
 

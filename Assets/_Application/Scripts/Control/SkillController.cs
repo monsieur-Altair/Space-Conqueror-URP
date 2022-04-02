@@ -1,4 +1,5 @@
 ﻿using System;
+using _Application.Scripts.Buildings;
 using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
@@ -42,13 +43,13 @@ namespace _Application.Scripts.Control
             _objectPool = objectPool;
             
             
-            Call = new Skills.Call(Planets.Team.Blue, Planets.Scientific.DecreaseScientificCount);
+            Call = new Skills.Call(Team.Blue, Altar.DecreaseManaCount);
             Call.NeedObjectFromPool += SpawnUnit;
             Call.SetSkillObject(gameFactory.CreateIndicator());
 
-            Buff = new Skills.Buff(Planets.Team.Blue, Planets.Scientific.DecreaseScientificCount);
+            Buff = new Skills.Buff(Team.Blue, Altar.DecreaseManaCount);
 
-            Acid = new Skills.Acid(Planets.Team.Blue, Planets.Scientific.DecreaseScientificCount);
+            Acid = new Skills.Acid(Team.Blue, Altar.DecreaseManaCount);
             Acid.SetSkillObject(gameFactory.CreateAcid());
 
             Ice = new Skills.Ice();

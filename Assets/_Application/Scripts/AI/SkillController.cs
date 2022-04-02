@@ -1,10 +1,10 @@
-﻿using _Application.Scripts.Infrastructure.Services.Factory;
+﻿using _Application.Scripts.Buildings;
+using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
-using _Application.Scripts.Planets;
 using _Application.Scripts.Skills;
 using UnityEngine;
-using Base = _Application.Scripts.Planets.Base;
+using Base = _Application.Scripts.Buildings.Base;
 
 namespace _Application.Scripts.AI
 {
@@ -13,22 +13,22 @@ namespace _Application.Scripts.AI
         public Call Call { get; }
         public Buff Buff { get; }
         public Acid Acid { get; }
-
-        private readonly IScriptableService _scriptableService;
+        
         private readonly ObjectPool _objectPool;
+        private readonly IScriptableService _scriptableService;
 
         public SkillController(IGameFactory gameFactory, IScriptableService scriptableService, ObjectPool objectPool)
         {
             _scriptableService = scriptableService;
             _objectPool = objectPool;
-            
-            Call = new Call(Team.Red ,DecreaseAISciCounter);
+
+            Call = new Call(Team.Red, DecreaseAIManaCounter);
             Call.NeedObjectFromPool += SpawnUnit;
             Call.SetSkillObject(gameFactory.CreateIndicator());
 
-            Buff = new Buff(Team.Red ,DecreaseAISciCounter);
+            Buff = new Buff(Team.Red, DecreaseAIManaCounter);
 
-            Acid = new Acid(Team.Red ,DecreaseAISciCounter);
+            Acid = new Acid(Team.Red, DecreaseAIManaCounter);
             Acid.SetSkillObject(gameFactory.CreateAcid());
 
             ReloadSkills();
@@ -41,6 +41,9 @@ namespace _Application.Scripts.AI
             Call.Reload(_scriptableService.AIsCall, 1.0f);
         }
 
+        private static void DecreaseAIManaCounter(float value) => 
+        	Core.ManaCount -= value;
+        
         public void Refresh()
         {
             Call.Refresh(); 
@@ -51,7 +54,7 @@ namespace _Application.Scripts.AI
         public void AttackByAcid(Base target) => 
             Acid.ExecuteForAI(target);
 
-        public void BuffPlanet(Base target) => 
+        public void BuffBuilding(Base target) => 
             Buff.ExecuteForAI(target);
 
         public void CallSupply(Base target) => 
@@ -59,8 +62,6 @@ namespace _Application.Scripts.AI
 
         private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
             _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.Base>();
-
-        private static void DecreaseAISciCounter(float value) => 
-            Core.ScientificCount -= value;
+        
     }   
 }

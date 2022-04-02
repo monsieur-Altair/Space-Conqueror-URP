@@ -1,7 +1,8 @@
 ﻿using System.Collections;
+using _Application.Scripts.Buildings;
+using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Managers;
 using _Application.Scripts.Misc;
-using _Application.Scripts.Planets;
 using _Application.Scripts.Scriptables;
 using UnityEngine;
 
@@ -36,10 +37,10 @@ namespace _Application.Scripts.Skills
         protected override void ApplySkill()
         {
             if(!IsForAI)
-                SelectedPlanet = RaycastForPlanet();
+                SelectedBuilding = RaycastForBuilding();
             
-            if (SelectedPlanet!=null && SelectedPlanet.Team == TeamConstraint)
-                ApplySkillToPlanet(CallSupply);
+            if (SelectedBuilding!=null && SelectedBuilding.Team == TeamConstraint)
+                ApplySkillToBuilding(CallSupply);
             else
                 OnCanceledSkill();
         }
@@ -50,22 +51,22 @@ namespace _Application.Scripts.Skills
             if (_sentUnit != null)
                 _sentUnit.StopAndDestroy();
             _indicator.SetActive(false);
-            SelectedPlanet = null;
+            SelectedBuilding = null;
             IsOnCooldown = false;
             OnCanceledSkill();
         }
 
         private void CallSupply()
         {
-            Vector3 launchPos = CameraResolution.FindSpawnPoint(SelectedPlanet);
-            Vector3 destPos = CalculateDestPos(launchPos, SelectedPlanet);
+            Vector3 launchPos = CameraResolution.FindSpawnPoint(SelectedBuilding);
+            Vector3 destPos = CalculateDestPos(launchPos, SelectedBuilding);
             
-            PoolObjectType poolObjectType = (PoolObjectType) ((int) SelectedPlanet.Type);
+            PoolObjectType poolObjectType = (PoolObjectType) ((int) SelectedBuilding.Type);
             
             _sentUnit = OnNeedObjectFromPool(poolObjectType,launchPos, Quaternion.LookRotation(destPos - launchPos));
             
-            SelectedPlanet.AdjustUnit(_sentUnit, _callPercent / 100.0f);
-            _sentUnit.GoTo(SelectedPlanet, destPos);
+            SelectedBuilding.AdjustUnit(_sentUnit, _callPercent / 100.0f);
+            _sentUnit.GoTo(SelectedBuilding, destPos);
 
             _displayingIndicatorCor = CoroutineRunner.StartCoroutine(DisplayIndicator());
         }
@@ -73,16 +74,16 @@ namespace _Application.Scripts.Skills
         private IEnumerator DisplayIndicator()
         {
             _indicator.SetActive(true);
-            _indicator.transform.position = SelectedPlanet.transform.position + _indicatorOffset;
+            _indicator.transform.position = SelectedBuilding.transform.position + _indicatorOffset;
             yield return new WaitForSeconds(1.5f);
             _indicator.SetActive(false);
         }
 
-        private static Vector3 CalculateDestPos(in Vector3 launchPos, Planets.Base destinationPlanet)
+        private static Vector3 CalculateDestPos(in Vector3 launchPos, Buildings.Base destinationPlanet)
         {
             Vector3 destPos = destinationPlanet.transform.position;
             Vector3 offset = (destPos - launchPos).normalized;
-            return destPos - offset * destinationPlanet.OrbitRadius;
+            return destPos - offset * destinationPlanet.BuildingsRadius;
         }
     }
 }

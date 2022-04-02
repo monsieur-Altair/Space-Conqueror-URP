@@ -29,21 +29,22 @@ namespace _Application.Scripts.Managers
         private readonly TeamManager _teamManager;
         private readonly ICoroutineRunner _coroutineRunner;
         private readonly IScriptableService _scriptableService;
-        
-        private GameObject _planetsLay;
+        private readonly IProgressService _progressService;
+
+        private GameObject _buildingsLay;
         private bool _isWin;
         private GameStates _currentGameState;
-        
-        private List<Planets.Base> _allPlanets;
-        
+
+        private List<Buildings.Base> _allBuildings;
+
         public static int _money; /////////////////////////////////////////////////////////////////////////
         private int _lastCompletedLevel;
 
         public Main(Levels levelsManager, TeamManager teamManager, ICoroutineRunner coroutineRunner, AI.Core core, 
-            ObjectPool pool ,Outlook  outlook, UI ui, UserControl userControl, IReadWriterService readWriterService,
-            IScriptableService scriptableService)
+            ObjectPool pool ,Outlook  outlook, UI ui, UserControl userControl, IScriptableService scriptableService, 
+            IProgressService progressService)
         {
-            _allPlanets = new List<Planets.Base>();
+            _allBuildings = new List<Buildings.Base>();
             
             _teamManager = teamManager;
             _coroutineRunner = coroutineRunner;
@@ -54,8 +55,9 @@ namespace _Application.Scripts.Managers
             _ui = ui;
             _userControl = userControl;
             _scriptableService = scriptableService;
+            _progressService = progressService;
 
-            Planets.Base.Conquered += _teamManager.UpdateObjectsCount;
+            Buildings.Base.Conquered += _teamManager.UpdateObjectsCount;
             _teamManager.GameEnded += EndGame;
 
             _ui.SetUIBehaviours(_teamManager, RetryLevel, LoadNextLevel, ToUpgradeMenuBehaviour, BackToGame);
@@ -65,7 +67,7 @@ namespace _Application.Scripts.Managers
         {
             _ui.HideUpgradeMenu();
             _ui.ShowSkillsButtons();
-            _planetsLay.SetActive(true);
+            _buildingsLay.SetActive(true);
 
             _money = AllServices.Instance.GetSingle<IProgressService>().PlayerProgress.money;///////////////////////////
             _ui.UpdateMoneyText(_money);////////////////////////////////////////////////////////////////////////////////
@@ -77,8 +79,7 @@ namespace _Application.Scripts.Managers
         {
             _ui.HideSkillsButtons();
             _ui.HideGameOverUI();
-            _planetsLay.SetActive(false);
-            //hide planets
+            _buildingsLay.SetActive(false);
             _ui.ShowUpgradeMenu();
         }
 
@@ -110,16 +111,16 @@ namespace _Application.Scripts.Managers
 
         private void PrepareLevel()
         {
-            _allPlanets = _planetsLay.GetComponentsInChildren<Planets.Base>().ToList();
+            _allBuildings = _buildingsLay.GetComponentsInChildren<Buildings.Base>().ToList();
             
-            foreach (Planets.Base planet in _allPlanets)
+            foreach (Buildings.Base building in _allBuildings)
             {
-                planet.gameObject.SetActive(true);
-                planet.Init();
-                planet.LaunchingUnit += SpawnUnit;
+                building.gameObject.SetActive(true);
+                building.Construct(_scriptableService, _progressService);
+                building.LaunchingUnit += SpawnUnit;
             }
             
-            _teamManager.FillTeamCount(_allPlanets);
+            _teamManager.FillTeamCount(_allBuildings);
         }
 
         private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
@@ -152,9 +153,6 @@ namespace _Application.Scripts.Managers
             }
         }
 
-        //private void SaveProgress() => 
-            //_readWriterService.WriteProgress();
-
         private void EndGame(bool isWin)
         {
             _coroutineRunner.CancelAllInvoked();
@@ -165,8 +163,6 @@ namespace _Application.Scripts.Managers
             
             AddReward();
             
-            //SaveProgress();
-
             _currentGameState = GameStates.GameOver;
             UpdateState();
         }
@@ -184,14 +180,14 @@ namespace _Application.Scripts.Managers
         {
             ClearLists();
             yield return _coroutineRunner.StartCoroutine(_levelsManager.InstantiateLevel());
-            _planetsLay = _levelsManager.GetCurrentLay();
+            _buildingsLay = _levelsManager.GetCurrentLay();
             PrepareLevel();
-            _core.Init(_allPlanets);
+            _core.Init(_allBuildings);
             _core.Enable();
-            _outlook.PrepareLevel(_allPlanets);
-            _ui.PrepareLevel(_allPlanets);
+            _outlook.PrepareLevel(_allBuildings);
+            _ui.PrepareLevel(_allBuildings);
             
-            Planets.Scientific.DischargeScientificCount();
+            Buildings.Altar.DischargeManaCount();//count = 0
             
             _ui.EnableSkillUI();
             _userControl.Reload();
@@ -200,11 +196,11 @@ namespace _Application.Scripts.Managers
 
         private void ClearLists()
         {
-            foreach (Planets.Base planet in _allPlanets) 
-                planet.LaunchingUnit -= SpawnUnit;
+            foreach (Buildings.Base building in _allBuildings) 
+                building.LaunchingUnit -= SpawnUnit;
 
             _teamManager.Clear();
-            _allPlanets.Clear();
+            _allBuildings.Clear();
         }
 
         private void LoadNextLevel()

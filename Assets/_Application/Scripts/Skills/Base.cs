@@ -14,25 +14,29 @@ namespace _Application.Scripts.Skills
         
         protected abstract void CancelSkill();
         protected abstract void ApplySkill();
-        
-        protected Camera MainCamera;
-        protected Planets.Base SelectedPlanet;
-        
+        public abstract void SetSkillObject(GameObject skillObject);
+
+        protected readonly Camera MainCamera;
+        protected Buildings.Base SelectedBuilding;
+
         protected float Cooldown;
         protected bool IsOnCooldown;
         protected bool IsForAI;
-        protected Planets.Team TeamConstraint;
-        protected ICoroutineRunner CoroutineRunner;
-        protected delegate void UniqueActionToPlanet();
-        
-        private DecreasingCounter _decreaseCounter;
+        protected Buildings.Team TeamConstraint;
+        protected readonly ICoroutineRunner CoroutineRunner;
+
+
+        protected delegate void UniqueActionToBuilding();
+
+        private readonly DecreasingCounter _decreaseCounter;
 
         public int Cost { get; private set; }
         protected Vector3 SelectedScreenPos { get; private set; }
 
-        public Base(Planets.Team? teamConstraint, [CanBeNull] DecreasingCounter function)
+
+        protected Base(Buildings.Team? teamConstraint, [CanBeNull] DecreasingCounter function)
         {
-            MainCamera=Camera.main;
+            MainCamera = Camera.main;
             CoroutineRunner = GlobalObject.Instance;
             _decreaseCounter = function;
             SetTeamConstraint(teamConstraint);
@@ -42,7 +46,14 @@ namespace _Application.Scripts.Skills
         {
             LoadResources(resource, coefficient);
         }
-        
+
+        protected virtual void LoadResources(Scriptables.Skill resource, float coefficient = 1.0f)
+        {
+            float decreasingCoefficient = (2.0f - coefficient);
+            Cooldown = resource.cooldown * decreasingCoefficient;
+            Cost = (int)(resource.cost * decreasingCoefficient);
+        }
+
         public void Refresh()
         {
             if (IsOnCooldown)
@@ -55,57 +66,37 @@ namespace _Application.Scripts.Skills
         public void ExecuteForPlayer(Vector3 pos)
         {
             SelectedScreenPos = pos;
-            if (Planets.Scientific.ScientificCount > Cost && !IsOnCooldown)
+            if (Buildings.Altar.ManaCount > Cost && !IsOnCooldown)
                 ApplySkill();
             else
                 OnCanceledSkill();
         }
 
-        public virtual void SetSkillObject(GameObject skillObject)
+        public void ExecuteForAI(Buildings.Base planet)
         {
-            
-        }
-
-        public void SetTeamConstraint(Planets.Team? team)
-        {
-            if (team != null)
-            {
-                IsForAI = (team == Planets.Team.Red);
-                TeamConstraint = (Planets.Team) team; 
-            }
-        }
-
-        public void ExecuteForAI(Planets.Base planet)
-        {
-            SelectedPlanet = planet;
-            if (AI.Core.ScientificCount > Cost && !IsOnCooldown) 
+            SelectedBuilding = planet;
+            if (AI.Core.ManaCount > Cost && !IsOnCooldown) 
                 ApplySkill();
         }
 
-        protected virtual void LoadResources(Scriptables.Skill resource,
-            float coefficient = 1.0f)
-        {
-            float decreasingCoefficient = (2.0f - coefficient);
-            Cooldown = resource.cooldown * decreasingCoefficient;
-            Cost = (int)(resource.cost * decreasingCoefficient);
-        }
-
-        protected Planets.Base RaycastForPlanet()
+        protected Buildings.Base RaycastForBuilding()
         {
             int layerMask = 1 << 0;
             layerMask = ~layerMask;
             Ray ray = MainCamera.ScreenPointToRay(SelectedScreenPos);
-            return Physics.Raycast(ray, out var hit,Mathf.Infinity, layerMask) ? hit.collider.GetComponent<Planets.Base>() : null;
+            return Physics.Raycast(ray, out RaycastHit hit,Mathf.Infinity, layerMask) 
+                ? hit.collider.GetComponent<Buildings.Base>() 
+                : null;
         }
-        
-        protected void ApplySkillToPlanet(UniqueActionToPlanet action)
+
+        protected void ApplySkillToBuilding(UniqueActionToBuilding action)
         {
             IsOnCooldown = true;
             _decreaseCounter(Cost);
             action();
             CoroutineRunner.InvokeWithDelay(CancelSkill,Cooldown);
         }
-        
+
         protected void OnCanceledSkill()
         {
             if(!IsOnCooldown)
@@ -114,5 +105,14 @@ namespace _Application.Scripts.Skills
 
         protected Units.Base OnNeedObjectFromPool(PoolObjectType type, Vector3 pos, Quaternion rotation) => 
             NeedObjectFromPool?.Invoke(type, pos, rotation);
+
+        private void SetTeamConstraint(Buildings.Team? team)
+        {
+            if (team != null)
+            {
+                IsForAI = (team == Buildings.Team.Red);
+                TeamConstraint = (Buildings.Team) team;
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using _Application.Scripts.Buildings;
 
 namespace _Application.Scripts.Managers
 {
@@ -8,7 +9,7 @@ namespace _Application.Scripts.Managers
         public event Action<List<int>> TeamCountUpdated;
         public event Action<bool> GameEnded;
 
-        private readonly int _teamNumber = Enum.GetNames(typeof(Planets.Team)).Length;
+        private readonly int _teamNumber = Enum.GetNames(typeof(Team)).Length;
         private readonly List<int> _teamCount;
 
         public TeamManager()
@@ -18,7 +19,7 @@ namespace _Application.Scripts.Managers
                 _teamCount.Add(0);
         }
 
-        public void UpdateObjectsCount(Planets.Base planet ,Planets.Team oldTeam, Planets.Team newTeam)
+        public void UpdateObjectsCount(Base building ,Team oldTeam, Team newTeam)
         {
             _teamCount[(int) oldTeam]--;
             _teamCount[(int) newTeam]++;
@@ -33,11 +34,11 @@ namespace _Application.Scripts.Managers
                 _teamCount[i] = 0;
         }
 
-        public void FillTeamCount(List<Planets.Base> allPlanets)
+        public void FillTeamCount(List<Base> allBuildings)
         {
-            foreach (Planets.Base planet in allPlanets)
+            foreach (Base building in allBuildings)
             {
-                int team = (int) planet.Team;
+                int team = (int) building.Team;
                 _teamCount[team]++;
             }
             TeamCountUpdated?.Invoke(_teamCount);
@@ -45,8 +46,8 @@ namespace _Application.Scripts.Managers
 
         private void CheckGameOver()
         {
-            bool noneBlue = _teamCount[(int)Planets.Team.Blue]==0;
-            bool noneRed = _teamCount[(int)Planets.Team.Red]==0;
+            bool noneBlue = _teamCount[(int)Team.Blue]==0;
+            bool noneRed = _teamCount[(int)Team.Red]==0;
             if (noneBlue || noneRed)
             {
                 bool isWin = noneRed;

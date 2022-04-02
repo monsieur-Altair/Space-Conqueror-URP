@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using _Application.Scripts.Planets;
+using _Application.Scripts.Buildings;
 using _Application.Scripts.Scriptables;
 using UnityEngine;
 
@@ -28,16 +28,20 @@ namespace _Application.Scripts.Skills
             }
         }
 
+        public override void SetSkillObject(GameObject skillObject)
+        {
+        }
+
         protected override void ApplySkill()
         {
             if (!IsForAI)
             {
-                SelectedPlanet = RaycastForPlanet();
-                _buffedEntity = SelectedPlanet;
+                SelectedBuilding = RaycastForBuilding();
+                _buffedEntity = SelectedBuilding;
             }
 
-            if (_buffedEntity != null && SelectedPlanet.Team == TeamConstraint)
-                ApplySkillToPlanet(BuffPlanet);
+            if (_buffedEntity != null && SelectedBuilding.Team == TeamConstraint)
+                ApplySkillToBuilding(BuffBuilding);
             else
                 OnCanceledSkill();
         }
@@ -49,13 +53,13 @@ namespace _Application.Scripts.Skills
             if (_buffedEntity.IsBuffed)
                 _buffedEntity.UnBuff(_buffPercent);
             _buffedEntity = null;
-            SelectedPlanet = null;
+            SelectedBuilding = null;
             
             IsOnCooldown = false;
             OnCanceledSkill();
         }
 
-        private void BuffPlanet() => 
+        private void BuffBuilding() => 
             _buffCoroutine = CoroutineRunner.StartCoroutine(BuffThenUnBuff());
 
         private IEnumerator BuffThenUnBuff()

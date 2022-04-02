@@ -10,6 +10,8 @@ using _Application.Scripts.Scriptables.Upgrades;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+#pragma warning disable 8618
+#pragma warning disable 8629
 
 namespace _Application.Scripts.Upgrades
 {

@@ -19,7 +19,7 @@ namespace _Application.Scripts.Managers
         private readonly List<Color> _counterBackground;
         private readonly List<Color> _counterForeground;
 
-        private List<Planets.Base> _allPlanets = new List<Planets.Base>();
+        private List<Buildings.Base> _allBuildings = new List<Buildings.Base>();
         private readonly List<GameObject> _countersList = new List<GameObject>();
         private readonly Dictionary<int, Image> _backgrounds = new Dictionary<int, Image>();
         private readonly Dictionary<int, TextMeshProUGUI> _foregrounds = new Dictionary<int, TextMeshProUGUI>();
@@ -27,7 +27,7 @@ namespace _Application.Scripts.Managers
         private GameObject _toUpgradeMenuButton;
         private GameObject _nextLevelButton;
         private GameObject _retryLevelButton;
-        private GameObject _scientificBar;
+        private GameObject _manaBar;
         private GameObject _teamBar;
 
         private List<Button> _skillButtons;
@@ -55,10 +55,10 @@ namespace _Application.Scripts.Managers
             _counterForeground = _warehouse.counterForeground;
         }
 
-        public void PrepareLevel(List<Planets.Base> allPlanets)
+        public void PrepareLevel(List<Buildings.Base> allBuildings)
         {
             ClearList();
-            _allPlanets = new List<Planets.Base>(allPlanets);
+            _allBuildings = new List<Buildings.Base>(allBuildings);
             FillLists();
         }
 
@@ -94,20 +94,20 @@ namespace _Application.Scripts.Managers
             AdjustSkillButtons();
             
             teamManager.TeamCountUpdated += _teamBar.GetComponent<TeamProgressBar>().FillTeamCount;
-            Planets.Scientific.ScientificCountUpdated += _scientificBar.GetComponent<ScientificBar>().FillScientificCount;
+            Buildings.Altar.ManaCountUpdated += _manaBar.GetComponent<ManaBar>().FillManaCount;
         }
 
         public static void RemoveBehaviours(TeamManager teamManager)
         {
-            Planets.Base.Conquered -= teamManager.UpdateObjectsCount;
+            Buildings.Base.Conquered -= teamManager.UpdateObjectsCount;
             //_teamManager.TeamCountUpdated -= _teamBar.GetComponent<TeamProgressBar>().FillTeamCount;
             //null refs?
-            //Planets.Scientific.ScientificCountUpdated -= _scientificBar.GetComponent<ScientificBar>().FillScientificCount;
+            //Planets.Mana.ScientificCountUpdated -= _manaBar.GetComponent<ManaBar>().FillScientificCount;
         }
 
         public void SetBars(GameObject scientificBar, GameObject teamBar)
         {
-            _scientificBar = scientificBar;
+            _manaBar = scientificBar;
             _teamBar = teamBar;
         }
 
@@ -144,7 +144,7 @@ namespace _Application.Scripts.Managers
 
         public void ShowGameplayUI()
         {
-            _scientificBar.SetActive(true);
+	    _manaBar.SetActive(true);
             _teamBar.SetActive(true);
         }
 
@@ -169,7 +169,7 @@ namespace _Application.Scripts.Managers
 
         public void HideGameplayUI()
         {
-            _scientificBar.SetActive(false);
+ 	    _manaBar.SetActive(false);
             _teamBar.SetActive(false);
         }
 
@@ -217,41 +217,41 @@ namespace _Application.Scripts.Managers
             foreach (GameObject counter in _countersList) 
                 counter.gameObject.SetActive(false);
             
-            foreach (Planets.Base planet in _allPlanets)
+            foreach (Buildings.Base building in _allBuildings)
             {
-                planet.CountChanged -= SetCounter;
-                planet.TeamChanged -= SetCounterColor;
+                building.CountChanged -= SetCounter;
+                building.TeamChanged -= SetCounterColor;
             }
-            _allPlanets.Clear();
+            _allBuildings.Clear();
             _foregrounds.Clear();
             _backgrounds.Clear();
         }
 
         private void FillLists()
         {
-            foreach (Planets.Base planet in _allPlanets)
+            foreach (Buildings.Base building in _allBuildings)
             {
-                planet.CountChanged += SetCounter;
-                planet.TeamChanged += SetCounterColor;
+                building.CountChanged += SetCounter;
+                building.TeamChanged += SetCounterColor;
 
-                GameObject counter = SpawnCounterTo(planet);
-                DecomposeCounter(counter, planet);
+                GameObject counter = SpawnCounterTo(building);
+                DecomposeCounter(counter, building);
                 
-                SetCounterColor(planet);
-                SetCounter(planet, (int) planet.Count);
+                SetCounterColor(building);
+                SetCounter(building, (int) building.Count);
             }
         }
 
-        private void DecomposeCounter(GameObject counter, Planets.Base planet)
+        private void DecomposeCounter(GameObject counter, Buildings.Base building)
         {
-            int index = planet.ID.GetHashCode();
+            int index = building.ID.GetHashCode();
             _foregrounds.Add(index, counter.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>());
             _backgrounds.Add(index, counter.GetComponentInChildren<Image>());
         }
 
-        private GameObject SpawnCounterTo(Planets.Base planet)
+        private GameObject SpawnCounterTo(Buildings.Base building)
         {
-            Vector3 counterPos = GetCounterPos(planet);
+            Vector3 counterPos = GetCounterPos(building);
             GameObject counter = _pool.GetObject(PoolObjectType.Counter, counterPos, Quaternion.identity);
             counter.transform.SetParent(_canvas.transform);
             counter.transform.localScale = _baseCounterScale;
@@ -259,24 +259,24 @@ namespace _Application.Scripts.Managers
             return counter;
         }
 
-        private Vector3 GetCounterPos(Planets.Base planet)
+        private Vector3 GetCounterPos(Buildings.Base building)
         {
-            Vector3 pos = planet.transform.position;
+            Vector3 pos = building.transform.position;
             Vector3 screenPos = CameraResolution.GetScreenPos(pos);
             return screenPos + _offset;
         }
 
-        private void SetCounterColor(Planets.Base planet)
+        private void SetCounterColor(Buildings.Base building)
         {
-            int team = (int) planet.Team;
-            int index = planet.ID.GetHashCode();
+            int team = (int) building.Team;
+            int index = building.ID.GetHashCode();
             _foregrounds[index].color = _counterForeground[team];
             _backgrounds[index].color = _counterBackground[team];
         }
 
-        private void SetCounter(Planets.Base planet, int value)
+        private void SetCounter(Buildings.Base building, int value)
         {
-            int index = planet.ID.GetHashCode();
+            int index = building.ID.GetHashCode();
             _foregrounds[index].text = value.ToString();
         }
 
