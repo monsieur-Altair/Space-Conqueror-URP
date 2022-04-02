@@ -68,7 +68,7 @@ namespace _Application.Scripts.Managers
         {
             _ui.HideUpgradeMenu();
             _ui.ShowSkillsButtons();
-            _planetsLay.SetActive(true);
+            _buildingsLay.SetActive(true);
 
             _money = AllServices.Instance.GetSingle<IProgressService>().PlayerProgress.money;///////////////////////////
             _ui.UpdateMoneyText(_money);////////////////////////////////////////////////////////////////////////////////
@@ -80,8 +80,7 @@ namespace _Application.Scripts.Managers
         {
             _ui.HideSkillsButtons();
             _ui.HideGameOverUI();
-            _planetsLay.SetActive(false);
-            //hide planets
+            _buildingsLay.SetActive(false);
             _ui.ShowUpgradeMenu();
         }
 
@@ -155,9 +154,6 @@ namespace _Application.Scripts.Managers
             }
         }
 
-        //private void SaveProgress() => 
-            //_readWriterService.WriteProgress();
-
         private void EndGame(bool isWin)
         {
             _coroutineRunner.CancelAllInvoked();
@@ -168,8 +164,6 @@ namespace _Application.Scripts.Managers
             
             AddReward();
             
-            //SaveProgress();
-
             _currentGameState = GameStates.GameOver;
             UpdateState();
         }

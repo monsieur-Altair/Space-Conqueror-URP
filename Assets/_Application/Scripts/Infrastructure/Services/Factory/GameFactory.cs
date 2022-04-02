@@ -3,7 +3,7 @@ using _Application.Scripts.Infrastructure.Services.AssetManagement;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
-using _Application.Scripts.Upgrades;
+using _Application.Scripts.Scriptables;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -77,8 +77,8 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
         public GameObject CreateIce() => 
             _assetProvider.Instantiate(AssetPaths.IcePrefabPath);
 
-        public Scriptables.Skill CreateSkillResource(string path) => 
-            _assetProvider.InstantiateScriptable<Scriptables.Skill>(path);
+        public Skill CreateSkillResource(string path) => 
+            _assetProvider.InstantiateScriptable<Skill>(path);
 
         private UI CreateUI(ObjectPool pool, Warehouse warehouse, Control.SkillController skillController)
         {

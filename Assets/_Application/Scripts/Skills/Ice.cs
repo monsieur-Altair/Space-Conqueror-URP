@@ -2,7 +2,6 @@
 using System.Collections;
 using _Application.Scripts.Buildings;
 using _Application.Scripts.Control;
-using _Application.Scripts.Planets;
 using _Application.Scripts.Scriptables;
 using UnityEngine;
 

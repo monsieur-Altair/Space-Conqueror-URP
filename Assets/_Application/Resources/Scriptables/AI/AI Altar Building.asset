@@ -10,14 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d7475b95743b44dcbabbfaad5001aab0, type: 3}
-<<<<<<<< HEAD:Assets/_Application/Resources/Scriptables/AI/Building.asset
-  m_Name: Building
-========
-  m_Name: AI Spawner Planet
->>>>>>>> DevMelnikov:Assets/_Application/Resources/Scriptables/AI/AI Spawner Planet.asset
+  m_Name: AI Altar Building
   m_EditorClassIdentifier: 
-  maxCount: 50
-  produceCount: 5
+  maxCount: 25
+  produceCount: 4
   produceTime: 1
-  defense: 1
+  defense: 0.8
   reducingSpeed: 3

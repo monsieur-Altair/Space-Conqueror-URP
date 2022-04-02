@@ -9,8 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4e50a4842294124a568b651a2854807, type: 3}
-  m_Name: AI Scientific Rocket
+  m_Script: {fileID: 11500000, guid: d7475b95743b44dcbabbfaad5001aab0, type: 3}
+  m_Name: AI Attacker Building
   m_EditorClassIdentifier: 
-  damage: 80
-  speed: 5.75
+  maxCount: 40
+  produceCount: 3
+  produceTime: 1
+  defense: 1.5
+  reducingSpeed: 3

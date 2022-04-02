@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d7475b95743b44dcbabbfaad5001aab0, type: 3}
-  m_Name: AI Attacker Planet
+  m_Name: AI Spawner Building
   m_EditorClassIdentifier: 
-  maxCount: 40
-  produceCount: 3
+  maxCount: 50
+  produceCount: 5
   produceTime: 1
-  defense: 1.5
+  defense: 1
   reducingSpeed: 3

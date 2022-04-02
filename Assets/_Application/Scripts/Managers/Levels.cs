@@ -35,16 +35,6 @@ namespace _Application.Scripts.Managers
 
         public GameObject GetCurrentLay() => 
             _currentLevel;
-        //
-        // public void HidePlanets()
-        // {
-        //     
-        // }
-        //
-        // public void ShowPlanets()
-        // {
-        //     
-        // }
         
         public IEnumerator InstantiateLevel()
         {

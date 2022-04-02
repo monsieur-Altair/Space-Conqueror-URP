@@ -9,8 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4e50a4842294124a568b651a2854807, type: 3}
-  m_Name: AI Attacker Rocket
+  m_Script: {fileID: 11500000, guid: c8198880750d404cb58a07d9e9b963d4, type: 3}
+  m_Name: AI Mana
   m_EditorClassIdentifier: 
-  damage: 150
-  speed: 4.25
+  maxCount: 100
+  produceCount: 4
+  produceTime: 1

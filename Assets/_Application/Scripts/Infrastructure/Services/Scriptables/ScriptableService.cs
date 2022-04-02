@@ -16,15 +16,15 @@ namespace _Application.Scripts.Infrastructure.Services.Scriptables
 
         #region PlayerStats
 
-        public Planet PlayerAttackerPlanet { get; set; }
-        public Planet PlayerScientificPlanet { get; set; }
-        public Planet PlayerSpawnerPlanet { get; set; }
+        public Building PlayerAttackerBuilding { get; set; }
+        public Building PlayerAltarBuilding { get; set; }
+        public Building PlayerSpawnerBuilding { get; set; }
 
         public Unit PlayerAttackerUnit { get; set; }
-        public Unit PlayerScientificUnit { get; set; }
+        public Unit PlayerAltarUnit { get; set; }
         public Unit PlayerSpawnerUnit { get; set; }
 
-        public Scientific PlayerScientific { get; set; }
+        public Mana PlayerMana { get; set; }
         
         public Acid PlayersAcid { get; private set; }
         public Buff PlayersBuff { get; private set; }
@@ -36,15 +36,15 @@ namespace _Application.Scripts.Infrastructure.Services.Scriptables
 
         #region AIStats
 
-        public Planet AIAttackerPlanet { get; set; }
-        public Planet AIScientificPlanet { set; get; }
-        public Planet AISpawnerPlanet { get; set; }
+        public Building AIAttackerBuilding { get; set; }
+        public Building AIAltarBuilding { set; get; }
+        public Building AISpawnerBuilding { get; set; }
         
         public Unit AIAttackerUnit { get; set; }
         public Unit AIScientificUnit { get; set; }
         public Unit AISpawnerUnit { get; set; }
 
-        public Scientific AIScientific { get; set; }
+        public Mana AIMana { get; set; }
 
         public Acid AIsAcid { get; private set; }
         public Buff AIsBuff { get; private set; }
@@ -86,15 +86,15 @@ namespace _Application.Scripts.Infrastructure.Services.Scriptables
             AIsBuff = LoadScriptable<Buff>(AssetPaths.AIBuffResourcePath);
             AIsCall = LoadScriptable<Call>(AssetPaths.AICallResourcePath);
             
-            AIAttackerPlanet   = _assetProvider.InstantiateScriptable<Planet>(AssetPaths.AIAttackerPlanetPath);
-            AIScientificPlanet = _assetProvider.InstantiateScriptable<Planet>(AssetPaths.AIScientificPlanetPath);
-            AISpawnerPlanet    = _assetProvider.InstantiateScriptable<Planet>(AssetPaths.AISpawnerPlanetPath);
+            AIAttackerBuilding = _assetProvider.InstantiateScriptable<Building>(AssetPaths.AIAttackerBuildingPath);
+            AIAltarBuilding    = _assetProvider.InstantiateScriptable<Building>(AssetPaths.AIAltarBuildingPath);
+            AISpawnerBuilding  = _assetProvider.InstantiateScriptable<Building>(AssetPaths.AISpawnerBuildingPath);
 
             AIAttackerUnit   = _assetProvider.InstantiateScriptable<Unit>(AssetPaths.AIAttackerUnitPath);
-            AIScientificUnit = _assetProvider.InstantiateScriptable<Unit>(AssetPaths.AIScientificUnitPath);
+            AIScientificUnit = _assetProvider.InstantiateScriptable<Unit>(AssetPaths.AIAltarUnitPath);
             AISpawnerUnit    = _assetProvider.InstantiateScriptable<Unit>(AssetPaths.AISpawnerUnitPath);
 
-            AIScientific = _assetProvider.InstantiateScriptable<Scientific>(AssetPaths.AIScientificPath);
+            AIMana = _assetProvider.InstantiateScriptable<Mana>(AssetPaths.AIManaPath);
         }
         
         private void LoadAllPlayerStats()
@@ -104,15 +104,15 @@ namespace _Application.Scripts.Infrastructure.Services.Scriptables
             PlayersCall = LoadScriptable<Call>(AssetPaths.CallResourcePath);
             PlayersIce  = LoadScriptable<Ice>(AssetPaths.IceResourcePath);
 
-            PlayerAttackerPlanet   = _assetProvider.InstantiateScriptable<Planet>(AssetPaths.PlayerAttackerPlanetPath);
-            PlayerScientificPlanet = _assetProvider.InstantiateScriptable<Planet>(AssetPaths.PlayerScientificPlanetPath);
-            PlayerSpawnerPlanet    = _assetProvider.InstantiateScriptable<Planet>(AssetPaths.PlayerSpawnerPlanetPath);
+            PlayerAttackerBuilding = _assetProvider.InstantiateScriptable<Building>(AssetPaths.PlayerAttackerBuildingPath);
+            PlayerAltarBuilding    = _assetProvider.InstantiateScriptable<Building>(AssetPaths.PlayerAltarBuildingPath);
+            PlayerSpawnerBuilding  = _assetProvider.InstantiateScriptable<Building>(AssetPaths.PlayerSpawnerBuildingPath);
 
-            PlayerAttackerUnit   = _assetProvider.InstantiateScriptable<Unit>(AssetPaths.PlayerAttackerUnitPath);
-            PlayerScientificUnit = _assetProvider.InstantiateScriptable<Unit>(AssetPaths.PlayerScientificUnitPath);
-            PlayerSpawnerUnit    = _assetProvider.InstantiateScriptable<Unit>(AssetPaths.PlayerSpawnerUnitPath);
+            PlayerAttackerUnit = _assetProvider.InstantiateScriptable<Unit>(AssetPaths.PlayerAttackerUnitPath);
+            PlayerAltarUnit    = _assetProvider.InstantiateScriptable<Unit>(AssetPaths.PlayerAltarUnitPath);
+            PlayerSpawnerUnit  = _assetProvider.InstantiateScriptable<Unit>(AssetPaths.PlayerSpawnerUnitPath);
 
-            PlayerScientific = _assetProvider.InstantiateScriptable<Scientific>(AssetPaths.PlayerScientificPath);
+            PlayerMana = _assetProvider.InstantiateScriptable<Mana>(AssetPaths.PlayerScientificPath);
         }
 
         private void LoadRewards() => 

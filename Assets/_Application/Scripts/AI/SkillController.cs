@@ -1,5 +1,6 @@
-﻿using _Application.Scripts.Infrastructure.Services.AssetManagement;
+﻿using _Application.Scripts.Buildings;
 using _Application.Scripts.Infrastructure.Services.Factory;
+using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
 using _Application.Scripts.Skills;
 using UnityEngine;
@@ -14,20 +15,20 @@ namespace _Application.Scripts.AI
         public Acid Acid { get; }
         
         private readonly ObjectPool _objectPool;
+        private readonly IScriptableService _scriptableService;
 
-        public SkillController(IGameFactory gameFactory, ObjectPool objectPool)
         public SkillController(IGameFactory gameFactory, IScriptableService scriptableService, ObjectPool objectPool)
         {
             _scriptableService = scriptableService;
             _objectPool = objectPool;
-            
-            Call = new Call(Team.Red ,DecreaseAISciCounter);
+
+            Call = new Call(Team.Red, DecreaseAIManaCounter);
             Call.NeedObjectFromPool += SpawnUnit;
             Call.SetSkillObject(gameFactory.CreateIndicator());
 
-            Buff = new Buff(Team.Red ,DecreaseAISciCounter);
+            Buff = new Buff(Team.Red, DecreaseAIManaCounter);
 
-            Acid = new Acid(Team.Red ,DecreaseAISciCounter);
+            Acid = new Acid(Team.Red, DecreaseAIManaCounter);
             Acid.SetSkillObject(gameFactory.CreateAcid());
 
             ReloadSkills();
@@ -40,7 +41,7 @@ namespace _Application.Scripts.AI
             Call.Reload(_scriptableService.AIsCall, 1.0f);
         }
 
-        private static void DecreaseAISciCounter(float value) => 
+        private static void DecreaseAIManaCounter(float value) => 
         	Core.ManaCount -= value;
         
         public void Refresh()
@@ -61,8 +62,6 @@ namespace _Application.Scripts.AI
 
         private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
             _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.Base>();
-
-        private static void DecreaseAISciCounter(float value) => 
-            Core.ScientificCount -= value;
+        
     }   
 }

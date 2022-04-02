@@ -22,7 +22,7 @@ namespace _Application.Scripts.Skills
         protected float Cooldown;
         protected bool IsOnCooldown;
         protected bool IsForAI;
-        protected Team TeamConstraint;
+        protected Buildings.Team TeamConstraint;
         protected ICoroutineRunner CoroutineRunner;
         protected delegate void UniqueActionToBuilding();
         
@@ -31,7 +31,7 @@ namespace _Application.Scripts.Skills
         public int Cost { get; private set; }
         protected Vector3 SelectedScreenPos { get; private set; }
 
-        public Base(Planets.Team? teamConstraint, [CanBeNull] DecreasingCounter function)
+        public Base(Buildings.Team? teamConstraint, [CanBeNull] DecreasingCounter function)
         {
             MainCamera = Camera.main;
             CoroutineRunner = GlobalObject.Instance;
@@ -67,12 +67,12 @@ namespace _Application.Scripts.Skills
             
         }
 
-        public void SetTeamConstraint(Planets.Team? team)
+        public void SetTeamConstraint(Buildings.Team? team)
         {
             if (team != null)
             {
             	IsForAI = (team == Team.Red);
-            	TeamConstraint = team;
+            	TeamConstraint = (Team) team;
             }
         }
 
