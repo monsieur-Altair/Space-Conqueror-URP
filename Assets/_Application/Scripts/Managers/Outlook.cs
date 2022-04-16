@@ -1,15 +1,20 @@
-﻿using System.Collections.Generic;
-using _Application.Scripts.Units;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using Base = _Application.Scripts.Units.Base;
 using Type = _Application.Scripts.Buildings.Type;
 
 namespace _Application.Scripts.Managers
 {    
     public class Outlook
     {
-        private readonly List<Texture> _altarTextures;
-        private readonly List<Texture> _attackerTextures;
-        private readonly List<Texture> _spawnerTextures;
+        private const int BuffTexIndex = 0;
+        private const int CrystalBaseHash = 1;
+        private const int CrystalEmissionHash = 2;
+        private const int FlagHash = 3;
+        private const int RoofHash = 4;
+        private static readonly int BaseMap = Shader.PropertyToID("_BaseMap");
+        private static readonly int EmissionMap = Shader.PropertyToID("_EmissionMap");
 
         private readonly List<Texture> _warriorsTextures;
 
@@ -19,32 +24,37 @@ namespace _Application.Scripts.Managers
         private readonly Material _baseBuildingMaterial;
         private readonly Material _baseWarriorMaterial;
 
+        private readonly Material _baseCrystalMaterial;
+        private readonly Material _baseFlagMaterial;
+        private readonly Material _baseRoofMaterial;
+
         private readonly Warehouse _warehouse;
-        
-        private readonly List<List<Texture>> _allTextures=new List<List<Texture>>();
+
+        private readonly Dictionary<int, List<Texture>> _allTextures = new Dictionary<int, List<Texture>>();
         private readonly Dictionary<int, MeshRenderer> _buildingsRenderer = new Dictionary<int, MeshRenderer>();
         private List<Buildings.Base> _allBuildings = new List<Buildings.Base>();
-
-        private const int BuffTexIndex = 1;
 
 
         public Outlook(Warehouse warehouse)
         {
             _warehouse = warehouse;
 
-            _altarTextures = _warehouse.altarTextures;
-            _attackerTextures = _warehouse.attackerTextures;
-            _spawnerTextures = _warehouse.spawnerTextures;
             _warriorsTextures = _warehouse.warriorsTextures;
 
             _buffedBuildingMaterial = _warehouse.buffedBuildingMaterial;
             _buffedWarriorMaterial = _warehouse.buffedWarriorMaterial;
+            
             _baseBuildingMaterial = _warehouse.baseBuildingMaterial;
             _baseWarriorMaterial = _warehouse.baseWarriorMaterial;
             
-            _allTextures.Add(_altarTextures);
-            _allTextures.Add(_spawnerTextures);
-            _allTextures.Add(_attackerTextures);
+            _baseCrystalMaterial = _warehouse.baseCrystalMaterial;
+            _baseFlagMaterial = _warehouse.baseFlagMaterial;
+            _baseRoofMaterial = _warehouse.baseRoofMaterial;
+            
+            _allTextures.Add(CrystalBaseHash,_warehouse.crystalBaseTextures);
+            _allTextures.Add(CrystalEmissionHash,_warehouse.crystalEmissionTextures);
+            _allTextures.Add(RoofHash,_warehouse.roofTextures);
+            _allTextures.Add(FlagHash,_warehouse.flagTextures);
         }
        
         public void PrepareLevel(List<Buildings.Base> planets)
@@ -93,50 +103,72 @@ namespace _Application.Scripts.Managers
         private void SetOutlook(Buildings.Base building)
         {
             int team = (int)building.Team;
-            int type = (int) building.Type;
+            Type type = building.Type;
             int index = building.ID.GetHashCode();
-            Material mainMaterial = new Material(_baseBuildingMaterial)
+            
+            _buildingsRenderer[index].materials = GetMaterials(type, team);
+        }
+
+        private Material[] GetMaterials(Type type, int team)
+        {
+            switch (type)
             {
-                mainTexture = _allTextures[type][team]
-            };
-            Material[] materials = {mainMaterial, null};
-            _buildingsRenderer[index].materials = materials;
+                case Type.Altar:
+                    Material crystalMat = new Material(_baseCrystalMaterial);
+                    crystalMat.SetTexture(BaseMap, _allTextures[CrystalBaseHash][team]);
+                    crystalMat.SetTexture(EmissionMap, _allTextures[CrystalEmissionHash][team]);
+                    return new[] {_baseBuildingMaterial, crystalMat};
+                case Type.Spawner:
+                    Material flagSpawnerMat = new Material(_baseFlagMaterial);
+                    flagSpawnerMat.SetTexture(BaseMap, _allTextures[FlagHash][team]);
+                    Material roofMat = new Material(_baseRoofMaterial);
+                    roofMat.SetTexture(BaseMap, _allTextures[RoofHash][team]);
+                    return new[] {_baseBuildingMaterial, flagSpawnerMat, roofMat};
+                case Type.Attacker:
+                    Material flagMat = new Material(_baseFlagMaterial);
+                    flagMat.SetTexture(BaseMap, _allTextures[FlagHash][team]);
+                    return new[] {_baseBuildingMaterial, flagMat};
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
         }
 
         private void SetUnitOutlook(Buildings.Base building, Base unit)
         {
             int team = (int) building.Team;
             //also we can add all rockets materials to list 
-            Material buffedMaterial = building.IsBuffed ? _buffedWarriorMaterial : null;
-            
-            Material mainMaterial = new Material(_baseWarriorMaterial)
-            {
-                mainTexture = _warriorsTextures[team]
-            };
 
-            Material[] materials = {mainMaterial, buffedMaterial};
-            unit.transform.GetChild(0).GetComponent<MeshRenderer>().materials = materials;
+            unit.transform.GetChild(0).GetComponent<MeshRenderer>().materials =
+                GetUnitMaterials(building.IsBuffed, team);
+        }
+
+        private Material[] GetUnitMaterials(bool isBuffed, int team)
+        {
+            Material mainMaterial = new Material(_baseWarriorMaterial);
+            Material secondMat = isBuffed ? _buffedWarriorMaterial : mainMaterial;
+
+            mainMaterial.SetTexture(BaseMap, _warriorsTextures[team]);
+
+            return new [] {mainMaterial, secondMat};
         }
 
         private void SetBuff(Buildings.Base building)
         {
             int index = building.ID.GetHashCode();
-            
-            Material[] materials = _buildingsRenderer[index].materials;
-            materials[BuffTexIndex] = _buffedBuildingMaterial;
-            _buildingsRenderer[index].materials = materials;
+            SetBuffMaterial(index, _buffedBuildingMaterial);
         }
 
         private void UnSetBuff(Buildings.Base building)
         {
             int index = building.ID.GetHashCode();
-            
-            if (_buildingsRenderer.TryGetValue(index,out MeshRenderer value))
-            {
-                Material[] materials = value.materials;
-                materials[BuffTexIndex] = null;
-                value.materials = materials;
-            }
+            SetBuffMaterial(index,_baseBuildingMaterial);/////////////////////////////////////////////////
+        }
+
+        private void SetBuffMaterial(int index, Material newMaterial)
+        {
+            Material[] materials = _buildingsRenderer[index].materials;
+            materials[BuffTexIndex] = newMaterial;
+            _buildingsRenderer[index].materials = materials;
         }
         
     }

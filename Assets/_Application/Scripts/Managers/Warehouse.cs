@@ -5,9 +5,10 @@ namespace _Application.Scripts.Managers
 {
     public class Warehouse : MonoBehaviour
     {
-        public List<Texture> altarTextures;
-        public List<Texture> attackerTextures;
-        public List<Texture> spawnerTextures;
+        public List<Texture> crystalBaseTextures;
+        public List<Texture> crystalEmissionTextures;
+        public List<Texture> flagTextures;
+        public List<Texture> roofTextures;
 
         public List<Texture> warriorsTextures;
 
@@ -15,6 +16,10 @@ namespace _Application.Scripts.Managers
         public Material buffedWarriorMaterial;
 
         public Material baseBuildingMaterial;
+        public Material baseCrystalMaterial;
+        public Material baseFlagMaterial;
+        public Material baseRoofMaterial;
+        
         public Material baseWarriorMaterial;
 
         public List<Color> counterBackground;
