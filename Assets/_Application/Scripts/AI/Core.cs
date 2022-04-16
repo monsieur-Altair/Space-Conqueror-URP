@@ -61,7 +61,7 @@ namespace _Application.Scripts.AI
             while (true)
             {
                 float delay = Random.Range(MinDelay, MaxDelay);
-                Debug.LogError($"AI thinks {delay} seconds...");
+                //Debug.LogError($"AI thinks {delay} seconds...");
                 yield return new WaitForSeconds(delay);
                 _attackByWarrior.Execute();
             }

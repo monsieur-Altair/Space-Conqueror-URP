@@ -43,25 +43,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc04737c77eb4546b1a5dcaa8585953d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  altarTextures:
-  - {fileID: 2800000, guid: 9e86640de59f6e84882428f3843eb88f, type: 3}
-  - {fileID: 2800000, guid: d53ab3d83f6649648b01400d3ee34fa7, type: 3}
-  - {fileID: 2800000, guid: 7e9a830fc9246614b8520626ac01043c, type: 3}
-  attackerTextures:
-  - {fileID: 2800000, guid: 9e86640de59f6e84882428f3843eb88f, type: 3}
-  - {fileID: 2800000, guid: d53ab3d83f6649648b01400d3ee34fa7, type: 3}
-  - {fileID: 2800000, guid: 7e9a830fc9246614b8520626ac01043c, type: 3}
-  spawnerTextures:
-  - {fileID: 2800000, guid: 9e86640de59f6e84882428f3843eb88f, type: 3}
-  - {fileID: 2800000, guid: d53ab3d83f6649648b01400d3ee34fa7, type: 3}
-  - {fileID: 2800000, guid: 7e9a830fc9246614b8520626ac01043c, type: 3}
+  crystalBaseTextures:
+  - {fileID: 2800000, guid: 903b6611fbb89a24b93e332fa2a94ada, type: 3}
+  - {fileID: 2800000, guid: 6ea9351475b20094794f172c74e31a7f, type: 3}
+  - {fileID: 2800000, guid: 69400e903e33f4547869b6cedb3b331f, type: 3}
+  crystalEmissionTextures:
+  - {fileID: 2800000, guid: a0c23a3e747ada74c82d677fc9e316d1, type: 3}
+  - {fileID: 2800000, guid: adba5878ea8e3e243ac698a7ccbb5984, type: 3}
+  - {fileID: 2800000, guid: d24e36afba7980c46b15b399c0225acf, type: 3}
+  flagTextures:
+  - {fileID: 2800000, guid: dd7bee9683b59544f9b266f1f93149a7, type: 3}
+  - {fileID: 2800000, guid: f08837b802f56ab4b906978ce123ed0c, type: 3}
+  - {fileID: 2800000, guid: fee558bcb2559bd4d8a373c250484f88, type: 3}
+  roofTextures:
+  - {fileID: 2800000, guid: ee4c19bd491b8f54084da148a59fe1b1, type: 3}
+  - {fileID: 2800000, guid: 4321c7bf2dea2094f8bbdc67e83de1b6, type: 3}
+  - {fileID: 2800000, guid: c68f9c8354539a74f9c7b0181f146ea1, type: 3}
   warriorsTextures:
-  - {fileID: 2800000, guid: 9e86640de59f6e84882428f3843eb88f, type: 3}
-  - {fileID: 2800000, guid: d53ab3d83f6649648b01400d3ee34fa7, type: 3}
+  - {fileID: 2800000, guid: 3175952fbd2fc4f4896a0e0f1fe42fa9, type: 3}
+  - {fileID: 2800000, guid: 84ca4fe8f068a33428414c917f1a79d1, type: 3}
   buffedBuildingMaterial: {fileID: 2100000, guid: b3cb278440d8b2940afd8271980669be, type: 2}
   buffedWarriorMaterial: {fileID: 2100000, guid: 0e7506afdf812e248b2427c03bc59ebb, type: 2}
-  baseBuildingMaterial: {fileID: 2100000, guid: a24a30c922236f247baa7ef62013558c, type: 2}
-  baseWarriorMaterial: {fileID: 2100000, guid: 955190cea373c1e4aa7401ca90dd5e78, type: 2}
+  baseBuildingMaterial: {fileID: 2100000, guid: 2876b05130092d64d9105f6da8dc1489, type: 2}
+  baseCrystalMaterial: {fileID: 2100000, guid: d0d415d34d8270f488d90c72fbb8725c, type: 2}
+  baseFlagMaterial: {fileID: 2100000, guid: c0416b15b5bb9d64fa8a7beacf2f23d6, type: 2}
+  baseRoofMaterial: {fileID: 2100000, guid: 4c75d9c39368677449514aba09d2801f, type: 2}
+  baseWarriorMaterial: {fileID: 2100000, guid: dd987036fa3bb8c4da9a39ed1b09c55b, type: 2}
   counterBackground:
   - {r: 0, g: 0.09411766, b: 0.38431376, a: 1}
   - {r: 0.37647063, g: 0, b: 0.003921569, a: 1}
