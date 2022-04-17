@@ -1,14 +1,11 @@
-﻿Shader "Space Conqueror/Base Shader"
+﻿Shader "Medieval usurper/Base Shader"
 {
     Properties
     {
-        //_Color ("Color", Color) = (1,1,1,1)
         _MainTex ("Main Tex", 2D) = "white" {}
 
         _OutlineColor ("Outline Color", Color) = (1,1,1,1)
         _OutlineWidth ("Outline Width", Range(0, 4)) = 0.25
-        
-        //[Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull", Float) = 2
     }
     SubShader
     {
@@ -22,12 +19,10 @@
         
         LOD 200
         Cull back
-        //[_Cull]
 
         Pass{
             Tags { "LightMode"="SRPDefaultUnlit" }
             ZWrite Off
-            //CGPROGRAM
             HLSLPROGRAM
             
             #pragma vertex vert
@@ -36,10 +31,7 @@
 
             struct Attributes {
                 float4 vertex : POSITION;
-                //float4 tangent : TANGENT;
                 float3 normal : NORMAL;
-                //float4 texcoord : TEXCOORD0;
-                //float4 color : COLOR;
             };
 
             struct Varyings{
@@ -125,5 +117,4 @@
             ENDHLSL
         }
     }
-    //FallBack "Diffuse"
 }

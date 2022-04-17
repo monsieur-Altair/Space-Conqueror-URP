@@ -28,26 +28,8 @@ namespace _Application.Scripts.Upgrades
         {
             _readWriterService = AllServices.Instance.GetSingle<IReadWriterService>();
 
-            foreach (UpgradeController upgradeController in upgradeControllers)
-            {
-                _progressReaders.Add(upgradeController);
-                _progressWriters.Add(upgradeController);
-                
-                upgradeController.TriedPurchaseUpgrade += (cost) =>
-                {
-                    if ((_money - cost) >= 0)
-                    {
-                        _money -= cost;
-                        AllServices.Instance.GetSingle<IProgressService>().PlayerProgress.money = _money;//////////////////////////////
-                        Managers.Main._money = _money;//////////////////////////////////////////////////////////////////////
-                        moneyText.text = $"money: {_money}";
-                        upgradeController.ApplyPurchase();
-                    }
-                };
-
-                upgradeController.Init();
-                //add to lists in game factory
-            }
+            foreach (UpgradeController upgradeController in upgradeControllers) 
+                InitController(upgradeController);
 
             _progressService = AllServices.Instance.GetSingle<IProgressService>();
         }
@@ -76,8 +58,30 @@ namespace _Application.Scripts.Upgrades
             
             Managers.GlobalObject.Instance.StopAllCoroutines();
         }
-        
+
         private void OnDestroy() => 
             _readWriterService.WriteProgress();
+
+        private void InitController(UpgradeController upgradeController)
+        {
+            _progressReaders.Add(upgradeController);
+            _progressWriters.Add(upgradeController);
+
+            upgradeController.TriedPurchaseUpgrade += (cost) =>
+            {
+                if ((_money - cost) >= 0)
+                {
+                    _money -= cost;
+                    AllServices.Instance.GetSingle<IProgressService>().PlayerProgress.money =
+                        _money; //////////////////////////////
+                    Managers.Main._money = _money; //////////////////////////////////////////////////////////////////////
+                    moneyText.text = $"money: {_money}";
+                    upgradeController.ApplyPurchase();
+                }
+            };
+
+            upgradeController.Init();
+            //add to lists in game factory
+        }
     }
 }
