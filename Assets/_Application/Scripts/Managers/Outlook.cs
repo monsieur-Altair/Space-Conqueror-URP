@@ -117,17 +117,17 @@ namespace _Application.Scripts.Managers
                     Material crystalMat = new Material(_baseCrystalMaterial);
                     crystalMat.SetTexture(BaseMap, _allTextures[CrystalBaseHash][team]);
                     crystalMat.SetTexture(EmissionMap, _allTextures[CrystalEmissionHash][team]);
-                    return new[] {_baseBuildingMaterial, crystalMat};
+                    return new[] {crystalMat, _baseBuildingMaterial};
                 case Type.Spawner:
                     Material flagSpawnerMat = new Material(_baseFlagMaterial);
                     flagSpawnerMat.SetTexture(BaseMap, _allTextures[FlagHash][team]);
                     Material roofMat = new Material(_baseRoofMaterial);
                     roofMat.SetTexture(BaseMap, _allTextures[RoofHash][team]);
-                    return new[] {_baseBuildingMaterial, flagSpawnerMat, roofMat};
+                    return new[] { roofMat, flagSpawnerMat, _baseBuildingMaterial };
                 case Type.Attacker:
                     Material flagMat = new Material(_baseFlagMaterial);
                     flagMat.SetTexture(BaseMap, _allTextures[FlagHash][team]);
-                    return new[] {_baseBuildingMaterial, flagMat};
+                    return new[] { flagMat, _baseBuildingMaterial};
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
