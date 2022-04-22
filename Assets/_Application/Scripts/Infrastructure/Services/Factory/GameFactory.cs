@@ -60,7 +60,8 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
                 uiManager, 
                 userControl,
                 _allServices.GetSingle<IScriptableService>(),
-                _allServices.GetSingle<IProgressService>());
+                _allServices.GetSingle<IProgressService>(),
+                AudioManager.Instance);
             
             ProgressReaders.Add(mainManager);
             ProgressWriters.Add(mainManager);
