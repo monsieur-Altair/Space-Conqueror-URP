@@ -11130,8 +11130,10 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5160126973207507745, guid: 9d167c75327fe9e4284430ebba3e5b01, type: 3}
   m_PrefabInstance: {fileID: 1952022183}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &1967972733
-PrefabInstance:
+  m_GameObject: {fileID: 1702432187}
+  m_Enabled: 0
+--- !u!20 &1702432191
+Camera:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:

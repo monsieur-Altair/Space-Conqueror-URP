@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using _Application.Scripts.AI;
 using _Application.Scripts.Control;
 using _Application.Scripts.Infrastructure;
 using _Application.Scripts.Infrastructure.Services;
@@ -30,6 +31,7 @@ namespace _Application.Scripts.Managers
         private readonly ICoroutineRunner _coroutineRunner;
         private readonly IScriptableService _scriptableService;
         private readonly IProgressService _progressService;
+        private readonly AudioManager _audioManager;
 
         private GameObject _buildingsLay;
         private bool _isWin;
@@ -40,9 +42,9 @@ namespace _Application.Scripts.Managers
         public static int _money; /////////////////////////////////////////////////////////////////////////
         private int _lastCompletedLevel;
 
-        public Main(Levels levelsManager, TeamManager teamManager, ICoroutineRunner coroutineRunner, AI.Core core, 
-            ObjectPool pool ,Outlook  outlook, UI ui, UserControl userControl, IScriptableService scriptableService, 
-            IProgressService progressService)
+        public Main(Levels levelsManager, TeamManager teamManager, ICoroutineRunner coroutineRunner, Core core,
+            ObjectPool pool, Outlook outlook, UI ui, UserControl userControl, IScriptableService scriptableService,
+            IProgressService progressService, AudioManager audioManager)
         {
             _allBuildings = new List<Buildings.Base>();
             
@@ -56,6 +58,7 @@ namespace _Application.Scripts.Managers
             _userControl = userControl;
             _scriptableService = scriptableService;
             _progressService = progressService;
+            _audioManager = audioManager;
 
             Buildings.Base.Conquered += _teamManager.UpdateObjectsCount;
             _teamManager.GameEnded += EndGame;
@@ -145,6 +148,7 @@ namespace _Application.Scripts.Managers
                     _core.Disable();
                     _ui.DisableSkillUI();
                     _ui.ShowGameOverUI(_isWin);
+                    _audioManager.PlayEndgame(_isWin);
                     _ui.HideGameplayUI();
                     break;
                 }
