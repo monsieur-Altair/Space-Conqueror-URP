@@ -1,11 +1,20 @@
 ﻿using _Application.Scripts.Skills;
+using UnityEngine;
 
 namespace _Application.Scripts.Units
 {
     public class Warrior : Base, IFreezable
     {
-        private Buildings.Base.UnitInf _unitInf;
+        public SkinnedMeshRenderer skinnedMeshRenderer;
         
+        private Buildings.Base.UnitInf _unitInf;
+
+        public Material Materialas
+        {
+            get => skinnedMeshRenderer.material;
+            set { }
+        }
+
         protected override void TargetInRange()
         {
             Ice.DeletingFreezingZone -= Unfreeze;

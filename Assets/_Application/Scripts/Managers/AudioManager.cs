@@ -21,28 +21,27 @@ namespace _Application.Scripts.Managers
         
         private void Awake()
         {
-            // _audioBackSource = GetComponent<AudioSource>();
-            // _audioEffectsSource = transform.GetChild(0).GetComponent<AudioSource>();
-            // _audioBackSource.clip = backgroundClips[0];
-            // _audioBackSource.Play();
-            // Instance = this;
-            // DontDestroyOnLoad(this);
+             _audioBackSource = GetComponent<AudioSource>();
+             _audioEffectsSource = transform.GetChild(0).GetComponent<AudioSource>();
+             _audioBackSource.clip = backgroundClips[0];
+             _audioBackSource.Play();
+             Instance = this; 
+             DontDestroyOnLoad(this);
         }
 
         public void PlayEndgame(bool isWin)
         {
-            // _audioBackSource.Pause();
-            // _audioEffectsSource.clip = isWin ? winClip : loseClip;
-            // StartCoroutine(PlayAudio());
+            _audioBackSource.Pause();
+            _audioEffectsSource.clip = isWin ? winClip : loseClip;
+            StartCoroutine(PlayAudio());
         }
 
         private IEnumerator PlayAudio()
         {
-            // _audioEffectsSource.Play();
-            // yield return new WaitForSeconds(3.0f);
-            // _audioEffectsSource.Stop();
-            // _audioBackSource.Play();
-            yield break;
+            _audioEffectsSource.Play();
+            yield return new WaitForSeconds(3.0f);
+            _audioEffectsSource.Stop();
+            _audioBackSource.Play();
         }
     }
 }

@@ -23,7 +23,6 @@ namespace _Application.Scripts.Units
         private Vector3 _destination;
         private const float MinDistance = 1.0f;
 
-
         public void Update()
         {
             if (Target != null)
