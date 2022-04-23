@@ -69,6 +69,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fc56c53dad84f73ae2d44f025e25228, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  skinnedMeshRenderer: {fileID: 7354509912141954282}
 --- !u!136 &1787512184970467169
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -166,6 +167,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Knight
       objectReference: {fileID: 0}
+    - target: {fileID: 3027896407205900740, guid: 287f48fd645c49e46b0baefe77f97a06, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3027896407205900740, guid: 287f48fd645c49e46b0baefe77f97a06, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 287f48fd645c49e46b0baefe77f97a06, type: 3}
 --- !u!1 &4671395684945113215 stripped
@@ -176,6 +185,11 @@ GameObject:
 --- !u!4 &5449339110345042629 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 287f48fd645c49e46b0baefe77f97a06, type: 3}
+  m_PrefabInstance: {fileID: 5482367775630363950}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &7354509912141954282 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 3027896407205900740, guid: 287f48fd645c49e46b0baefe77f97a06, type: 3}
   m_PrefabInstance: {fileID: 5482367775630363950}
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &6936914169285937027

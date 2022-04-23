@@ -5,7 +5,7 @@ Shader "Medieval usurper/Force Field"
     {
         _FieldTex ("Field Texture", 2D) = "white" {}
         [HDR] _Color ("Color", Color) = (1,1,1,1)
-        _Percent("Field percent",Range(0.8,2))=1
+        _Percent("Field percent",Range(0.7,2))=1
         _FresnelPower("Fresnel Power", Range(0, 10)) = 3
     }
     SubShader

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using _Application.Scripts.Units;
 using UnityEngine;
 using Base = _Application.Scripts.Units.Base;
 using Type = _Application.Scripts.Buildings.Type;
@@ -105,7 +106,7 @@ namespace _Application.Scripts.Managers
             int team = (int)building.Team;
             Type type = building.Type;
             int index = building.ID.GetHashCode();
-            
+
             _buildingsRenderer[index].materials = GetMaterials(type, team);
         }
 
@@ -117,17 +118,23 @@ namespace _Application.Scripts.Managers
                     Material crystalMat = new Material(_baseCrystalMaterial);
                     crystalMat.SetTexture(BaseMap, _allTextures[CrystalBaseHash][team]);
                     crystalMat.SetTexture(EmissionMap, _allTextures[CrystalEmissionHash][team]);
-                    return new[] {crystalMat, _baseBuildingMaterial};
+                    return new[] {crystalMat, _baseBuildingMaterial, _baseBuildingMaterial};
                 case Type.Spawner:
-                    Material flagSpawnerMat = new Material(_baseFlagMaterial);
-                    flagSpawnerMat.SetTexture(BaseMap, _allTextures[FlagHash][team]);
-                    Material roofMat = new Material(_baseRoofMaterial);
-                    roofMat.SetTexture(BaseMap, _allTextures[RoofHash][team]);
-                    return new[] { roofMat, flagSpawnerMat, _baseBuildingMaterial };
+                    Material flagSpawnerMat = new Material(_baseFlagMaterial)
+                    {
+                        mainTexture = _allTextures[FlagHash][team]
+                    };
+                    Material roofMat = new Material(_baseRoofMaterial)
+                    {
+                        mainTexture =  _allTextures[RoofHash][team]
+                    };
+                    return new[] { roofMat, flagSpawnerMat, _baseBuildingMaterial, _baseBuildingMaterial };
                 case Type.Attacker:
-                    Material flagMat = new Material(_baseFlagMaterial);
-                    flagMat.SetTexture(BaseMap, _allTextures[FlagHash][team]);
-                    return new[] { flagMat, _baseBuildingMaterial};
+                    Material flagMat = new Material(_baseFlagMaterial)
+                    {
+                        mainTexture = _allTextures[FlagHash][team]
+                    };
+                    return new[] { flagMat, _baseBuildingMaterial, _baseBuildingMaterial};
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
@@ -138,18 +145,18 @@ namespace _Application.Scripts.Managers
             int team = (int) building.Team;
             //also we can add all rockets materials to list 
 
-            unit.transform.GetChild(0).GetComponent<MeshRenderer>().materials =
-                GetUnitMaterials(building.IsBuffed, team);
+            unit.GetComponent<Warrior>().skinnedMeshRenderer.materials = GetUnitMaterials(building.IsBuffed, team);
         }
 
         private Material[] GetUnitMaterials(bool isBuffed, int team)
         {
-            Material mainMaterial = new Material(_baseWarriorMaterial);
+            Material mainMaterial = new Material(_baseWarriorMaterial)
+            {
+                mainTexture = _warriorsTextures[team]
+            };
             Material secondMat = isBuffed ? _buffedWarriorMaterial : mainMaterial;
 
-            mainMaterial.SetTexture(BaseMap, _warriorsTextures[team]);
-
-            return new [] {mainMaterial, secondMat};
+            return new[] {mainMaterial, secondMat};
         }
 
         private void SetBuff(Buildings.Base building)
@@ -161,13 +168,13 @@ namespace _Application.Scripts.Managers
         private void UnSetBuff(Buildings.Base building)
         {
             int index = building.ID.GetHashCode();
-            SetBuffMaterial(index,_baseBuildingMaterial);/////////////////////////////////////////////////
+            SetBuffMaterial(index, _baseBuildingMaterial);
         }
 
         private void SetBuffMaterial(int index, Material newMaterial)
         {
             Material[] materials = _buildingsRenderer[index].materials;
-            materials[BuffTexIndex] = newMaterial;
+            materials[materials.Length-1] = newMaterial;
             _buildingsRenderer[index].materials = materials;
         }
         

@@ -89,7 +89,7 @@ Material:
     - _DstBlend: 0
     - _EdgeWidth: 0.05
     - _FresnelBrightness: 0
-    - _FresnelPower: 1.7
+    - _FresnelPower: 1.4
     - _FresnelShadowDropoff: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -105,7 +105,7 @@ Material:
     - _OutlineSize: 0
     - _OutlineWidth: 0.0004
     - _Parallax: 0.02
-    - _Percent: 1
+    - _Percent: 0.8
     - _RampLevels: 2
     - _RimAlpha: 0
     - _RimDropOff: 0
