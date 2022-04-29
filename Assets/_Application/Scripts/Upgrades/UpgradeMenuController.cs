@@ -77,6 +77,8 @@ namespace _Application.Scripts.Upgrades
                     Managers.Main._money = _money; //////////////////////////////////////////////////////////////////////
                     moneyText.text = $"money: {_money}";
                     upgradeController.ApplyPurchase();
+                    
+                   // _readWriterService.WriteProgress();
                 }
             };
 
