@@ -56,3 +56,12 @@ MonoBehaviour:
   - poolObjectType: 6
     prefab: {fileID: 2870287180951207076, guid: 072d865c1ef6bd844b78860b581e8233, type: 3}
     size: 12
+  - poolObjectType: 7
+    prefab: {fileID: 2947993639071935147, guid: 547d0751c77bd0540a252f0a874ba809, type: 3}
+    size: 2
+  - poolObjectType: 8
+    prefab: {fileID: 6276433409546012761, guid: 877d1f4f5ef197248892c82435314711, type: 3}
+    size: 2
+  - poolObjectType: 9
+    prefab: {fileID: 5070550477755079263, guid: ffc191d283b08ec4fbb1529ac5a88c59, type: 3}
+    size: 1

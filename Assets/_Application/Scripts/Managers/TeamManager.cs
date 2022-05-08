@@ -6,8 +6,8 @@ namespace _Application.Scripts.Managers
 {
     public class TeamManager
     {
-        public event Action<List<int>> TeamCountUpdated;
-        public event Action<bool> GameEnded;
+        public static event Action<List<int>> TeamCountUpdated;
+        public static event Action<bool> GameEnded;
 
         private readonly int _teamNumber = Enum.GetNames(typeof(Team)).Length;
         private readonly List<int> _teamCount;

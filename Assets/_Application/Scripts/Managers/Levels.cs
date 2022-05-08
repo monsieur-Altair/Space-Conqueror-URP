@@ -6,20 +6,23 @@ namespace _Application.Scripts.Managers
 {
     public class Levels : MonoBehaviour
     {
-        [SerializeField] private NavMeshSurface navMeshSurfaceObj;
-        [SerializeField] private GameObject[] levels;
-
-        public int CurrentLevelNumber { get;  set; }
-        public static Levels Instance { get; private set; }
+        [SerializeField] 
+        private NavMeshSurface navMeshSurfaceObj;
+        
+        [SerializeField] 
+        private GameObject[] levels;
 
         private readonly Vector3 _instantiatePos = new Vector3(0, 0, 0);
         private GameObject _currentLevel;
+        
+        public int CurrentLevelNumber { get;  set; }
+        public static Levels Instance { get; private set; }
+
 
         public void Awake()
         {
             if (Instance == null)
                 Instance = this;
-            //navMeshSurfaceObj = FindObjectOfType<NavMeshSurface>();
         }
 
         public void SwitchToNextLevel()

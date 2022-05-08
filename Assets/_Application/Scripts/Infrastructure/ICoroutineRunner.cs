@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections;
+using _Application.Scripts.Infrastructure.Services;
 using UnityEngine;
 
 namespace _Application.Scripts.Infrastructure
 {
-    public interface ICoroutineRunner
+    public interface ICoroutineRunner : IService
     {
         Coroutine StartCoroutine(IEnumerator coroutine);
         void StopCoroutine(Coroutine coroutine);
         void StopCoroutine(IEnumerator coroutine);
-        public void InvokeWithDelay(Action action, float delay);
-        public void CancelAllInvoked();
+        void InvokeWithDelay(Action action, float delay);
+        void CancelAllInvoked();
+        void StopAllCoroutines();
+        void Init();
     }
 }

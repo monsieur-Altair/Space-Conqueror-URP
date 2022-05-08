@@ -9,13 +9,8 @@ namespace _Application.Scripts.Managers
 {
     public class GlobalObject : MonoBehaviour, ICoroutineRunner
     {
-        public static GlobalObject Instance;
-
-        private void Awake()
-        {
-            if (Instance == null)
-                Instance = this;
-        }
+        public void Init() => 
+            DontDestroyOnLoad(this);
 
         public void InvokeWithDelay(Action action, float delay) => 
             StartCoroutine(WaitAndDo(delay, action));
