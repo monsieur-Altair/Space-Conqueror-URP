@@ -22,12 +22,9 @@ namespace _Application.Scripts.Upgrades
         
         private readonly List<IProgressReader> _progressReaders = new List<IProgressReader>();
         private readonly List<IProgressWriter> _progressWriters = new List<IProgressWriter>();
-        private IReadWriterService _readWriterService;
 
         private void Awake()
         {
-            _readWriterService = AllServices.Instance.GetSingle<IReadWriterService>();
-
             foreach (UpgradeController upgradeController in upgradeControllers) 
                 InitController(upgradeController);
 
@@ -59,31 +56,35 @@ namespace _Application.Scripts.Upgrades
             Managers.GlobalObject.Instance.StopAllCoroutines();
         }
 
-        private void OnDestroy() => 
-            _readWriterService.WriteProgress();
+        private void OnDestroy()
+        {  
+            foreach (UpgradeController upgradeController in upgradeControllers)
+                upgradeController.TriedPurchaseUpgrade -= UpgradeController_TriedPurchaseUpgrade;
+        }
+
 
         private void InitController(UpgradeController upgradeController)
         {
             _progressReaders.Add(upgradeController);
             _progressWriters.Add(upgradeController);
 
-            upgradeController.TriedPurchaseUpgrade += (cost) =>
-            {
-                if ((_money - cost) >= 0)
-                {
-                    _money -= cost;
-                    AllServices.Instance.GetSingle<IProgressService>().PlayerProgress.money =
-                        _money; //////////////////////////////
-                    Managers.Main._money = _money; //////////////////////////////////////////////////////////////////////
-                    moneyText.text = $"money: {_money}";
-                    upgradeController.ApplyPurchase();
-                    
-                   // _readWriterService.WriteProgress();
-                }
-            };
+            upgradeController.TriedPurchaseUpgrade += UpgradeController_TriedPurchaseUpgrade;
 
             upgradeController.Init();
             //add to lists in game factory
+        }
+
+        private void UpgradeController_TriedPurchaseUpgrade(UpgradeController upgradeController, int cost)
+        {
+            if ((_money - cost) >= 0)
+            {
+                _money -= cost;
+                _progressService.PlayerProgress.money = _money; //////////////////////////////
+                Managers.Main._money = _money; //////////////////////////////////////////////////////////////////////
+                moneyText.text = $"money: {_money}";
+                upgradeController.ApplyPurchase();
+                upgradeController.WriteProgress(_progressService.PlayerProgress);
+            }
         }
     }
 }

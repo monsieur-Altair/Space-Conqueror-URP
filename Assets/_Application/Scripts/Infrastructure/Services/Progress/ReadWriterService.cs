@@ -28,6 +28,7 @@ namespace _Application.Scripts.Infrastructure.Services.Progress
                 progressWriter.WriteProgress(_progressService.PlayerProgress);
             
             PlayerPrefs.SetString(PlayerProgressKey, _progressService.PlayerProgress.ConvertToJson());
+            PlayerPrefs.Save();
         }
     }
 }

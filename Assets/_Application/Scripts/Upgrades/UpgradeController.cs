@@ -17,7 +17,7 @@ namespace _Application.Scripts.Upgrades
 {
     public class UpgradeController : MonoBehaviour, IProgressReader, IProgressWriter
     {
-        public event Action<int> TriedPurchaseUpgrade = delegate { };
+        public event Action<UpgradeController ,int> TriedPurchaseUpgrade = delegate { };
         
         [SerializeField]
         private Button addButton;
@@ -106,7 +106,7 @@ namespace _Application.Scripts.Upgrades
         private void ButtonClickHandler()
         {
             if (_numberOfCompletedCells < cellCount)
-                TriedPurchaseUpgrade(_cost);
+                TriedPurchaseUpgrade(this ,_cost);
         }
 
         private float GetAdditionalCoefficient()
