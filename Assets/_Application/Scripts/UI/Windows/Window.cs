@@ -13,7 +13,7 @@ namespace _Application.Scripts.UI.Windows
         {
             OnOpened();
             Opened(this);
-            gameObject.SetActive(true);
+            gameObject.SetActive(true); 
         }
 
         public void Close()
