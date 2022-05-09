@@ -193,12 +193,14 @@ namespace _Application.Scripts.Managers
 
         private void NextLevelButton_Clicked()
         {
+            _audioManager.PlayBackgroundAgain();
             _levelsManager.SwitchToNextLevel();
             StartGame();
         }
 
         private void RestartLevelButton_Clicked()
         {
+            _audioManager.PlayBackgroundAgain();
             _levelsManager.RestartLevel();
             StartGame();
         }

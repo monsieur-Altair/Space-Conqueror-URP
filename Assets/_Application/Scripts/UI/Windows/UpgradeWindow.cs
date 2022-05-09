@@ -53,7 +53,7 @@ namespace _Application.Scripts.UI.Windows
                 upgradeController.Refresh();
 
             _money = _progressService.PlayerProgress.money;
-            moneyText.text = $"money: {_money}";
+            moneyText.text = _money.ToString();
         }
 
         protected override void OnClosed()
@@ -91,7 +91,7 @@ namespace _Application.Scripts.UI.Windows
             {
                 _money -= cost;
                 _progressService.PlayerProgress.money = _money; 
-                moneyText.text = $"money: {_money}";
+                moneyText.text = _money.ToString();
                 upgradeController.ApplyPurchase();
                 upgradeController.WriteProgress(_progressService.PlayerProgress);
             }

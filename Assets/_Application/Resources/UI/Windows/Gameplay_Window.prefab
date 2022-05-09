@@ -11,13 +11,14 @@ GameObject:
   - component: {fileID: 2052767557076080000}
   - component: {fileID: 2052767557076080002}
   - component: {fileID: 2052767557076080001}
+  - component: {fileID: 6509410304153461913}
   m_Layer: 5
   m_Name: Gameplay_Window
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2052767557076080000
 RectTransform:
   m_ObjectHideFlags: 0
@@ -82,6 +83,23 @@ MonoBehaviour:
   - {fileID: 5436332991166172681}
   - {fileID: 6159900165241312877}
   _counterContainer: {fileID: 2052767558393937230}
+--- !u!114 &6509410304153461913
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2052767557076080007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &2052767558345438798
 GameObject:
   m_ObjectHideFlags: 0
@@ -477,6 +495,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4585342051370775839, guid: 85f09103a8bf0d24786eb86f1e69c001, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 6bfdce63ab68a1d4a86f85c3716289c4, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 85f09103a8bf0d24786eb86f1e69c001, type: 3}
 --- !u!224 &2584658793870402644 stripped

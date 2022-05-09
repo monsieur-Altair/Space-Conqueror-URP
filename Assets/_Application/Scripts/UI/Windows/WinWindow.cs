@@ -34,7 +34,7 @@ namespace _Application.Scripts.UI.Windows
         {
             base.OnOpened();
             
-            _moneyText.text = $"money: {_progressService.PlayerProgress.money}";
+            _moneyText.text = _progressService.PlayerProgress.money.ToString();
         }
     }
 }

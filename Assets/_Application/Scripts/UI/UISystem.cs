@@ -10,9 +10,6 @@ namespace _Application.Scripts.UI
         [SerializeField] 
         private Transform _windowsContainer;
 
-        // [SerializeField]
-        // private Button _playButton;
-
         [SerializeField] 
         private Canvas _canvas;
 
@@ -22,8 +19,6 @@ namespace _Application.Scripts.UI
         public static UISystem Instance { get; private set; }
         public Window CurrentWindow { get; private set; }
         public Canvas GameCanvas => _canvas;
-        //public Button PlayButton => _playButton;
-
 
         public void Setup()
         {
@@ -72,6 +67,7 @@ namespace _Application.Scripts.UI
             {
                 _windows.Add(window.GetType(), window);
                 window.GetDependencies();
+                window.gameObject.SetActive(false);
             }
         }
 
