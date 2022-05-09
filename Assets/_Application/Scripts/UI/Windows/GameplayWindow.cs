@@ -31,6 +31,8 @@ namespace _Application.Scripts.UI.Windows
 
         private ISkillController _skillController;
         private ICoroutineRunner _coroutineRunner;
+        private Levels _levelManager;
+        
         public Transform CounterContainer => _counterContainer;
 
         public override void GetDependencies()
@@ -39,7 +41,8 @@ namespace _Application.Scripts.UI.Windows
 
             _skillController = AllServices.Instance.GetSingle<ISkillController>();
             _coroutineRunner = AllServices.Instance.GetSingle<ICoroutineRunner>();
-            
+            _levelManager = Levels.Instance;
+
             foreach (Button button in _skillButtons) 
                 button.onClick.AddListener(() => { PressHandler(button); });
 
@@ -64,7 +67,31 @@ namespace _Application.Scripts.UI.Windows
             TeamManager.TeamCountUpdated -= _teamBar.FillTeamCount;
             Buildings.Altar.ManaCountUpdated -= _manaBar.FillManaCount;
         }
-        
+
+        protected override void OnOpened()
+        {
+            base.OnOpened();
+
+            ShowCertainUI();
+        }
+
+        private void ShowCertainUI()
+        {
+            int currentLevelNumber = Levels.Instance.CurrentLevelNumber; ///////////////////////////////
+
+            switch (currentLevelNumber)
+            {
+                case 0:
+                    _manaBar.gameObject.SetActive(false);
+                    _skillButtons[AcidIndex].gameObject.SetActive(false);
+                    _skillButtons[BuffIndex].gameObject.SetActive(false);
+                    _skillButtons[CallIndex].gameObject.SetActive(false);
+                    _skillButtons[IceIndex ].gameObject.SetActive(false);
+                    break;
+            }
+                                                                         
+        }
+
         private void PressHandler(Button button)
         {
             if (_skillController.IsSkillNotSelected)

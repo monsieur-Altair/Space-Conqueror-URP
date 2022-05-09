@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using _Application.Scripts.UI.Windows;
+using _Application.Scripts.UI.Windows.Tutorial;
 using UnityEngine;
 
 namespace _Application.Scripts.UI
@@ -86,6 +87,18 @@ namespace _Application.Scripts.UI
             
             poppedWindow.transform.SetAsFirstSibling();
             CurrentWindow = _openedWindows.Peek();
+        }
+
+        public static void ShowTutorialWindow(int levelsNumber)
+        {
+            switch (levelsNumber)
+            {
+                case 0:
+                    ShowWindow<Tutorial0Window>();
+                    break;
+                case 1:
+                    break;
+            }
         }
     }
 }

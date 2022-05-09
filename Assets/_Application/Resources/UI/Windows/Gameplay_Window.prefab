@@ -185,6 +185,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 6272767965694352412, guid: 12c2b136c0b2a4d4ba00d2f22b38b51f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6272767965694352413, guid: 12c2b136c0b2a4d4ba00d2f22b38b51f, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -297,6 +301,10 @@ PrefabInstance:
     - target: {fileID: 3788361949590735470, guid: 6ab59efcb8884f94790f31053209bba2, type: 3}
       propertyPath: m_Name
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3788361949590735470, guid: 6ab59efcb8884f94790f31053209bba2, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3788361949590735471, guid: 6ab59efcb8884f94790f31053209bba2, type: 3}
       propertyPath: m_Pivot.x
@@ -495,6 +503,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4585342051370775835, guid: 85f09103a8bf0d24786eb86f1e69c001, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4585342051370775839, guid: 85f09103a8bf0d24786eb86f1e69c001, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -527,6 +539,10 @@ PrefabInstance:
     - target: {fileID: 1847252944854592401, guid: 571c1fc3b65b5b04e9edbec3d88b14da, type: 3}
       propertyPath: m_Name
       value: Mana bar
+      objectReference: {fileID: 0}
+    - target: {fileID: 1847252944854592401, guid: 571c1fc3b65b5b04e9edbec3d88b14da, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1847252944854592430, guid: 571c1fc3b65b5b04e9edbec3d88b14da, type: 3}
       propertyPath: m_Pivot.x
@@ -640,6 +656,10 @@ PrefabInstance:
     - target: {fileID: 5260408494848650419, guid: 1beb1f764e8f7b541806b53e3bb0ea50, type: 3}
       propertyPath: m_Name
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260408494848650419, guid: 1beb1f764e8f7b541806b53e3bb0ea50, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5260408494848650428, guid: 1beb1f764e8f7b541806b53e3bb0ea50, type: 3}
       propertyPath: m_Pivot.x

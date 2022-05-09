@@ -10,6 +10,7 @@ using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.SavedData;
 using _Application.Scripts.UI;
 using _Application.Scripts.UI.Windows;
+using _Application.Scripts.UI.Windows.Tutorial;
 using UnityEngine;
 
 namespace _Application.Scripts.Managers
@@ -60,6 +61,7 @@ namespace _Application.Scripts.Managers
 
             Buildings.Base.Conquered += _teamManager.UpdateObjectsCount;
             TeamManager.GameEnded += EndGame;
+            AnimatedWindow.FadeCompleted += AnimatedWindow_FadeCompleted;
 
             UISystem.GetWindow<WinWindow>().NextLevelButton.onClick.AddListener(NextLevelButton_Clicked);
             UISystem.GetWindow<WinWindow>().ToUpgradeMenuButton.onClick.AddListener(ToUpgradeMenuButton_Clicked);
@@ -110,6 +112,9 @@ namespace _Application.Scripts.Managers
                     UISystem.ShowWindow<GameplayWindow>();
                     
                     _coroutineRunner.StartCoroutine(StartGameplay());
+                    
+                    UISystem.ShowTutorialWindow(_levelsManager.CurrentLevelNumber);
+
                     break;
                 }
                 case GameStates.GameOver:
@@ -212,6 +217,9 @@ namespace _Application.Scripts.Managers
             
             _buildingsLay.SetActive(false);
         }
+
+        private static void AnimatedWindow_FadeCompleted() => 
+            UISystem.ReturnToPreviousWindow();
 
         private void BackToGameButton_Clicked()
         {
