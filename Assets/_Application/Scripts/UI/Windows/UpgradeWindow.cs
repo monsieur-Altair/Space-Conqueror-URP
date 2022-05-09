@@ -90,8 +90,7 @@ namespace _Application.Scripts.UI.Windows
             if (_money >= cost)
             {
                 _money -= cost;
-                _progressService.PlayerProgress.money = _money; //////////////////////////////
-                //Managers.Main._money = _money; //////////////////////////////////////////////////////////////////////
+                _progressService.PlayerProgress.money = _money; 
                 moneyText.text = $"money: {_money}";
                 upgradeController.ApplyPurchase();
                 upgradeController.WriteProgress(_progressService.PlayerProgress);

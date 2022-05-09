@@ -55,7 +55,7 @@
 
         #region Upgrades
         
-        public const string RainUpgradeInfoPath = "Scriptables/Upgrades/Acid info";
+        public const string RainUpgradeInfoPath = "Scriptables/Upgrades/Rain info";
         public const string UnitSpeedUpgradeInfoPath = "Scriptables/Upgrades/Unit speed info";
         public const string UnitAttackUpgradeInfoPath = "Scriptables/Upgrades/Unit attack info";
         public const string BuildingDefenceUpgradeInfoPath = "Scriptables/Upgrades/Building defence info";

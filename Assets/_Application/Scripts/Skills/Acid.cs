@@ -64,6 +64,7 @@ namespace _Application.Scripts.Skills
 
         private void StartRain()
         {
+            _rain.SetActive(true);
             _rain.transform.position = SelectedBuilding.transform.position +_offset;
             _rain.transform.rotation = _rotation;
             _rainParticles.Play();

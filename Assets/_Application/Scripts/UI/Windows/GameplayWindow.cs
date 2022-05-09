@@ -67,9 +67,6 @@ namespace _Application.Scripts.UI.Windows
         
         private void PressHandler(Button button)
         {
-            // if(!_isSkillButtonsActive) 
-            //     return;
-            
             if (_skillController.IsSkillNotSelected)
             {
                 int index = _skillButtons.IndexOf(button);

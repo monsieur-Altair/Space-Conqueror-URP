@@ -69,10 +69,10 @@ namespace _Application.Scripts.Managers
         {
             foreach (KeyValuePair<int, Queue<GameObject>> pair in _poolDictionary)
             {
-                foreach (GameObject unit in pair.Value)
+                foreach (GameObject item in pair.Value)
                 {
-                    if(unit.activeSelf)
-                        unit.SetActive(false);
+                    if(item.activeSelf)
+                        item.SetActive(false);
                 }
             }
         }

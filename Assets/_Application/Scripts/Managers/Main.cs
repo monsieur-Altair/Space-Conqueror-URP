@@ -39,7 +39,6 @@ namespace _Application.Scripts.Managers
 
         private List<Buildings.Base> _allBuildings;
 
-       // public static int _money; /////////////////////////////////////////////////////////////////////////
         private int _lastCompletedLevel;
 
         public Main(Levels levelsManager, TeamManager teamManager, ICoroutineRunner coroutineRunner, AI.Core core,
@@ -69,31 +68,19 @@ namespace _Application.Scripts.Managers
             UISystem.GetWindow<UpgradeWindow>().BackToGameButton.onClick.AddListener(BackToGameButton_Clicked);
        }
 
-
-        // public void Destroy()
-        // {
-        //     UI.RemoveBehaviours(_teamManager);
-        //     TeamManager.GameEnded -= EndGame;
-        // }
-
         public void StartGame()
         {
             _currentGameState = GameStates.Gameplay;
             UpdateState();
         }
 
-        public void WriteProgress(PlayerProgress playerProgress)
-        {
-           // playerProgress.money = _money;
+        public void WriteProgress(PlayerProgress playerProgress) => 
             playerProgress.levelInfo.lastCompletedLevel = _lastCompletedLevel;
-        }
 
         public void ReadProgress(PlayerProgress playerProgress)
         {
-            //_money = playerProgress.money;
             _lastCompletedLevel = playerProgress.levelInfo.lastCompletedLevel;
             _levelsManager.CurrentLevelNumber = _lastCompletedLevel + 1;
-            //ok
         }
 
         private void PrepareLevel()
@@ -119,8 +106,8 @@ namespace _Application.Scripts.Managers
             { 
                 case GameStates.Gameplay:
                 {
-                    //_ui.HideGameOverUI();
-                    //_ui.ShowGameplayUI();
+                    UISystem.ReturnToPreviousWindow();
+                    UISystem.ShowWindow<GameplayWindow>();
                     
                     _coroutineRunner.StartCoroutine(StartGameplay());
                     break;
@@ -135,10 +122,7 @@ namespace _Application.Scripts.Managers
                     UISystem.ReturnToPreviousWindow();
                     ShowEndGameWindow();
 
-                    //_ui.DisableSkillUI();
-                    //_ui.ShowGameOverUI(_isWin);
                     _audioManager.PlayEndgame(_isWin);
-                    //_ui.HideGameplayUI();
                     break;
                 }
                 default:
@@ -174,8 +158,7 @@ namespace _Application.Scripts.Managers
             int rewardMoney = _isWin ? _scriptableService.RewardList.GetReward(_lastCompletedLevel) : 0;
             
             money += rewardMoney;
-            AllServices.Instance.GetSingle<IProgressService>().PlayerProgress.money = money;//////////////////////////////
-            //_ui.UpdateMoneyText(money);
+            AllServices.Instance.GetSingle<IProgressService>().PlayerProgress.money = money;
         }
 
         private IEnumerator StartGameplay()
@@ -193,10 +176,7 @@ namespace _Application.Scripts.Managers
             
             Buildings.Altar.DischargeManaCount();//count = 0
             
-            //_ui.EnableSkillUI();
             
-            UISystem.ReturnToPreviousWindow();
-            UISystem.ShowWindow<GameplayWindow>();
             
             _userControl.Reload();
             _userControl.Enable();
@@ -228,25 +208,15 @@ namespace _Application.Scripts.Managers
             UISystem.ReturnToPreviousWindow();
             UISystem.ShowWindow<UpgradeWindow>();
             
-            //_ui.HideSkillsButtons();
-            //_ui.HideGameOverUI();
             _buildingsLay.SetActive(false);
-            //_ui.ShowUpgradeMenu();
         }
 
         private void BackToGameButton_Clicked()
         {
             UISystem.ReturnToPreviousWindow();
-            UISystem.ShowWindow<GameplayWindow>();
-            
-            // _ui.HideUpgradeMenu();
-            // _ui.ShowSkillsButtons();
             
             _buildingsLay.SetActive(true);
 
-            //_money = AllServices.Instance.GetSingle<IProgressService>().PlayerProgress.money;///////////////////////////
-            // _ui.UpdateMoneyText(_money);////////////////////////////////////////////////////////////////////////////////
-            
             ShowEndGameWindow();
         }
     }
