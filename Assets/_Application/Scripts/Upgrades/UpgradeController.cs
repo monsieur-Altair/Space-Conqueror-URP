@@ -1,10 +1,9 @@
 ﻿#nullable enable
 using System;
 using System.Collections;
-using _Application.Scripts.Infrastructure.Services;
+using _Application.Scripts.Infrastructure;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
-using _Application.Scripts.Managers;
 using _Application.Scripts.SavedData;
 using _Application.Scripts.Scriptables.Upgrades;
 using TMPro;
@@ -17,7 +16,7 @@ namespace _Application.Scripts.Upgrades
 {
     public class UpgradeController : MonoBehaviour, IProgressReader, IProgressWriter
     {
-        public event Action<int> TriedPurchaseUpgrade = delegate { };
+        public event Action<UpgradeController ,int> TriedPurchaseUpgrade = delegate { };
         
         [SerializeField]
         private Button addButton;
@@ -37,10 +36,12 @@ namespace _Application.Scripts.Upgrades
         private int _numberOfCompletedCells;
         private int _cost;
         private UpgradeInfo _upgradeInfo;
+        private ICoroutineRunner _coroutineRunner;
 
-        public void Init()
+        public void Init(IScriptableService scriptableService, ICoroutineRunner coroutineRunner)
         {
-            _upgradeInfo = AllServices.Instance.GetSingle<IScriptableService>().GetUpgradeInfo(upgradeType);
+            _upgradeInfo = scriptableService.GetUpgradeInfo(upgradeType);
+            _coroutineRunner = coroutineRunner;
             addButton.onClick.AddListener(ButtonClickHandler);
         }
 
@@ -88,7 +89,7 @@ namespace _Application.Scripts.Upgrades
             }
             
 
-            GlobalObject.Instance.StartCoroutine(PurchaseAnimation(startFill, lastFill));
+            _coroutineRunner.StartCoroutine(PurchaseAnimation(startFill, lastFill));
         }
 
         private IEnumerator PurchaseAnimation(float startFill, float lastFill)
@@ -106,7 +107,7 @@ namespace _Application.Scripts.Upgrades
         private void ButtonClickHandler()
         {
             if (_numberOfCompletedCells < cellCount)
-                TriedPurchaseUpgrade(_cost);
+                TriedPurchaseUpgrade(this ,_cost);
         }
 
         private float GetAdditionalCoefficient()

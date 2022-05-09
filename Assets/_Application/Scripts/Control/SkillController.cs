@@ -1,6 +1,5 @@
 ﻿using System;
 using _Application.Scripts.Buildings;
-using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
@@ -17,7 +16,8 @@ namespace _Application.Scripts.Control
         Call,
         None
     }
-    public class SkillController
+
+    public class SkillController : ISkillController
     {
         public Skills.Call Call { get; }
         public Skills.Buff Buff { get; }
@@ -26,15 +26,15 @@ namespace _Application.Scripts.Control
 
         private readonly IProgressService _progressService;
         private readonly IScriptableService _scriptableService;
-        private readonly ObjectPool _objectPool;
+        private readonly IObjectPool _objectPool;
 
         public bool IsSkillNotSelected => 
             SelectedSkillName == SkillName.None;
         
         public SkillName SelectedSkillName { get; private set; }
 
-        public SkillController(IProgressService progressService ,IGameFactory gameFactory, 
-            IScriptableService scriptableService, ObjectPool objectPool)
+        public SkillController(IProgressService progressService ,IObjectPool pool, 
+            IScriptableService scriptableService, IObjectPool objectPool)
         {
             ClearSelectedSkill();
 
@@ -42,24 +42,14 @@ namespace _Application.Scripts.Control
             _scriptableService = scriptableService;
             _objectPool = objectPool;
             
-            
-            Call = new Skills.Call(Team.Blue, Altar.DecreaseManaCount);
-            Call.NeedObjectFromPool += SpawnUnit;
-            Call.SetSkillObject(gameFactory.CreateIndicator());
-
+            Call = new Skills.Call(pool ,Team.Blue, Altar.DecreaseManaCount);
             Buff = new Skills.Buff(Team.Blue, Altar.DecreaseManaCount);
+            Acid = new Skills.Acid(pool,Team.Blue, Altar.DecreaseManaCount);
+            Ice = new Skills.Ice(pool);
 
-            Acid = new Skills.Acid(Team.Blue, Altar.DecreaseManaCount);
-            Acid.SetSkillObject(gameFactory.CreateAcid());
-
-            Ice = new Skills.Ice();
-            Ice.SetSkillObject(gameFactory.CreateIce());
-            
-            ReloadSkills();
+            Call.NeedObjectFromPool += SpawnUnit;
+            //ReloadSkills();
         }
-        
-        private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
-            _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.Base>();
 
         public void ApplySkill(Vector3 position)
         {
@@ -106,5 +96,8 @@ namespace _Application.Scripts.Control
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
+
+        private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
+            _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.Base>();
     }
 }

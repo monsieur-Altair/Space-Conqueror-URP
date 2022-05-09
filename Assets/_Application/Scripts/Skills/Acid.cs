@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using _Application.Scripts.Buildings;
+using _Application.Scripts.Managers;
 using _Application.Scripts.Scriptables;
 using UnityEngine;
 
@@ -9,23 +10,21 @@ namespace _Application.Scripts.Skills
     {
         private readonly Vector3 _offset = new Vector3(0.8f, 3, 0);
         private readonly Quaternion _rotation = Quaternion.Euler(-90f,0,0);
+
+        private readonly ParticleSystem _rainParticles;
+        private readonly GameObject _rain;
         
-        private GameObject _acidRain;
         private Coroutine _damagingByAcid;
-        private ParticleSystem _acidParticles;
         private float _hitDuration;
         private float _duration;
         private float _hitDamage;
         private int _hitCount;
 
-        public Acid(Team teamConstraint, DecreasingCounter function) : base(teamConstraint, function)
+        public Acid(IObjectPool pool ,Team teamConstraint, DecreasingCounter function) : base(teamConstraint, function)
         {
-        }
-
-        public override void SetSkillObject(GameObject skillObject)
-        {
-            _acidRain = skillObject;
-            _acidParticles = _acidRain.transform.GetChild(0).GetComponent<ParticleSystem>();
+            _rain = pool.GetObject(PoolObjectType.Rain, Vector3.zero, Quaternion.identity);
+            
+            _rainParticles = _rain.transform.GetChild(0).GetComponent<ParticleSystem>();
         }
 
         protected override void LoadResources(Skill resource, float coefficient = 1.0f)
@@ -44,8 +43,8 @@ namespace _Application.Scripts.Skills
 
         protected override void CancelSkill()
         {
-            if(_acidParticles.isPlaying)
-                _acidParticles.Stop();
+            if(_rainParticles.isPlaying)
+                _rainParticles.Stop();
             CoroutineRunner.StopCoroutine(_damagingByAcid);
             SelectedBuilding = null;
             IsOnCooldown = false;
@@ -65,9 +64,10 @@ namespace _Application.Scripts.Skills
 
         private void StartRain()
         {
-            _acidRain.transform.position = SelectedBuilding.transform.position +_offset;
-            _acidRain.transform.rotation = _rotation;
-            _acidParticles.Play();
+            _rain.SetActive(true);
+            _rain.transform.position = SelectedBuilding.transform.position +_offset;
+            _rain.transform.rotation = _rotation;
+            _rainParticles.Play();
             _damagingByAcid = CoroutineRunner.StartCoroutine(DamageBuildingByRain());
         }
 
@@ -80,7 +80,7 @@ namespace _Application.Scripts.Skills
                 yield return new WaitForSeconds(_hitDuration);
                 count++;
             }
-            _acidParticles.Stop();
+            _rainParticles.Stop();
             SelectedBuilding = null;
         }
     }

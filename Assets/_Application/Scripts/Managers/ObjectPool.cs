@@ -12,9 +12,13 @@ namespace _Application.Scripts.Managers
         AltarBuilding = 3,
         SpawnerBuilding = 4,
         AttackerBuilding = 5,
-        Counter = 6
+        Counter = 6, 
+        Rain = 7, 
+        Indicator = 8,
+        Ice = 9
     }
-    public class ObjectPool : MonoBehaviour
+
+    public class ObjectPool : MonoBehaviour, IObjectPool
     {
         public List<Pool> pools;
         
@@ -28,19 +32,21 @@ namespace _Application.Scripts.Managers
             public int size;
         }
 
-        public void Start()
+        public void Init()
         {
             foreach (Pool pool in pools)
             {
                 Queue<GameObject> objectPool = new Queue<GameObject>(); 
                 for (int i = 0; i < pool.size; i++)
                 {
-                    GameObject unit = Instantiate(pool.prefab,transform);
-                    unit.SetActive(false);
-                    objectPool.Enqueue(unit);
+                    GameObject item = Instantiate(pool.prefab, transform);
+                    item.SetActive(false);
+                    objectPool.Enqueue(item);
                 }
                 _poolDictionary.Add(pool.poolObjectType.GetHashCode(),objectPool);
             }
+            
+            DontDestroyOnLoad(this);
         }
 
         public GameObject GetObject(PoolObjectType type, Vector3 position, Quaternion rotation)
@@ -63,10 +69,10 @@ namespace _Application.Scripts.Managers
         {
             foreach (KeyValuePair<int, Queue<GameObject>> pair in _poolDictionary)
             {
-                foreach (GameObject unit in pair.Value)
+                foreach (GameObject item in pair.Value)
                 {
-                    if(unit.activeSelf)
-                        unit.SetActive(false);
+                    if(item.activeSelf)
+                        item.SetActive(false);
                 }
             }
         }

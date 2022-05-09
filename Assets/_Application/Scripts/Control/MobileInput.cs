@@ -12,7 +12,7 @@ namespace _Application.Scripts.Control
             if (Input.touchCount > 0)
             {
                 _touch = Input.GetTouch(0);
-                if (_skillController.SelectedSkillName != SkillName.None)
+                if (SkillController.SelectedSkillName != SkillName.None)
                     AffectToSkills();
                 else
                     AffectToBuilding();
@@ -25,7 +25,7 @@ namespace _Application.Scripts.Control
             {
                 case TouchPhase.Ended:
                 {
-                    _skillController.ApplySkill(_touch.position);
+                    SkillController.ApplySkill(_touch.position);
                     break;
                 }
             }
@@ -39,17 +39,17 @@ namespace _Application.Scripts.Control
             {
                 case TouchPhase.Began:
                 {
-                    _buildingsController.HandleClick(position);
+                    BuildingsController.HandleClick(position);
                     break;
                 }
                 case TouchPhase.Ended:
                 {
-                    _buildingsController.HandleRelease(position);
+                    BuildingsController.HandleRelease(position);
                     break;
                 }
                 case TouchPhase.Moved:
                 {
-                    _buildingsController.HandleMultipleSelection(position);
+                    BuildingsController.HandleMultipleSelection(position);
                     break;
                 }
                 case TouchPhase.Stationary:

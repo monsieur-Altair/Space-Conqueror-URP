@@ -5,24 +5,9 @@
         public const string PoolPath = "Managers/Object Pool";
         public const string UserControlPath = "Managers/User Control";
         public const string Warehouse = "Managers/Warehouse";
-
-        #region UIPaths
         
-        public const string FirstButtonPath  = "UI/Buttons/1";
-        public const string SecondButtonPath = "UI/Buttons/2";
-        public const string ThirdButtonPath  = "UI/Buttons/3";
-        public const string ForthButtonPath  = "UI/Buttons/4";
-        public const string NextLevelButtonsPath    = "UI/Buttons/Next level";
-        public const string RetryButtonsPath        = "UI/Buttons/Retry";
-        public const string ToUpgradeMenuButtonPath = "UI/Buttons/To upgrade menu";
         
-        public const string TeamBarPath = "UI/Bars/Team bar";
-        public const string ManaBarPath = "UI/Bars/Mana bar";
-        public const string MoneyTextPath = "UI/MoneyText";
-
-        public const string UpgradeMenuPath = "UI/Skills upgrades/UpgradeMenu";
-
-        #endregion
+        public const string UISystemPath = "UI/UISystem";
         
         public const string AcidPrefabPath = "Skills/Acid rain";
         public const string IndicatorPrefabPath = "Skills/Lamp";
@@ -75,8 +60,9 @@
         public const string UnitAttackUpgradeInfoPath = "Scriptables/Upgrades/Unit attack info";
         public const string BuildingDefenceUpgradeInfoPath = "Scriptables/Upgrades/Building defence info";
         public const string BuildingMaxCountUpgradeInfoPath = "Scriptables/Upgrades/Building max count info";
-        
+
         #endregion
 
+        public const string GlobalObjectPath = "GlobalObject";
     }
 }

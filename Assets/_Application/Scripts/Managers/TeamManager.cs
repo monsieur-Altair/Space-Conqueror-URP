@@ -6,8 +6,8 @@ namespace _Application.Scripts.Managers
 {
     public class TeamManager
     {
-        public event Action<List<int>> TeamCountUpdated;
-        public event Action<bool> GameEnded;
+        public static event Action<List<int>> TeamCountUpdated = delegate {  };
+        public static event Action<bool> GameEnded = delegate {  };
 
         private readonly int _teamNumber = Enum.GetNames(typeof(Team)).Length;
         private readonly List<int> _teamCount;
@@ -24,7 +24,7 @@ namespace _Application.Scripts.Managers
             _teamCount[(int) oldTeam]--;
             _teamCount[(int) newTeam]++;
 
-            TeamCountUpdated?.Invoke(_teamCount);
+            TeamCountUpdated(_teamCount);
             CheckGameOver();
         }
 
@@ -41,7 +41,7 @@ namespace _Application.Scripts.Managers
                 int team = (int) building.Team;
                 _teamCount[team]++;
             }
-            TeamCountUpdated?.Invoke(_teamCount);
+            TeamCountUpdated(_teamCount);
         }
 
         private void CheckGameOver()
@@ -51,7 +51,7 @@ namespace _Application.Scripts.Managers
             if (noneBlue || noneRed)
             {
                 bool isWin = noneRed;
-                GameEnded?.Invoke(isWin);
+                GameEnded(isWin);
             }
         }
     }

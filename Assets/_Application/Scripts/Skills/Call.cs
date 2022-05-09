@@ -10,21 +10,23 @@ namespace _Application.Scripts.Skills
 {
     public class Call : Base
     {
-        private GameObject _indicator;
+        private readonly GameObject _indicator;
         private readonly Vector3 _indicatorOffset = new Vector3(0, 1.9f, 0);
         private Coroutine _displayingIndicatorCor;
         private Units.Base _sentUnit;
         private float _callPercent;
 
-        public Call(Team teamConstraint, DecreasingCounter function) : base(teamConstraint, function)
+        public Call(IObjectPool pool ,Team teamConstraint, DecreasingCounter function) : base(teamConstraint, function)
         {
-        }
-
-        public override void SetSkillObject(GameObject skillObject)
-        {
-            _indicator = skillObject;
+            _indicator = pool.GetObject(PoolObjectType.Indicator, Vector3.zero, Quaternion.identity);
             _indicator.SetActive(false);
         }
+
+        // public override void SetSkillObject(GameObject skillObject)
+        // {
+        //     _indicator = skillObject;
+        //     _indicator.SetActive(false);
+        // }
 
         protected override void LoadResources(Skill resource, float coefficient = 1.0f)
         {
