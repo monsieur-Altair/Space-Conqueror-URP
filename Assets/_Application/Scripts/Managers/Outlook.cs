@@ -14,6 +14,8 @@ namespace _Application.Scripts.Managers
         private const int CrystalEmissionHash = 2;
         private const int FlagHash = 3;
         private const int RoofHash = 4;
+        private const int TeamHash = 5;
+        
         private static readonly int BaseMap = Shader.PropertyToID("_BaseMap");
         private static readonly int EmissionMap = Shader.PropertyToID("_EmissionMap");
 
@@ -56,8 +58,9 @@ namespace _Application.Scripts.Managers
             _allTextures.Add(CrystalEmissionHash,_warehouse.crystalEmissionTextures);
             _allTextures.Add(RoofHash,_warehouse.roofTextures);
             _allTextures.Add(FlagHash,_warehouse.flagTextures);
+            _allTextures.Add(TeamHash,_warehouse.teamTextures);
         }
-       
+
         public void PrepareLevel(List<Buildings.Base> planets)
         {
             ClearLists();
@@ -112,6 +115,11 @@ namespace _Application.Scripts.Managers
 
         private Material[] GetMaterials(Type type, int team)
         {
+            Material teamMat = new Material(_warehouse.teamMaterial)
+            {
+                mainTexture = _allTextures[TeamHash][team]
+            };
+            return new[] {_baseBuildingMaterial, teamMat};
             switch (type)
             {
                 case Type.Altar:

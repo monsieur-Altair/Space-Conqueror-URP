@@ -12,6 +12,8 @@ namespace _Application.Scripts.Managers
 
         public List<Texture> warriorsTextures;
 
+        public List<Texture> teamTextures;
+
         public Material buffedBuildingMaterial;
         public Material buffedWarriorMaterial;
 
@@ -19,6 +21,8 @@ namespace _Application.Scripts.Managers
         public Material baseCrystalMaterial;
         public Material baseFlagMaterial;
         public Material baseRoofMaterial;
+
+        public Material teamMaterial;
         
         public Material baseWarriorMaterial;
 
