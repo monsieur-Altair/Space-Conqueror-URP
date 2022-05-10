@@ -97,6 +97,11 @@ namespace _Application.Scripts.UI.Windows
                     _skillButtons[IceIndex ].gameObject.SetActive(false);
                     break;
                 case 3:
+                    _manaBar.gameObject.SetActive(true);
+                    _skillButtons[AcidIndex].gameObject.SetActive(true);
+                    _skillButtons[BuffIndex].gameObject.SetActive(true);
+                    _skillButtons[CallIndex].gameObject.SetActive(false);
+                    _skillButtons[IceIndex ].gameObject.SetActive(false);
                     break;
                 case 4:
                     break;

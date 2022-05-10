@@ -82,13 +82,5 @@ namespace _Application.Scripts.Infrastructure.States
             //register input service
         }
 
-        private IInputService RegisterInputService()
-        {
-            if (Application.isEditor)
-                return new StandaloneInput();
-            else
-                return new MobileInput();
-        }
-
     }
 }

@@ -109,6 +109,9 @@ namespace _Application.Scripts.UI
                 case 2:
                     ShowWindow<Tutorial2Window>();
                     break;
+                case 3:
+                    ShowWindow<Tutorial3Window>();
+                    break;
             }
 
             IsTutorialDisplayed = true;
