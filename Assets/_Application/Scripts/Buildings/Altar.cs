@@ -6,9 +6,7 @@ namespace _Application.Scripts.Buildings
 {
     public class Altar : Base
     {
-        //[SerializeField] private Scriptables.Mana mana;
-
-        public static event Action<float, int> ManaCountUpdated; 
+        public static event Action<float, int> ManaCountUpdated = delegate {  }; 
         
         private static int _maxCountMana;
         private float _produceCountMana;
@@ -19,13 +17,13 @@ namespace _Application.Scripts.Buildings
         public static void DecreaseManaCount(float value)
         {
             ManaCount -= value;
-            ManaCountUpdated?.Invoke(ManaCount, _maxCountMana);
+            ManaCountUpdated(ManaCount, _maxCountMana);
         }
 
         public static void DischargeManaCount()
         {
             ManaCount = 0;
-            ManaCountUpdated?.Invoke(ManaCount, _maxCountMana);
+            ManaCountUpdated(ManaCount, _maxCountMana);
         }
 
         protected override void LoadResources(Building infoAboutBuilding, Unit infoAboutUnit)
@@ -70,7 +68,7 @@ namespace _Application.Scripts.Buildings
             ManaCount += _produceCountMana / _produceTimeMana * Time.deltaTime;
             if (ManaCount > _maxCountMana)
                 ManaCount = _maxCountMana;
-            ManaCountUpdated?.Invoke(ManaCount, _maxCountMana);
+            ManaCountUpdated(ManaCount, _maxCountMana);
         }
     }
 }

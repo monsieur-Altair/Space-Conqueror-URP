@@ -20,6 +20,8 @@ namespace _Application.Scripts.UI
         public static UISystem Instance { get; private set; }
         public Window CurrentWindow { get; private set; }
         public Canvas GameCanvas => _canvas;
+        public static bool IsTutorialDisplayed { get; private set; }
+
 
         public void Setup()
         {
@@ -53,12 +55,14 @@ namespace _Application.Scripts.UI
         {
             Window.Opened += Window_Opened;
             Window.Closed += Window_Closed;
+            AnimatedWindow.FadeCompleted += AnimatedWindow_FadeCompleted;
         }
 
         private void UnsubscribeEvents()
         {
             Window.Opened -= Window_Opened;
             Window.Closed -= Window_Closed;
+            AnimatedWindow.FadeCompleted -= AnimatedWindow_FadeCompleted;
         }
 
         private void GetAllWindows()
@@ -89,6 +93,9 @@ namespace _Application.Scripts.UI
             CurrentWindow = _openedWindows.Peek();
         }
 
+        private static void AnimatedWindow_FadeCompleted() => 
+            IsTutorialDisplayed = false;
+
         public static void ShowTutorialWindow(int levelsNumber)
         {
             switch (levelsNumber)
@@ -97,8 +104,11 @@ namespace _Application.Scripts.UI
                     ShowWindow<Tutorial0Window>();
                     break;
                 case 1:
+                    ShowWindow<Tutorial1Window>();
                     break;
             }
+
+            IsTutorialDisplayed = true;
         }
     }
 }

@@ -668,6 +668,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UISystem
       objectReference: {fileID: 0}
+    - target: {fileID: 5516542067424819916, guid: d4b2a95da944b5c42a42b5304a148ccb, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d4b2a95da944b5c42a42b5304a148ccb, type: 3}
 --- !u!1001 &69213618

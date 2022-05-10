@@ -112,8 +112,11 @@ namespace _Application.Scripts.Managers
                     UISystem.ShowWindow<GameplayWindow>();
                     
                     _coroutineRunner.StartCoroutine(StartGameplay());
-                    
-                    UISystem.ShowTutorialWindow(_levelsManager.CurrentLevelNumber);
+
+                    int currentLevelNumber = _levelsManager.CurrentLevelNumber;
+
+                    if (currentLevelNumber <= 5) 
+                        UISystem.ShowTutorialWindow(currentLevelNumber);
 
                     break;
                 }
@@ -124,7 +127,9 @@ namespace _Application.Scripts.Managers
                     _objectPool.DisableAllUnitsInScene();
                     _core.Disable();
                     
-                    UISystem.ReturnToPreviousWindow();
+                    if(UISystem.IsTutorialDisplayed)
+                        UISystem.ReturnToPreviousWindow();
+                    
                     ShowEndGameWindow();
 
                     _audioManager.PlayEndgame(_isWin);
@@ -137,6 +142,8 @@ namespace _Application.Scripts.Managers
 
         private void ShowEndGameWindow()
         {
+            UISystem.ReturnToPreviousWindow();
+
             if (_isWin)
                 UISystem.ShowWindow<WinWindow>();
             else
@@ -223,8 +230,6 @@ namespace _Application.Scripts.Managers
 
         private void BackToGameButton_Clicked()
         {
-            UISystem.ReturnToPreviousWindow();
-            
             _buildingsLay.SetActive(true);
 
             ShowEndGameWindow();
