@@ -19,5 +19,6 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
         UISystem CreateUISystem();
         IObjectPool CreatePool();
         ICoroutineRunner CreateCoroutineRunner();
+        Camera CreateCamera();
     }
 }

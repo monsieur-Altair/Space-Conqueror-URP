@@ -5,6 +5,7 @@ using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
+using _Application.Scripts.Misc;
 using _Application.Scripts.SavedData;
 using UnityEngine;
 
@@ -72,6 +73,9 @@ namespace _Application.Scripts.Infrastructure.States
             _allServices.RegisterSingle<IReadWriterService>(
                 new ReadWriterService(progressService, factory));
             
+            Camera camera = AllServices.Instance.GetSingle<IGameFactory>().CreateCamera();
+            camera.GetComponent<CameraResolution>().Init(camera);
+
             _allServices.RegisterSingle<ISkillController>(new SkillController(progressService, objectPool,
                 scriptableService, objectPool));
 

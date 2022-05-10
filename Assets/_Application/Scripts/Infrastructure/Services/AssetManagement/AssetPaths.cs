@@ -64,5 +64,6 @@
         #endregion
 
         public const string GlobalObjectPath = "GlobalObject";
+        public const string MainCameraPath = "Main Camera";
     }
 }

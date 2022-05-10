@@ -81,6 +81,9 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
         public ICoroutineRunner CreateCoroutineRunner() => 
             _assetProvider.Instantiate<GlobalObject>(AssetPaths.GlobalObjectPath);
 
+        public Camera CreateCamera() => 
+            _assetProvider.Instantiate<Camera>(AssetPaths.MainCameraPath);
+
         public GameObject CreateAcid() => 
             _assetProvider.Instantiate(AssetPaths.AcidPrefabPath);
 

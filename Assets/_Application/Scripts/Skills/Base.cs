@@ -2,6 +2,7 @@
 using _Application.Scripts.Infrastructure;
 using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Managers;
+using _Application.Scripts.Misc;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -37,7 +38,7 @@ namespace _Application.Scripts.Skills
 
         protected Base(Buildings.Team? teamConstraint, [CanBeNull] DecreasingCounter function)
         {
-            MainCamera = Camera.main;
+            MainCamera = CameraResolution.MainCamera;
             CoroutineRunner = AllServices.Instance.GetSingle<ICoroutineRunner>();
             _decreaseCounter = function;
             SetTeamConstraint(teamConstraint);

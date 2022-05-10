@@ -45,7 +45,7 @@ namespace _Application.Scripts.Managers
             if (CurrentLevelNumber >= levels.Length)
                 CurrentLevelNumber = 0;
 
-            CurrentLevelNumber = 1;
+            CurrentLevelNumber = 2;
             
             yield return StartCoroutine(DeleteAllLevel());
 
