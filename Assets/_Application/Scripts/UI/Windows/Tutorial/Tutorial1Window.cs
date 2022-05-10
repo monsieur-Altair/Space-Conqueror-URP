@@ -4,7 +4,7 @@
     {
         protected override void StartFadeAnimation()
         {
-            _duration = 15.0f;
+            _duration = 7.5f;
             base.StartFadeAnimation();
         }
     }

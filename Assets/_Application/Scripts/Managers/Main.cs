@@ -108,10 +108,10 @@ namespace _Application.Scripts.Managers
             { 
                 case GameStates.Gameplay:
                 {
+                    _coroutineRunner.StartCoroutine(StartGameplay());
+                    
                     UISystem.ReturnToPreviousWindow();
                     UISystem.ShowWindow<GameplayWindow>();
-                    
-                    _coroutineRunner.StartCoroutine(StartGameplay());
 
                     int currentLevelNumber = _levelsManager.CurrentLevelNumber;
 
@@ -187,8 +187,6 @@ namespace _Application.Scripts.Managers
             CounterSpawner.FillLists(_allBuildings);
             
             Buildings.Altar.DischargeManaCount();//count = 0
-            
-            
             
             _userControl.Reload();
             _userControl.Enable();

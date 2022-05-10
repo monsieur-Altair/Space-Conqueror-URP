@@ -82,12 +82,23 @@ namespace _Application.Scripts.UI.Windows
             switch (currentLevelNumber)
             {
                 case 0:
+                case 1:
                     _manaBar.gameObject.SetActive(false);
                     _skillButtons[AcidIndex].gameObject.SetActive(false);
                     _skillButtons[BuffIndex].gameObject.SetActive(false);
                     _skillButtons[CallIndex].gameObject.SetActive(false);
                     _skillButtons[IceIndex ].gameObject.SetActive(false);
                     break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                default:
+                    return;
             }
                                                                          
         }
