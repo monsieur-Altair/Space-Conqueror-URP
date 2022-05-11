@@ -1,8 +1,6 @@
 ﻿#nullable enable
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using _Application.Scripts.Infrastructure;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
