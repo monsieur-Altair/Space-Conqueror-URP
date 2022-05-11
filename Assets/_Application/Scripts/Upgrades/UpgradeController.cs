@@ -102,6 +102,7 @@ namespace _Application.Scripts.Upgrades
                 improvedBar.fillAmount += delta;
                 yield return new WaitForSeconds(0.025f);
             }
+            //////////////////////////
         }
 
         private void ButtonClickHandler()

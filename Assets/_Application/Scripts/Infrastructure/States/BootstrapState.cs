@@ -60,19 +60,20 @@ namespace _Application.Scripts.Infrastructure.States
             IGameFactory factory = _allServices.RegisterSingle<IGameFactory>(
                 new GameFactory(_allServices , assetProvider, scriptableService));
 
-            ICoroutineRunner coroutineRunner =
-                _allServices.RegisterSingle<ICoroutineRunner>(factory.CreateCoroutineRunner());
-            coroutineRunner.Init();
 
             IObjectPool objectPool = _allServices.RegisterSingle<IObjectPool>(factory.CreatePool());
             objectPool.Init();
 
             IProgressService progressService = _allServices.RegisterSingle<IProgressService>(
                 new ProgressService());
-            
-            _allServices.RegisterSingle<IReadWriterService>(
+
+            IReadWriterService readWriterService = _allServices.RegisterSingle<IReadWriterService>(
                 new ReadWriterService(progressService, factory));
             
+            ICoroutineRunner coroutineRunner =
+                _allServices.RegisterSingle<ICoroutineRunner>(factory.CreateCoroutineRunner());
+            coroutineRunner.Init(readWriterService);
+
             Camera camera = AllServices.Instance.GetSingle<IGameFactory>().CreateCamera();
             camera.GetComponent<CameraResolution>().Init(camera);
 

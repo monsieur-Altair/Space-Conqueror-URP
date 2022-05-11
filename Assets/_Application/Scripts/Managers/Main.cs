@@ -126,9 +126,12 @@ namespace _Application.Scripts.Managers
                     _userControl.Disable();
                     _objectPool.DisableAllUnitsInScene();
                     _core.Disable();
-                    
-                    if(UISystem.IsTutorialDisplayed)
+
+                    if (UISystem.IsTutorialDisplayed)
+                    {
                         UISystem.ReturnToPreviousWindow();
+                        UISystem.DisableTutorialWindow();
+                    }
                     
                     ShowEndGameWindow();
 

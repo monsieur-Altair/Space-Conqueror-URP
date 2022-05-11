@@ -7,6 +7,7 @@ namespace _Application.Scripts.UI.Windows.Tutorial
     [RequireComponent(typeof(Animator), typeof(CanvasGroup))]
     public class AnimatedWindow : Window
     {
+        private const float MaxAlpha = 1.0f;
         public static event Action FadeCompleted = delegate {  };
         
         protected float _endAlphaValue = 0.0f;
@@ -28,13 +29,17 @@ namespace _Application.Scripts.UI.Windows.Tutorial
 
         protected virtual void StartFadeAnimation()
         {
+            _canvasGroup.alpha = MaxAlpha;
             _canvasGroup
                 .DOFade(_endAlphaValue, _duration)
                 .SetEase(Ease.InCirc)
                 .OnComplete(OnFadeCompleted);
         }
 
-        private static void OnFadeCompleted() => 
-            FadeCompleted();
+        private void OnFadeCompleted()
+        {
+            if(gameObject.activeSelf)   
+                FadeCompleted();
+        }
     }
 }

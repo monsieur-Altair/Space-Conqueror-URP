@@ -122,5 +122,8 @@ namespace _Application.Scripts.UI
 
             IsTutorialDisplayed = true;
         }
+
+        public static void DisableTutorialWindow() => 
+            IsTutorialDisplayed = false;
     }
 }
