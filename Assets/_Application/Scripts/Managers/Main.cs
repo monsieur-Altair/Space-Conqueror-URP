@@ -41,6 +41,7 @@ namespace _Application.Scripts.Managers
         private List<Buildings.Base> _allBuildings;
 
         private int _lastCompletedLevel;
+        private bool _hasUpgradeTutorialShown;
 
         public Main(Levels levelsManager, TeamManager teamManager, ICoroutineRunner coroutineRunner, AI.Core core,
             IObjectPool pool, Outlook outlook, UserControl userControl, IScriptableService scriptableService,
@@ -234,6 +235,15 @@ namespace _Application.Scripts.Managers
             _buildingsLay.SetActive(true);
 
             ShowEndGameWindow();
+        }
+
+        private void ShowUpgradeTutorialWindow()
+        {
+            if (_hasUpgradeTutorialShown == false)
+            {
+                UISystem.ShowWindow<Tutorial05Window>();
+                _hasUpgradeTutorialShown = true;
+            }
         }
     }
 }
