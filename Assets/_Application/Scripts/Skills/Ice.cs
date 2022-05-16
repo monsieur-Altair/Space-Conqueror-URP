@@ -2,6 +2,8 @@
 using System.Collections;
 using _Application.Scripts.Buildings;
 using _Application.Scripts.Control;
+using _Application.Scripts.Infrastructure.Services;
+using _Application.Scripts.Managers;
 using _Application.Scripts.Scriptables;
 using UnityEngine;
 
@@ -14,18 +16,14 @@ namespace _Application.Scripts.Skills
         private const float BuildingLayHeight = 0.66f;
         private float _duration;
 
-        private GameObject _freezingObject;
-        private Zone _freezingZone;
+        private readonly GameObject _freezingObject;
+        private readonly Zone _freezingZone;
         private Plane _plane;
         private Coroutine _spawnCoroutine;
 
-        public Ice() : base(null, null)
+        public Ice(IObjectPool pool) : base(null, null)
         {
-        }
-
-        public override void SetSkillObject(GameObject skillObject)
-        {
-            _freezingObject = skillObject;
+            _freezingObject = pool.GetObject(PoolObjectType.Ice, Vector3.zero, Quaternion.identity);
              
             _freezingZone = _freezingObject.GetComponent<Zone>(); 
             _freezingZone.SetTriggerFunction(FreezingEnteredObjects);
@@ -33,6 +31,17 @@ namespace _Application.Scripts.Skills
             _freezingObject.SetActive(false);
             _plane = new Plane(Vector3.up, new Vector3(0, BuildingLayHeight, 0));
         }
+
+        // public override void SetSkillObject(GameObject skillObject)
+        // {
+        //     _freezingObject = skillObject;
+        //      
+        //     _freezingZone = _freezingObject.GetComponent<Zone>(); 
+        //     _freezingZone.SetTriggerFunction(FreezingEnteredObjects);
+        //     
+        //     _freezingObject.SetActive(false);
+        //     _plane = new Plane(Vector3.up, new Vector3(0, BuildingLayHeight, 0));
+        // }
 
         protected override void LoadResources(Skill resource, float coefficient = 1.0f)
         {

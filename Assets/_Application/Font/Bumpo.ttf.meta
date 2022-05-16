@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 406187185dbf4e5ba42e88d41de2013f
+timeCreated: 1649261889
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: "Bumpo"
+  fontNames:
+  - Bumpo
+  fallbackFontReferences: []
+  customCharacters:
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData:
+  assetBundleName: 020bdde543b843f4419cd58388f1d24a.bundle
+  assetBundleVariant: 

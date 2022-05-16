@@ -13,23 +13,19 @@ namespace _Application.Scripts.AI
         public Call Call { get; }
         public Buff Buff { get; }
         public Acid Acid { get; }
-        
-        private readonly ObjectPool _objectPool;
+        private readonly IObjectPool _objectPool;
         private readonly IScriptableService _scriptableService;
 
-        public SkillController(IGameFactory gameFactory, IScriptableService scriptableService, ObjectPool objectPool)
+        public SkillController(IObjectPool pool, IScriptableService scriptableService, IObjectPool objectPool)
         {
             _scriptableService = scriptableService;
             _objectPool = objectPool;
 
-            Call = new Call(Team.Red, DecreaseAIManaCounter);
-            Call.NeedObjectFromPool += SpawnUnit;
-            Call.SetSkillObject(gameFactory.CreateIndicator());
-
+            Call = new Call(pool,Team.Red, DecreaseAIManaCounter);
+            Acid = new Acid(pool,Team.Red, DecreaseAIManaCounter);
             Buff = new Buff(Team.Red, DecreaseAIManaCounter);
 
-            Acid = new Acid(Team.Red, DecreaseAIManaCounter);
-            Acid.SetSkillObject(gameFactory.CreateAcid());
+            Call.NeedObjectFromPool += SpawnUnit;
 
             ReloadSkills();
         }

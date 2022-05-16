@@ -1,26 +1,26 @@
 ﻿
 namespace _Application.Scripts.Control
 {
-    public abstract class BaseInput:IInputService
+    public abstract class BaseInput : IInputService
     {
         protected abstract void AffectToBuilding();
         protected abstract void AffectToSkills();
         
-        protected BuildingsController _buildingsController;
-        protected SkillController _skillController;
+        public BuildingsController BuildingsController { get; private set; }
+        public ISkillController SkillController { get; private set; }
 
         public abstract void HandleInput();
 
-        public void Init(BuildingsController buildingsController, SkillController skillController)
+        public void Init(BuildingsController buildingsController, ISkillController skillController)
         {
-            _buildingsController = buildingsController;
-            _skillController = skillController;
+            BuildingsController = buildingsController;
+            SkillController = skillController;
         }
 
         public void Refresh() => 
-            _skillController.RefreshSkills();
+            SkillController.RefreshSkills();
 
         public void Reload() => 
-            _skillController.ReloadSkills();
+            SkillController.ReloadSkills();
     }
 }

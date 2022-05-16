@@ -28,9 +28,9 @@ namespace _Application.Scripts.Skills
             }
         }
 
-        public override void SetSkillObject(GameObject skillObject)
-        {
-        }
+        // public override void SetSkillObject(GameObject skillObject)
+        // {
+        // }
 
         protected override void ApplySkill()
         {

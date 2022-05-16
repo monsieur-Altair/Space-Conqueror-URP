@@ -17,6 +17,8 @@ namespace _Application.Scripts.Managers
         [SerializeField]
         private AudioClip loseClip;
         
+        private Coroutine _playAudioCor;
+
         public static AudioManager Instance { get; private set; }
         
         private void Awake()
@@ -33,15 +35,27 @@ namespace _Application.Scripts.Managers
         {
             _audioBackSource.Pause();
             _audioEffectsSource.clip = isWin ? winClip : loseClip;
-            StartCoroutine(PlayAudio());
+            _playAudioCor = StartCoroutine(PlayAudio());
+        }
+
+        public void PlayBackgroundAgain()
+        {
+            StopCoroutine(_playAudioCor);
+            
+            _audioEffectsSource.Stop();
+            _audioBackSource.Play();
         }
 
         private IEnumerator PlayAudio()
         {
             _audioEffectsSource.Play();
-            yield return new WaitForSeconds(3.0f);
+            while (_audioEffectsSource.isPlaying)
+                yield return null;
+
             _audioEffectsSource.Stop();
             _audioBackSource.Play();
         }
+        
+        
     }
 }

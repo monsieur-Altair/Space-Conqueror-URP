@@ -8,10 +8,10 @@ namespace _Application.Scripts.Control
 
         private IInputService _inputService;
 
-        public void Init(BuildingsController buildingsController ,SkillController skillController)
+        public void Init(BuildingsController buildingsController , ISkillController skillController)
         {
             //_inputService = Game.InputService;
-            //_inputService.Init(new BuildingsController(Camera.main), GetComponent<SkillController>());
+            //_inputService.Init(new BuildingsController(MainCamera.main), GetComponent<SkillController>());
             _inputService = RegisterInputService(buildingsController ,skillController);
             //_inputService = AllServices.Instance.Single<IInputService>();
         }
@@ -36,7 +36,8 @@ namespace _Application.Scripts.Control
         public void Reload() =>
             _inputService.Reload();
 
-        private static IInputService RegisterInputService(BuildingsController buildingsController ,SkillController skillController)
+        private static IInputService RegisterInputService(BuildingsController buildingsController ,
+            ISkillController skillController)
         {
             IInputService service;
             if (Application.isEditor)

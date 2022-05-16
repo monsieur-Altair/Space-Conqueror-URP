@@ -60,14 +60,19 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 4321c7bf2dea2094f8bbdc67e83de1b6, type: 3}
   - {fileID: 2800000, guid: c68f9c8354539a74f9c7b0181f146ea1, type: 3}
   warriorsTextures:
-  - {fileID: 2800000, guid: 3175952fbd2fc4f4896a0e0f1fe42fa9, type: 3}
-  - {fileID: 2800000, guid: 84ca4fe8f068a33428414c917f1a79d1, type: 3}
+  - {fileID: 2800000, guid: 34815691f93af9c41bc5bb0abdb011cd, type: 3}
+  - {fileID: 2800000, guid: 8ea1c3301c03f224a99a3761aa0e0834, type: 3}
+  teamTextures:
+  - {fileID: 2800000, guid: bec31b5bb08018847944d4298b8999b4, type: 3}
+  - {fileID: 2800000, guid: 99dc25d62fe2fe1499e3eb5656b0a8df, type: 3}
+  - {fileID: 2800000, guid: 4760584a155b94a4fa3f9a96fab5372d, type: 3}
   buffedBuildingMaterial: {fileID: 2100000, guid: b3cb278440d8b2940afd8271980669be, type: 2}
   buffedWarriorMaterial: {fileID: 2100000, guid: 0e7506afdf812e248b2427c03bc59ebb, type: 2}
   baseBuildingMaterial: {fileID: 2100000, guid: 2876b05130092d64d9105f6da8dc1489, type: 2}
   baseCrystalMaterial: {fileID: 2100000, guid: d0d415d34d8270f488d90c72fbb8725c, type: 2}
   baseFlagMaterial: {fileID: 2100000, guid: c0416b15b5bb9d64fa8a7beacf2f23d6, type: 2}
   baseRoofMaterial: {fileID: 2100000, guid: 4c75d9c39368677449514aba09d2801f, type: 2}
+  teamMaterial: {fileID: 2100000, guid: 73cac7043cc1c5844a1d948edb7c11fc, type: 2}
   baseWarriorMaterial: {fileID: 2100000, guid: dd987036fa3bb8c4da9a39ed1b09c55b, type: 2}
   counterBackground:
   - {r: 0, g: 0.09411766, b: 0.38431376, a: 1}

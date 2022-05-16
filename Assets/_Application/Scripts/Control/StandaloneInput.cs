@@ -6,7 +6,7 @@ namespace _Application.Scripts.Control
     {
         public override void HandleInput()
         {
-            if (_skillController.SelectedSkillName != SkillName.None)
+            if (SkillController.SelectedSkillName != SkillName.None)
                 AffectToSkills();
             else
                 AffectToBuilding();
@@ -16,25 +16,17 @@ namespace _Application.Scripts.Control
         {
             Vector3 pos = Input.mousePosition;
             if (Input.GetMouseButtonUp(0))
-            {
-                _buildingsController.HandleRelease(pos);
-            }
+                BuildingsController.HandleRelease(pos);
             else if (Input.GetMouseButtonDown(0))
-            {
-                _buildingsController.HandleClick(pos);
-            }
-            else if(Input.GetMouseButton(0))
-            {
-                _buildingsController.HandleMultipleSelection(pos);
-            }
+                BuildingsController.HandleClick(pos);
+            else if(Input.GetMouseButton(0)) 
+                BuildingsController.HandleMultipleSelection(pos);
         }
 
         protected override void AffectToSkills()
         {
-            if (Input.GetMouseButtonUp(0))
-            {
-                _skillController.ApplySkill(Input.mousePosition);
-            }
+            if (Input.GetMouseButtonUp(0)) 
+                SkillController.ApplySkill(Input.mousePosition);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using _Application.Scripts.Infrastructure;
+using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Managers;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -14,7 +15,7 @@ namespace _Application.Scripts.Skills
         
         protected abstract void CancelSkill();
         protected abstract void ApplySkill();
-        public abstract void SetSkillObject(GameObject skillObject);
+        //public abstract void SetSkillObject(GameObject skillObject);
 
         protected readonly Camera MainCamera;
         protected Buildings.Base SelectedBuilding;
@@ -37,15 +38,13 @@ namespace _Application.Scripts.Skills
         protected Base(Buildings.Team? teamConstraint, [CanBeNull] DecreasingCounter function)
         {
             MainCamera = Camera.main;
-            CoroutineRunner = GlobalObject.Instance;
+            CoroutineRunner = AllServices.Instance.GetSingle<ICoroutineRunner>();
             _decreaseCounter = function;
             SetTeamConstraint(teamConstraint);
         }
 
-        public void Reload(Scriptables.Skill resource, float coefficient = 1.0f)
-        {
+        public void Reload(Scriptables.Skill resource, float coefficient = 1.0f) => 
             LoadResources(resource, coefficient);
-        }
 
         protected virtual void LoadResources(Scriptables.Skill resource, float coefficient = 1.0f)
         {

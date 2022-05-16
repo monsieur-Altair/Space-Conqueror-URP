@@ -2,6 +2,7 @@
 using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Managers;
 using _Application.Scripts.Scriptables;
+using _Application.Scripts.UI;
 using UnityEngine;
 
 namespace _Application.Scripts.Infrastructure.Services.Factory
@@ -15,5 +16,8 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
         List<IProgressReader> ProgressReaders { get; }
         List<IProgressWriter> ProgressWriters { get; }
         void CleanUp();
+        UISystem CreateUISystem();
+        IObjectPool CreatePool();
+        ICoroutineRunner CreateCoroutineRunner();
     }
 }

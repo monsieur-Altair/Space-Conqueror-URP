@@ -17,7 +17,6 @@ namespace _Application.Scripts.Infrastructure.States
             {
                 [typeof(BootstrapState)] = new BootstrapState(this, sceneLoader, allServices),
                 [typeof(LoadLevelState)] = new LoadLevelState(this, sceneLoader, allServices.GetSingle<IGameFactory>(),allServices.GetSingle<IProgressService>()),
-                [typeof(ReadProgressState)] = new ReadProgressState(this, allServices.GetSingle<IProgressService>(), allServices.GetSingle<IReadWriterService>()),
                 [typeof(GameLoopState)] = new GameLoopState(this)
             };
         }
