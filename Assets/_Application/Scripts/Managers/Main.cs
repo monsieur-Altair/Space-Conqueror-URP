@@ -8,6 +8,7 @@ using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.SavedData;
+using _Application.Scripts.Scriptables;
 using _Application.Scripts.UI;
 using _Application.Scripts.UI.Windows;
 using _Application.Scripts.UI.Windows.Tutorial;
@@ -66,9 +67,11 @@ namespace _Application.Scripts.Managers
 
             UISystem.GetWindow<WinWindow>().NextLevelButton.onClick.AddListener(NextLevelButton_Clicked);
             UISystem.GetWindow<WinWindow>().ToUpgradeMenuButton.onClick.AddListener(ToUpgradeMenuButton_Clicked);
+            UISystem.GetWindow<WinWindow>().ToStatisticButton.onClick.AddListener(ToStatisticButton_Clicked);
             UISystem.GetWindow<LoseWindow>().RestartButton.onClick.AddListener(RestartLevelButton_Clicked);
             UISystem.GetWindow<LoseWindow>().ToUpgradeMenuButton.onClick.AddListener(ToUpgradeMenuButton_Clicked);
             UISystem.GetWindow<UpgradeWindow>().BackToGameButton.onClick.AddListener(BackToGameButton_Clicked);
+            UISystem.GetWindow<StatisticWindow>().BackToGameButton.onClick.AddListener(BackToGameButton_Clicked);
        }
 
         public void StartGame()
@@ -78,11 +81,11 @@ namespace _Application.Scripts.Managers
         }
 
         public void WriteProgress(PlayerProgress playerProgress) => 
-            playerProgress.levelInfo.lastCompletedLevel = _lastCompletedLevel;
+            playerProgress.LevelInfo.lastCompletedLevel = _lastCompletedLevel;
 
         public void ReadProgress(PlayerProgress playerProgress)
         {
-            _lastCompletedLevel = playerProgress.levelInfo.lastCompletedLevel;
+            _lastCompletedLevel = playerProgress.LevelInfo.lastCompletedLevel;
             _levelsManager.CurrentLevelNumber = _lastCompletedLevel + 1;
         }
 
@@ -159,8 +162,13 @@ namespace _Application.Scripts.Managers
             _coroutineRunner.CancelAllInvoked();
             _isWin = isWin;
 
+            _progressService.PlayerProgress.Statistic.GainedMana += (int)Buildings.Altar.SavedManaCount;
+
             if (_isWin)
+            {
                 _lastCompletedLevel = _levelsManager.CurrentLevelNumber;
+                _progressService.PlayerProgress.Statistic.WinCount++;
+            }
             
             AddReward();
             
@@ -170,11 +178,11 @@ namespace _Application.Scripts.Managers
 
         private void AddReward()
         {
-            int money = AllServices.Instance.GetSingle<IProgressService>().PlayerProgress.money;
+            int money = AllServices.Instance.GetSingle<IProgressService>().PlayerProgress.Money;
             int rewardMoney = _isWin ? _scriptableService.RewardList.GetReward(_lastCompletedLevel) : 0;
             
             money += rewardMoney;
-            AllServices.Instance.GetSingle<IProgressService>().PlayerProgress.money = money;
+            AllServices.Instance.GetSingle<IProgressService>().PlayerProgress.Money = money;
         }
 
         private IEnumerator StartGameplay()
@@ -191,6 +199,7 @@ namespace _Application.Scripts.Managers
             CounterSpawner.FillLists(_allBuildings);
             
             Buildings.Altar.DischargeManaCount();//count = 0
+            Buildings.Altar.DischargeSavedManaCount();
             
             _userControl.Reload();
             _userControl.Enable();
@@ -223,6 +232,14 @@ namespace _Application.Scripts.Managers
         {
             UISystem.ReturnToPreviousWindow();
             UISystem.ShowWindow<UpgradeWindow>();
+            
+            _buildingsLay.SetActive(false);
+        }
+        
+        private void ToStatisticButton_Clicked()
+        {
+            UISystem.ReturnToPreviousWindow();
+            UISystem.ShowWindow<StatisticWindow>();
             
             _buildingsLay.SetActive(false);
         }

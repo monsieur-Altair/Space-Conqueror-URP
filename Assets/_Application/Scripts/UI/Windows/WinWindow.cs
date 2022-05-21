@@ -16,11 +16,15 @@ namespace _Application.Scripts.UI.Windows
         private Button _toUpgradeButton;
 
         [SerializeField] 
+        private Button _toStatistic;
+        
+        [SerializeField] 
         private TextMeshProUGUI _moneyText;
 
         private IProgressService _progressService;
 
         public Button NextLevelButton => _nextLevelButton;
+        public Button ToStatisticButton => _toStatistic;
         public Button ToUpgradeMenuButton => _toUpgradeButton;
         
         public override void GetDependencies()
@@ -34,7 +38,7 @@ namespace _Application.Scripts.UI.Windows
         {
             base.OnOpened();
             
-            _moneyText.text = _progressService.PlayerProgress.money.ToString();
+            _moneyText.text = _progressService.PlayerProgress.Money.ToString();
         }
     }
 }

@@ -13,6 +13,7 @@ namespace _Application.Scripts.Buildings
         private float _produceTimeMana;
         
         public static float ManaCount { get; private set; }
+        public static float SavedManaCount { get; private set; }
 
         public static void DecreaseManaCount(float value)
         {
@@ -25,6 +26,9 @@ namespace _Application.Scripts.Buildings
             ManaCount = 0;
             ManaCountUpdated(ManaCount, _maxCountMana);
         }
+
+        public static void DischargeSavedManaCount() => 
+            SavedManaCount = 0;
 
         protected override void LoadResources(Building infoAboutBuilding, Unit infoAboutUnit)
         {
@@ -65,9 +69,14 @@ namespace _Application.Scripts.Buildings
 
         private void IncreaseForPlayer()
         {
-            ManaCount += _produceCountMana / _produceTimeMana * Time.deltaTime;
+            float producedManaCount = _produceCountMana / _produceTimeMana * Time.deltaTime;
+            ManaCount += producedManaCount;
             if (ManaCount > _maxCountMana)
+            {
                 ManaCount = _maxCountMana;
+                producedManaCount = 0;
+            }
+            SavedManaCount += producedManaCount;
             ManaCountUpdated(ManaCount, _maxCountMana);
         }
     }

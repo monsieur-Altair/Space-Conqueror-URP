@@ -10,8 +10,10 @@ namespace _Application.Scripts.Skills
 {
     public abstract class Base : ISkill
     {
-        public event Action CanceledSkill;
-        public event Func<PoolObjectType, Vector3, Quaternion, Units.Base> NeedObjectFromPool;
+        public event Action CanceledSkill = delegate {  };
+        public static event Action<int> SkillIsAppliedForPlayer = delegate {  };
+        public event Func<PoolObjectType, Vector3, Quaternion, Units.Base> NeedObjectFromPool = delegate { return null; };
+        
         public delegate void DecreasingCounter(float count);
         
         protected abstract void CancelSkill();
@@ -67,7 +69,10 @@ namespace _Application.Scripts.Skills
         {
             SelectedScreenPos = pos;
             if (Buildings.Altar.ManaCount > Cost && !IsOnCooldown)
+            {
                 ApplySkill();
+                SkillIsAppliedForPlayer(Cost);
+            }
             else
                 OnCanceledSkill();
         }
@@ -100,11 +105,11 @@ namespace _Application.Scripts.Skills
         protected void OnCanceledSkill()
         {
             if(!IsOnCooldown)
-                CanceledSkill?.Invoke();
+                CanceledSkill();
         }
 
         protected Units.Base OnNeedObjectFromPool(PoolObjectType type, Vector3 pos, Quaternion rotation) => 
-            NeedObjectFromPool?.Invoke(type, pos, rotation);
+            NeedObjectFromPool(type, pos, rotation);
 
         private void SetTeamConstraint(Buildings.Team? team)
         {

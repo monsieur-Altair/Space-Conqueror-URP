@@ -28,7 +28,7 @@ namespace _Application.Scripts.Managers
                 _readWriterService.WriteProgress();
         }
 
-        private IEnumerator WaitAndDo(float delay, Action action)
+        private static IEnumerator WaitAndDo(float delay, Action action)
         {
             yield return new WaitForSeconds(delay);
             action?.Invoke();
