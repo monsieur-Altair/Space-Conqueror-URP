@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using _Application.Scripts.UI.Windows;
+using _Application.Scripts.UI.Windows.Tutorial;
 using UnityEngine;
 
 namespace _Application.Scripts.UI
@@ -19,6 +20,8 @@ namespace _Application.Scripts.UI
         public static UISystem Instance { get; private set; }
         public Window CurrentWindow { get; private set; }
         public Canvas GameCanvas => _canvas;
+        public static bool IsTutorialDisplayed { get; private set; }
+
 
         public void Setup()
         {
@@ -52,12 +55,14 @@ namespace _Application.Scripts.UI
         {
             Window.Opened += Window_Opened;
             Window.Closed += Window_Closed;
+            AnimatedWindow.FadeCompleted += AnimatedWindow_FadeCompleted;
         }
 
         private void UnsubscribeEvents()
         {
             Window.Opened -= Window_Opened;
             Window.Closed -= Window_Closed;
+            AnimatedWindow.FadeCompleted -= AnimatedWindow_FadeCompleted;
         }
 
         private void GetAllWindows()
@@ -87,5 +92,38 @@ namespace _Application.Scripts.UI
             poppedWindow.transform.SetAsFirstSibling();
             CurrentWindow = _openedWindows.Peek();
         }
+
+        private static void AnimatedWindow_FadeCompleted() => 
+            IsTutorialDisplayed = false;
+
+        public static void ShowTutorialWindow(int levelsNumber)
+        {
+            switch (levelsNumber)
+            {
+                case 0:
+                    ShowWindow<Tutorial0Window>();
+                    break;
+                case 1:
+                    ShowWindow<Tutorial1Window>();
+                    break;
+                case 2:
+                    ShowWindow<Tutorial2Window>();
+                    break;
+                case 3:
+                    ShowWindow<Tutorial3Window>();
+                    break;
+                case 4:
+                    ShowWindow<Tutorial4Window>();
+                    break;
+                case 5:
+                    ShowWindow<Tutorial5Window>();
+                    break;
+            }
+
+            IsTutorialDisplayed = true;
+        }
+
+        public static void DisableTutorialWindow() => 
+            IsTutorialDisplayed = false;
     }
 }

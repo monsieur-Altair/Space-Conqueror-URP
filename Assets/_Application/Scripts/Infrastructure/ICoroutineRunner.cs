@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using _Application.Scripts.Infrastructure.Services;
+using _Application.Scripts.Infrastructure.Services.Progress;
 using UnityEngine;
 
 namespace _Application.Scripts.Infrastructure
@@ -13,6 +14,6 @@ namespace _Application.Scripts.Infrastructure
         void InvokeWithDelay(Action action, float delay);
         void CancelAllInvoked();
         void StopAllCoroutines();
-        void Init();
+        void Init(IReadWriterService readWriterService);
     }
 }

@@ -48,6 +48,7 @@ namespace _Application.Scripts.Control
             Ice = new Skills.Ice(pool);
 
             Call.NeedObjectFromPool += SpawnUnit;
+            Skills.Base.SkillIsAppliedForPlayer += Base_SkillIsAppliedForPlayer;
             //ReloadSkills();
         }
 
@@ -99,5 +100,11 @@ namespace _Application.Scripts.Control
 
         private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
             _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.Base>();
+
+        private void Base_SkillIsAppliedForPlayer(int cost)
+        {
+            _progressService.PlayerProgress.Statistic.SpentMana += cost;
+            _progressService.PlayerProgress.Statistic.UsedSpells++;
+        }
     }
 }

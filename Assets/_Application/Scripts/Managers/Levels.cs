@@ -44,13 +44,14 @@ namespace _Application.Scripts.Managers
         {
             if (CurrentLevelNumber >= levels.Length)
                 CurrentLevelNumber = 0;
+
+            //CurrentLevelNumber = 5;
             
             yield return StartCoroutine(DeleteAllLevel());
 
             _currentLevel = Instantiate(levels[CurrentLevelNumber], _instantiatePos, Quaternion.identity);
             _currentLevel.SetActive(true);
             navMeshSurfaceObj.BuildNavMesh();
-            //yield return new WaitForSeconds(0.3f);
             _currentLevel.gameObject.transform.SetParent(gameObject.transform.parent);
         }
 

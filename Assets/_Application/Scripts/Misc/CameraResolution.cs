@@ -10,24 +10,23 @@ namespace _Application.Scripts.Misc
 
         private static float _minDepth;
         private static float _maxDepth;
-
+        
         private float _initialSize;
         private float _targetAspect;
-
         private float _initialFov;
         private float _horizontalFov = 120f;
 
-        private static Camera _mainCamera;
+        public static Camera MainCamera { get; private set; }
 
-
-        private void Start()
+        public void Init(Camera mainCamera)
         {
-            _mainCamera = GetComponent<Camera>();
-            _initialSize = _mainCamera.orthographicSize;
+            MainCamera = mainCamera;
+            
+            _initialSize = MainCamera.orthographicSize;
  
             _targetAspect = defaultResolution.x / defaultResolution.y;
  
-            _initialFov = _mainCamera.fieldOfView;
+            _initialFov = MainCamera.fieldOfView;
             _horizontalFov = CalcVerticalFov(_initialFov, 1 / _targetAspect);
             
             GetCameraDepths(out _minDepth, out _maxDepth);
@@ -37,20 +36,20 @@ namespace _Application.Scripts.Misc
 
         private void Update()
         {
-            if (_mainCamera.orthographic)
+            if (MainCamera.orthographic)
             {
-                float constantWidthSize = _initialSize * (_targetAspect / _mainCamera.aspect);
-                _mainCamera.orthographicSize = Mathf.Lerp(constantWidthSize, _initialSize, widthOrHeight);
+                float constantWidthSize = _initialSize * (_targetAspect / MainCamera.aspect);
+                MainCamera.orthographicSize = Mathf.Lerp(constantWidthSize, _initialSize, widthOrHeight);
             }
             else
             {
-                float constantWidthFov = CalcVerticalFov(_horizontalFov, _mainCamera.aspect);
-                _mainCamera.fieldOfView = Mathf.Lerp(constantWidthFov, _initialFov, widthOrHeight);
+                float constantWidthFov = CalcVerticalFov(_horizontalFov, MainCamera.aspect);
+                MainCamera.fieldOfView = Mathf.Lerp(constantWidthFov, _initialFov, widthOrHeight);
             }
         }
 
         public static Vector3 GetScreenPos(Vector3 pos) => 
-            _mainCamera.WorldToScreenPoint(pos);
+            MainCamera.WorldToScreenPoint(pos);
 
         private static float CalcVerticalFov(float hFovInDeg, float aspectRatio)
         { 
@@ -61,8 +60,8 @@ namespace _Application.Scripts.Misc
 
         public static Vector3 FindOffset(Vector3 worldPos)// go to camera resolution
         {
-            int coefficient = _mainCamera.pixelHeight / _mainCamera.pixelWidth;
-            Vector3 screenPos = _mainCamera.WorldToScreenPoint(worldPos);
+            int coefficient = MainCamera.pixelHeight / MainCamera.pixelWidth;
+            Vector3 screenPos = MainCamera.WorldToScreenPoint(worldPos);
             float depth = screenPos.z;
             float offsetY=(_minDepth-depth)/ (_maxDepth-_minDepth)*80.0f;
             float offsetX=(_minDepth-depth)/ (_maxDepth-_minDepth)*(80.0f/coefficient);
@@ -78,7 +77,7 @@ namespace _Application.Scripts.Misc
         public static Vector3 FindSpawnPoint(Base destination)
         {
             Vector3 destPosWorld = destination.transform.position;
-            Vector3 destPosScreen = _mainCamera.WorldToScreenPoint(destPosWorld);
+            Vector3 destPosScreen = MainCamera.WorldToScreenPoint(destPosWorld);
             float destX = destPosScreen.x;
             float destY = destPosScreen.y;
             float destZ = destPosScreen.z;
@@ -94,7 +93,7 @@ namespace _Application.Scripts.Misc
 
             int minWayIndex = FindMinWay(in possiblePoints, in destPosScreen);
 
-            Vector3 result = _mainCamera.ScreenToWorldPoint(possiblePoints[minWayIndex]);
+            Vector3 result = MainCamera.ScreenToWorldPoint(possiblePoints[minWayIndex]);
             result.y = destPosWorld.y;
             return result;
         }
@@ -126,22 +125,22 @@ namespace _Application.Scripts.Misc
         {
             min = max = 0.0f;
             
-            if(_mainCamera==null)
+            if(MainCamera==null)
                 return;
             
             Plane plane = new Plane(Vector3.up, new Vector3(0, 0, 0));
-            Ray ray = _mainCamera.ViewportPointToRay(new Vector3(0,0,0));
+            Ray ray = MainCamera.ViewportPointToRay(new Vector3(0,0,0));
             if (plane.Raycast(ray, out float distance))
             {
                 Vector3 botLeft = ray.GetPoint(distance);
-                min = _mainCamera.WorldToViewportPoint(botLeft).z;
+                min = MainCamera.WorldToViewportPoint(botLeft).z;
             }
             
-            ray = _mainCamera.ViewportPointToRay(new Vector3(1,1,0));
+            ray = MainCamera.ViewportPointToRay(new Vector3(1,1,0));
             if (plane.Raycast(ray, out float distance1))
             {
                 Vector3 topRight = ray.GetPoint(distance1);
-                max = _mainCamera.WorldToViewportPoint(topRight).z;
+                max = MainCamera.WorldToViewportPoint(topRight).z;
             }
         }
     }

@@ -52,7 +52,7 @@ namespace _Application.Scripts.UI.Windows
             foreach (UpgradeController upgradeController in upgradeControllers) 
                 upgradeController.Refresh();
 
-            _money = _progressService.PlayerProgress.money;
+            _money = _progressService.PlayerProgress.Money;
             moneyText.text = _money.ToString();
         }
 
@@ -63,7 +63,7 @@ namespace _Application.Scripts.UI.Windows
             foreach (IProgressWriter progressWriter in _progressWriters)
                 progressWriter.WriteProgress(_progressService.PlayerProgress);
 
-            _progressService.PlayerProgress.money = _money;
+            _progressService.PlayerProgress.Money = _money;
             
             _coroutineRunner.StopAllCoroutines();
         }
@@ -90,7 +90,7 @@ namespace _Application.Scripts.UI.Windows
             if (_money >= cost)
             {
                 _money -= cost;
-                _progressService.PlayerProgress.money = _money; 
+                _progressService.PlayerProgress.Money = _money; 
                 moneyText.text = _money.ToString();
                 upgradeController.ApplyPurchase();
                 upgradeController.WriteProgress(_progressService.PlayerProgress);

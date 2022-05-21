@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using _Application.Scripts.Buildings;
+using _Application.Scripts.Infrastructure.Services.Progress;
+using _Application.Scripts.SavedData;
 
 namespace _Application.Scripts.Managers
 {
@@ -8,24 +10,37 @@ namespace _Application.Scripts.Managers
     {
         public static event Action<List<int>> TeamCountUpdated = delegate {  };
         public static event Action<bool> GameEnded = delegate {  };
-
+        
         private readonly int _teamNumber = Enum.GetNames(typeof(Team)).Length;
         private readonly List<int> _teamCount;
+        private readonly IProgressService _progressService;
 
-        public TeamManager()
+
+        public TeamManager(IProgressService progressService)
         {
+            _progressService = progressService;
             _teamCount = new List<int>(_teamNumber);
             for (int i = 0; i < _teamNumber;i++)
                 _teamCount.Add(0);
         }
 
-        public void UpdateObjectsCount(Base building ,Team oldTeam, Team newTeam)
+        public void UpdateObjectsCount(Base building, Team oldTeam, Team newTeam)
         {
             _teamCount[(int) oldTeam]--;
             _teamCount[(int) newTeam]++;
 
+            CheckForStatistic(oldTeam, newTeam);
+            
             TeamCountUpdated(_teamCount);
             CheckGameOver();
+        }
+
+        private void CheckForStatistic(Team oldTeam, Team newTeam)
+        {
+            if (oldTeam == Team.Blue)
+                _progressService.PlayerProgress.Statistic.MissedBuildings++;
+            if (newTeam == Team.Blue)
+                _progressService.PlayerProgress.Statistic.ConqueredBuildings++;
         }
 
         public void Clear()
@@ -46,8 +61,8 @@ namespace _Application.Scripts.Managers
 
         private void CheckGameOver()
         {
-            bool noneBlue = _teamCount[(int)Team.Blue]==0;
-            bool noneRed = _teamCount[(int)Team.Red]==0;
+            bool noneBlue = _teamCount[(int) Team.Blue] == 0;
+            bool noneRed = _teamCount[(int) Team.Red] == 0;
             if (noneBlue || noneRed)
             {
                 bool isWin = noneRed;

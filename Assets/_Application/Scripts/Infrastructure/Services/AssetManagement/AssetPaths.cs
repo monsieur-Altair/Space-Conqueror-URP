@@ -10,7 +10,7 @@
         public const string UISystemPath = "UI/UISystem";
         
         public const string AcidPrefabPath = "Skills/Acid rain";
-        public const string IndicatorPrefabPath = "Skills/Lamp";
+        public const string IndicatorPrefabPath = "Skills/Indicator";
         public const string IcePrefabPath = "Skills/Ice";
 
         public const string RewardListPath = "Scriptables/Rewards list";
@@ -64,5 +64,6 @@
         #endregion
 
         public const string GlobalObjectPath = "GlobalObject";
+        public const string MainCameraPath = "Main Camera";
     }
 }

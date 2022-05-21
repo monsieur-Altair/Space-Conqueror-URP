@@ -37,7 +37,9 @@ namespace _Application.Scripts.Upgrades
         private int _cost;
         private UpgradeInfo _upgradeInfo;
         private ICoroutineRunner _coroutineRunner;
-
+        
+        //private readonly List<IEnumerator> _coroutines = new List<IEnumerator>();
+        
         public void Init(IScriptableService scriptableService, ICoroutineRunner coroutineRunner)
         {
             _upgradeInfo = scriptableService.GetUpgradeInfo(upgradeType);
@@ -73,7 +75,7 @@ namespace _Application.Scripts.Upgrades
         public void ApplyPurchase()
         {
             _numberOfCompletedCells++;
-            float startFill = improvedBar.fillAmount;
+            float startFill = (_numberOfCompletedCells-1) / (float) cellCount;
             float lastFill = _numberOfCompletedCells / (float) cellCount;
 
             SingleUpgradeStats? stats = _upgradeInfo.GetUpgradeStats(_numberOfCompletedCells);
@@ -87,8 +89,8 @@ namespace _Application.Scripts.Upgrades
             {
                 addButton.gameObject.SetActive(false);
             }
-            
 
+            //AddToCoroutinesList(PurchaseAnimation(startFill, lastFill));
             _coroutineRunner.StartCoroutine(PurchaseAnimation(startFill, lastFill));
         }
 
@@ -102,7 +104,22 @@ namespace _Application.Scripts.Upgrades
                 improvedBar.fillAmount += delta;
                 yield return new WaitForSeconds(0.025f);
             }
+            //RemoveFromCoroutinesList();
         }
+
+        // private void AddToCoroutinesList(IEnumerator purchaseAnimation)
+        // {
+        //     _coroutines.Add(purchaseAnimation);
+        //     if (_coroutines.Count == 1)
+        //         _coroutineRunner.StartCoroutine(_coroutines[0]);
+        // }
+        //
+        // private void RemoveFromCoroutinesList()
+        // {
+        //     _coroutines.Remove(_coroutines[0]);
+        //     if (_coroutines.Count > 0)
+        //         _coroutineRunner.StartCoroutine(_coroutines[0]);
+        // }
 
         private void ButtonClickHandler()
         {
