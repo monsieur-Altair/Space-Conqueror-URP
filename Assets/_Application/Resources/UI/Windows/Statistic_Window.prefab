@@ -68,14 +68,14 @@ MonoBehaviour:
   m_text: 'gained mana: 0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8955df5563449a44fb5e0120b205f66d, type: 2}
-  m_sharedMaterial: {fileID: -7677551805903908336, guid: 8955df5563449a44fb5e0120b205f66d, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 68ed8893664ba4a48805959fc7b1458d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -202,14 +202,14 @@ MonoBehaviour:
   m_text: 'conquered buildings: 0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8955df5563449a44fb5e0120b205f66d, type: 2}
-  m_sharedMaterial: {fileID: -7677551805903908336, guid: 8955df5563449a44fb5e0120b205f66d, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 68ed8893664ba4a48805959fc7b1458d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -336,14 +336,14 @@ MonoBehaviour:
   m_text: 'wins: 0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8955df5563449a44fb5e0120b205f66d, type: 2}
-  m_sharedMaterial: {fileID: -7677551805903908336, guid: 8955df5563449a44fb5e0120b205f66d, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 68ed8893664ba4a48805959fc7b1458d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -572,14 +572,14 @@ MonoBehaviour:
   m_text: 'spent mana: 0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8955df5563449a44fb5e0120b205f66d, type: 2}
-  m_sharedMaterial: {fileID: -7677551805903908336, guid: 8955df5563449a44fb5e0120b205f66d, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 68ed8893664ba4a48805959fc7b1458d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -706,14 +706,14 @@ MonoBehaviour:
   m_text: 'used spells: 0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8955df5563449a44fb5e0120b205f66d, type: 2}
-  m_sharedMaterial: {fileID: -7677551805903908336, guid: 8955df5563449a44fb5e0120b205f66d, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 68ed8893664ba4a48805959fc7b1458d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -840,14 +840,14 @@ MonoBehaviour:
   m_text: 'missed buildings: 0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8955df5563449a44fb5e0120b205f66d, type: 2}
-  m_sharedMaterial: {fileID: -7677551805903908336, guid: 8955df5563449a44fb5e0120b205f66d, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 68ed8893664ba4a48805959fc7b1458d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
