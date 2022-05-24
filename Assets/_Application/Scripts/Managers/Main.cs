@@ -71,6 +71,8 @@ namespace _Application.Scripts.Managers
             UISystem.GetWindow<LoseWindow>().RestartButton.onClick.AddListener(RestartLevelButton_Clicked);
             UISystem.GetWindow<LoseWindow>().ToUpgradeMenuButton.onClick.AddListener(ToUpgradeMenuButton_Clicked);
             UISystem.GetWindow<UpgradeWindow>().BackToGameButton.onClick.AddListener(BackToGameButton_Clicked);
+            
+            UISystem.GetWindow<StatisticWindow>().BackToGameButton.onClick.RemoveAllListeners();
             UISystem.GetWindow<StatisticWindow>().BackToGameButton.onClick.AddListener(BackToGameButton_Clicked);
        }
 

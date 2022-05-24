@@ -8,7 +8,11 @@ namespace _Application.Scripts.UI.Windows
     {
         [SerializeField] 
         private Button _playButton;
-        
+
+        [SerializeField] 
+        private Button _toStatsButton;
+
         public Button PlayButton => _playButton;
+        public Button ToStatsButton => _toStatsButton;
     }
 }
