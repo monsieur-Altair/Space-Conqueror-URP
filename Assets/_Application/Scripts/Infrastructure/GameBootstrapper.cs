@@ -17,10 +17,24 @@ namespace _Application.Scripts.Infrastructure
             _game.StateMachine.Enter<BootstrapState>();
             UISystem.ShowWindow<StartUpWindow>();
             UISystem.GetWindow<StartUpWindow>().PlayButton.onClick.AddListener(EnterLoadLevel);
+            UISystem.GetWindow<StartUpWindow>().ToStatsButton.onClick.AddListener(OnStatsClicked);
+            UISystem.GetWindow<StatisticWindow>().BackToGameButton.onClick.AddListener(BackToStartUp);
             DontDestroyOnLoad(this);
+        }
+
+        private static void BackToStartUp()
+        {
+            UISystem.ReturnToPreviousWindow();
+            UISystem.ShowWindow<StartUpWindow>();
         }
 
         private void EnterLoadLevel() => 
             _game.StateMachine.Enter<LoadLevelState, string>("Main");
+
+        private static void OnStatsClicked()
+        {
+            UISystem.ReturnToPreviousWindow();
+            UISystem.ShowWindow<StatisticWindow>();
+        }
     }
 }
