@@ -21,7 +21,7 @@ namespace _Application.Scripts.Skills
         private Plane _plane;
         private Coroutine _spawnCoroutine;
 
-        public Ice(IObjectPool pool) : base(null, null)
+        public Ice(ObjectPool pool) : base(null, null)
         {
             _freezingObject = pool.GetObject(PoolObjectType.Ice, Vector3.zero, Quaternion.identity);
              

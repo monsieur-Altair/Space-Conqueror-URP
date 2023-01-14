@@ -3,20 +3,21 @@ using System.Collections.Generic;
 using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Infrastructure.Services.Progress;
+using _Application.Scripts.Managers;
 
 namespace _Application.Scripts.Infrastructure.States
 {
-    public class StateMachine
+    public class StateMachine : IService
     {
         private readonly Dictionary<Type, IBaseState> _states;
         private IBaseState _activeState;
 
-        public StateMachine(SceneLoader sceneLoader, AllServices allServices)
+        public StateMachine(SceneLoader sceneLoader, CoreConfig coreConfig)
         {
             _states = new Dictionary<Type, IBaseState>()
             {
-                [typeof(BootstrapState)] = new BootstrapState(this, sceneLoader, allServices),
-                [typeof(LoadLevelState)] = new LoadLevelState(this, sceneLoader, allServices.GetSingle<IGameFactory>(),allServices.GetSingle<IProgressService>()),
+                [typeof(BootstrapState)] = new BootstrapState(this, sceneLoader, coreConfig),
+                [typeof(LoadLevelState)] = new LoadLevelState(this, sceneLoader, AllServices.Get<GameFactory>(),AllServices.Get<IProgressService>()),
                 [typeof(GameLoopState)] = new GameLoopState(this)
             };
         }

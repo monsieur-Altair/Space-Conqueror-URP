@@ -8,12 +8,12 @@ namespace _Application.Scripts.Infrastructure.Services.Progress
 {
     public class ReadWriterService : IReadWriterService
     {
-        private readonly IGameFactory _gameFactory;
+        private readonly GameFactory _gameFactory;
         private readonly IProgressService _progressService;
 
         private const string PlayerProgressKey = "PlayerProgress";
 
-        public ReadWriterService(IProgressService progressService, IGameFactory gameFactory)
+        public ReadWriterService(IProgressService progressService, GameFactory gameFactory)
         {
             _progressService = progressService;
             _gameFactory = gameFactory;

@@ -138,6 +138,7 @@ GameObject:
   - component: {fileID: 5370934065307269282}
   - component: {fileID: 1035500207987708673}
   - component: {fileID: -5000557946848516584}
+  - component: {fileID: 8810113161270021788}
   m_Layer: 0
   m_Name: Audio Manager
   m_TagString: Untagged
@@ -174,8 +175,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   backgroundClips:
   - {fileID: 8300000, guid: 7256072e16fe075428c451900d591e4e, type: 3}
-  winClip: {fileID: 0}
-  loseClip: {fileID: 0}
+  winClip: {fileID: 8300000, guid: 6b6856a4ce27cb6459e9f984b52df034, type: 3}
+  loseClip: {fileID: 8300000, guid: 16e6193b366db38419fbb003d3deb0de, type: 3}
 --- !u!82 &-5000557946848516584
 AudioSource:
   m_ObjectHideFlags: 0
@@ -272,3 +273,11 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!81 &8810113161270021788
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5370934065307269281}
+  m_Enabled: 1

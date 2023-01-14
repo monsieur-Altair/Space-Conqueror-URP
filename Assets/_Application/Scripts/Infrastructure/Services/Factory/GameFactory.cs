@@ -8,25 +8,22 @@ using _Application.Scripts.Managers;
 using _Application.Scripts.UI;
 using _Application.Scripts.UI.Windows;
 using UnityEngine;
-using SkillController = _Application.Scripts.AI.SkillController;
 
 namespace _Application.Scripts.Infrastructure.Services.Factory
 {
-    public class GameFactory : IGameFactory
+    public class GameFactory : IService
     {
         public List<IProgressReader> ProgressReaders { get; } 
         public List<IProgressWriter> ProgressWriters { get; }
 
-        private readonly AllServices _allServices;
-        private readonly IAssetProvider _assetProvider;
-        private readonly IScriptableService _scriptableService;
+        private readonly AssetProvider _assetProvider;
+        private readonly ScriptableService _scriptableService;
 
-        public GameFactory(AllServices allServices ,IAssetProvider assetProvider, IScriptableService scriptableService)
+        public GameFactory(AssetProvider assetProvider, ScriptableService scriptableService)
         {
             ProgressReaders = new List<IProgressReader>();
             ProgressWriters = new List<IProgressWriter>();
 
-            _allServices = allServices;
             _assetProvider = assetProvider;
             _scriptableService = scriptableService;
         }
@@ -42,15 +39,15 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
 
         public Main CreateWorld()
         {
-            IObjectPool objectPool = _allServices.GetSingle<IObjectPool>();
-            ICoroutineRunner coroutineRunner = _allServices.GetSingle<ICoroutineRunner>();
+            ObjectPool objectPool = AllServices.Get<ObjectPool>();
+            CoroutineRunner coroutineRunner = AllServices.Get<CoroutineRunner>();
             
             Warehouse warehouse = _assetProvider.Instantiate<Warehouse>(AssetPaths.Warehouse);
 
-            SkillController aiSkillController = 
-                new SkillController(objectPool,_scriptableService , objectPool); 
+            AISkillController aiAISkillController = 
+                new AISkillController(objectPool,_scriptableService , objectPool); 
             
-            Core aiManager = new Core(coroutineRunner, aiSkillController);
+            Core aiManager = new Core(coroutineRunner, aiAISkillController);
             
             Outlook outlookManager = new Outlook(warehouse);
             UserControl userControl = CreateUserControl();
@@ -58,16 +55,16 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
             CounterSpawner.Init(warehouse, objectPool, UISystem.GetWindow<GameplayWindow>().CounterContainer);
             
             
-            Main mainManager = new Main(Levels.Instance, 
-                new TeamManager(_allServices.GetSingle<IProgressService>()), 
+            Main mainManager = new Main(AllServices.Get<LevelManager>(), 
+                new TeamManager(AllServices.Get<IProgressService>()), 
                 coroutineRunner,
                 aiManager, 
                 objectPool,
                 outlookManager, 
                 userControl,
-                _allServices.GetSingle<IScriptableService>(),
-                _allServices.GetSingle<IProgressService>(),
-                AudioManager.Instance);
+                AllServices.Get<ScriptableService>(),
+                AllServices.Get<IProgressService>(),
+                AllServices.Get<AudioManager>());
             
             ProgressReaders.Add(mainManager);
             ProgressWriters.Add(mainManager);
@@ -75,11 +72,12 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
             return mainManager;
         }
 
-        public IObjectPool CreatePool() => 
-            _assetProvider.Instantiate<ObjectPool>(AssetPaths.PoolPath);
-
-        public ICoroutineRunner CreateCoroutineRunner() => 
-            _assetProvider.Instantiate<GlobalObject>(AssetPaths.GlobalObjectPath);
+        public T CreateMonoBeh<T>(T prefab) where T : MonoBehaviourService
+        {
+            T service = Object.Instantiate(prefab);
+            service.Init();
+            return service;
+        }
 
         public Camera CreateCamera() => 
             _assetProvider.Instantiate<Camera>(AssetPaths.MainCameraPath);
@@ -97,7 +95,7 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
         {
             UserControl userControl = _assetProvider.Instantiate<UserControl>(AssetPaths.UserControlPath);
             BuildingsController buildingsController = new BuildingsController(Camera.main);
-            userControl.Init(buildingsController, _allServices.GetSingle<ISkillController>());
+            userControl.Init(buildingsController, AllServices.Get<SkillController>());
             return userControl;
         }
     }

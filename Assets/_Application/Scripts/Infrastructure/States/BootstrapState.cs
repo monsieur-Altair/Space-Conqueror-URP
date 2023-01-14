@@ -1,4 +1,5 @@
-﻿using _Application.Scripts.Control;
+﻿using System.Collections.Generic;
+using _Application.Scripts.Control;
 using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Infrastructure.Services.AssetManagement;
 using _Application.Scripts.Infrastructure.Services.Factory;
@@ -17,20 +18,37 @@ namespace _Application.Scripts.Infrastructure.States
         private const string Main = "Main";
         private readonly StateMachine _stateMachine;
         private readonly SceneLoader _sceneLoader;
-        private readonly AllServices _allServices;
         private readonly IProgressService _progressService;
         private readonly IReadWriterService _readWriterService;
+        private readonly CoreConfig _coreConfig;
 
-        public BootstrapState(StateMachine stateMachine, SceneLoader sceneLoader, AllServices allServices)
+        public BootstrapState(StateMachine stateMachine, SceneLoader sceneLoader, CoreConfig coreConfig)
         {
+            _coreConfig = coreConfig;
             _stateMachine = stateMachine;
             _sceneLoader = sceneLoader;
-            _allServices = allServices;
             
             RegisterServices();
+            RegisterMonoBehServices();
+
+
+            _progressService = AllServices.Get<IProgressService>();
+            _readWriterService = AllServices.Get<IReadWriterService>();
             
-            _progressService = allServices.GetSingle<IProgressService>();
-            _readWriterService = allServices.GetSingle<IReadWriterService>();
+            AllServices.Register(new SkillController(_progressService, 
+                AllServices.Get<ObjectPool>(), 
+                AllServices.Get<ScriptableService>()));
+        }
+
+        private void RegisterMonoBehServices()
+        {
+            var gameFactory = AllServices.Get<GameFactory>();
+            var servicePrefabs = _coreConfig.MonoBehaviourServices;
+
+            AllServices.Register(gameFactory.CreateMonoBeh(servicePrefabs.AudioManager));
+            AllServices.Register(gameFactory.CreateMonoBeh(servicePrefabs.CoroutineRunner));
+            AllServices.Register(gameFactory.CreateMonoBeh(servicePrefabs.ObjectPool));
+            AllServices.Register(gameFactory.CreateMonoBeh(servicePrefabs.LevelManager));
         }
 
         public void Enter()
@@ -50,35 +68,21 @@ namespace _Application.Scripts.Infrastructure.States
 
         private void RegisterServices()
         {
-            IAssetProvider assetProvider = _allServices.RegisterSingle<IAssetProvider>(
-                new AssetProvider());
+            AssetProvider assetProvider = AllServices.Register(new AssetProvider());
 
-            IScriptableService scriptableService = _allServices.RegisterSingle<IScriptableService>(
-                new ScriptableService(assetProvider));
+            ScriptableService scriptableService = AllServices.Register(new ScriptableService(assetProvider));
             scriptableService.LoadAllScriptables();
 
-            IGameFactory factory = _allServices.RegisterSingle<IGameFactory>(
-                new GameFactory(_allServices , assetProvider, scriptableService));
+            GameFactory factory = AllServices.Register(new GameFactory(assetProvider, scriptableService));
 
+            IProgressService progressService = AllServices.Register<IProgressService>(new ProgressService());
 
-            IObjectPool objectPool = _allServices.RegisterSingle<IObjectPool>(factory.CreatePool());
-            objectPool.Init();
+            AllServices.Register<IReadWriterService>(new ReadWriterService(progressService, factory));
 
-            IProgressService progressService = _allServices.RegisterSingle<IProgressService>(
-                new ProgressService());
-
-            IReadWriterService readWriterService = _allServices.RegisterSingle<IReadWriterService>(
-                new ReadWriterService(progressService, factory));
-            
-            ICoroutineRunner coroutineRunner =
-                _allServices.RegisterSingle<ICoroutineRunner>(factory.CreateCoroutineRunner());
-            coroutineRunner.Init(readWriterService);
-
-            Camera camera = AllServices.Instance.GetSingle<IGameFactory>().CreateCamera();
+            Camera camera = AllServices.Get<GameFactory>().CreateCamera();
             camera.GetComponent<CameraResolution>().Init(camera);
-
-            _allServices.RegisterSingle<ISkillController>(new SkillController(progressService, objectPool,
-                scriptableService, objectPool));
+            
+            AllServices.Register(_stateMachine);
 
             //register input service
         }

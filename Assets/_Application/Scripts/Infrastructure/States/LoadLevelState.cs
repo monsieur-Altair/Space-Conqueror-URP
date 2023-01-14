@@ -8,11 +8,11 @@ namespace _Application.Scripts.Infrastructure.States
     {
         private readonly StateMachine _stateMachine;
         private readonly SceneLoader _sceneLoader;
-        private readonly IGameFactory _gameFactory;
+        private readonly GameFactory _gameFactory;
         private readonly IProgressService _progressService;
         //private curtain prefab
         public LoadLevelState(StateMachine stateMachine, SceneLoader sceneLoader, 
-            IGameFactory gameFactory, IProgressService progressService)
+            GameFactory gameFactory, IProgressService progressService)
         {
             _stateMachine = stateMachine;
             _sceneLoader = sceneLoader;

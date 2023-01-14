@@ -31,13 +31,12 @@ namespace _Application.Scripts.UI.Windows
         private Button _backToGameButton;
         
         private IProgressService _progressService;
-        public Button BackToGameButton => _backToGameButton;
 
         public override void GetDependencies()
         {
             base.GetDependencies();
 
-            _progressService = AllServices.Instance.GetSingle<IProgressService>();
+            _progressService = AllServices.Get<IProgressService>();
         }
 
         protected override void OnOpened()
@@ -45,6 +44,21 @@ namespace _Application.Scripts.UI.Windows
             base.OnOpened();
 
             UpdateAllFields();
+            
+            _backToGameButton.onClick.AddListener(BackToStartUp);
+        }
+
+        protected override void OnClosed()
+        {
+            base.OnClosed();
+            
+            _backToGameButton.onClick.RemoveAllListeners();
+        }
+
+        private static void BackToStartUp()
+        {
+            UISystem.ReturnToPreviousWindow();
+            UISystem.ShowWindow<StartUpWindow>();
         }
 
         private void UpdateAllFields()

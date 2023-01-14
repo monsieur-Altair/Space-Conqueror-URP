@@ -29,9 +29,9 @@ namespace _Application.Scripts.UI.Windows
         [SerializeField] 
         private Transform _counterContainer;
 
-        private ISkillController _skillController;
-        private ICoroutineRunner _coroutineRunner;
-        private Levels _levelManager;
+        private SkillController _skillController;
+        private CoroutineRunner _coroutineRunner;
+        private LevelManager _levelManager;
         
         public Transform CounterContainer => _counterContainer;
 
@@ -39,9 +39,9 @@ namespace _Application.Scripts.UI.Windows
         {
             base.GetDependencies();
 
-            _skillController = AllServices.Instance.GetSingle<ISkillController>();
-            _coroutineRunner = AllServices.Instance.GetSingle<ICoroutineRunner>();
-            _levelManager = Levels.Instance;
+            _skillController = AllServices.Get<SkillController>();
+            _coroutineRunner = AllServices.Get<CoroutineRunner>();
+            _levelManager = AllServices.Get<LevelManager>();
 
             foreach (Button button in _skillButtons) 
                 button.onClick.AddListener(() => { PressHandler(button); });
@@ -77,7 +77,7 @@ namespace _Application.Scripts.UI.Windows
 
         private void ShowCertainUI()
         {
-            int currentLevelNumber = Levels.Instance.CurrentLevelNumber; ///////////////////////////////
+            int currentLevelNumber = _levelManager.CurrentLevelNumber;
 
             switch (currentLevelNumber)
             {

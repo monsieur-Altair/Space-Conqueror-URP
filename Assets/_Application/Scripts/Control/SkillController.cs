@@ -1,5 +1,6 @@
 ﻿using System;
 using _Application.Scripts.Buildings;
+using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
@@ -17,7 +18,7 @@ namespace _Application.Scripts.Control
         None
     }
 
-    public class SkillController : ISkillController
+    public class SkillController : IService
     {
         public Skills.Call Call { get; }
         public Skills.Buff Buff { get; }
@@ -25,22 +26,21 @@ namespace _Application.Scripts.Control
         public Skills.Ice Ice { get; }
 
         private readonly IProgressService _progressService;
-        private readonly IScriptableService _scriptableService;
-        private readonly IObjectPool _objectPool;
+        private readonly ScriptableService _scriptableService;
+        private readonly ObjectPool _objectPool;
 
         public bool IsSkillNotSelected => 
             SelectedSkillName == SkillName.None;
         
         public SkillName SelectedSkillName { get; private set; }
 
-        public SkillController(IProgressService progressService ,IObjectPool pool, 
-            IScriptableService scriptableService, IObjectPool objectPool)
+        public SkillController(IProgressService progressService ,ObjectPool pool, ScriptableService scriptableService)
         {
             ClearSelectedSkill();
 
             _progressService = progressService;
             _scriptableService = scriptableService;
-            _objectPool = objectPool;
+            _objectPool = pool;
             
             Call = new Skills.Call(pool ,Team.Blue, Altar.DecreaseManaCount);
             Buff = new Skills.Buff(Team.Blue, Altar.DecreaseManaCount);
@@ -54,9 +54,9 @@ namespace _Application.Scripts.Control
 
         public void ApplySkill(Vector3 position)
         {
-            if (SelectedSkillName!=SkillName.None)
+            if (SelectedSkillName != SkillName.None)
             {
-                Skills.ISkill skill= ChooseSkill();
+                Skills.ISkill skill = ChooseSkill();
                 skill.ExecuteForPlayer(position);
                 SelectedSkillName = SkillName.None;
             }

@@ -2,14 +2,14 @@
 
 namespace _Application.Scripts.Infrastructure.Services.AssetManagement
 {
-    public class AssetProvider : IAssetProvider
+    public class AssetProvider : IService
     {
         public GameObject Instantiate(string path)
         {
             GameObject prefab = Resources.Load<GameObject>(path);
             return Object.Instantiate(prefab);
         }
-
+        
         public T Instantiate<T>(string path) =>
             Instantiate(path).GetComponent<T>();
 

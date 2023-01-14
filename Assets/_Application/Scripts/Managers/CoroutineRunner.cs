@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections;
 using _Application.Scripts.Infrastructure;
+using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using UnityEngine;
 
 namespace _Application.Scripts.Managers
 {
-    public class GlobalObject : MonoBehaviour, ICoroutineRunner
+    public class CoroutineRunner : MonoBehaviourService
     {
         private IReadWriterService _readWriterService;
         
-        public void Init(IReadWriterService readWriterService)
+        public override void Init()
         {
-            _readWriterService = readWriterService;
-            DontDestroyOnLoad(this);
+            base.Init();
+            
+            _readWriterService = AllServices.Get<IReadWriterService>();
         }
 
         public void InvokeWithDelay(Action action, float delay) => 

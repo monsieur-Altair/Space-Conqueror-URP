@@ -1,9 +1,10 @@
 ﻿using System.Collections;
+using _Application.Scripts.Infrastructure.Services;
 using UnityEngine;
 
 namespace _Application.Scripts.Managers
 {
-    public class AudioManager : MonoBehaviour
+    public class AudioManager : MonoBehaviourService
     {
         private AudioSource _audioBackSource;
         private AudioSource _audioEffectsSource;
@@ -19,16 +20,18 @@ namespace _Application.Scripts.Managers
         
         private Coroutine _playAudioCor;
 
-        public static AudioManager Instance { get; private set; }
-        
-        private void Awake()
+        public void StartPlayBack()
         {
-             _audioBackSource = GetComponent<AudioSource>();
-             _audioEffectsSource = transform.GetChild(0).GetComponent<AudioSource>();
-             _audioBackSource.clip = backgroundClips[0];
-             _audioBackSource.Play();
-             Instance = this; 
-             DontDestroyOnLoad(this);
+            _audioBackSource.Play();
+        }
+
+        public override void Init()
+        {
+            base.Init();
+            
+            _audioBackSource = GetComponent<AudioSource>();
+            _audioEffectsSource = transform.GetChild(0).GetComponent<AudioSource>();
+            _audioBackSource.clip = backgroundClips[0];
         }
 
         public void PlayEndgame(bool isWin)
@@ -55,7 +58,5 @@ namespace _Application.Scripts.Managers
             _audioEffectsSource.Stop();
             _audioBackSource.Play();
         }
-        
-        
     }
 }

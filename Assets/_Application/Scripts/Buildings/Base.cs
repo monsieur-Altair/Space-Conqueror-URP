@@ -39,7 +39,7 @@ namespace _Application.Scripts.Buildings
         
         private static int _id;
 
-        protected IScriptableService ScriptableService;
+        protected ScriptableService ScriptableService;
         protected IProgressService ProgressService;
         
         //private const float Speed = 20.0f;
@@ -81,7 +81,7 @@ namespace _Application.Scripts.Buildings
         public void OnDestroy() => 
             Ice.DeletingFreezingZone -= Unfreeze;
 
-        public void Construct(IScriptableService scriptableService, IProgressService progressService)
+        public void Construct(ScriptableService scriptableService, IProgressService progressService)
         {
             ScriptableService = scriptableService;
             ProgressService = progressService;

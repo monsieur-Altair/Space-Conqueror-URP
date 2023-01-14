@@ -27,7 +27,7 @@ namespace _Application.Scripts.UI.Windows
         {
             base.GetDependencies();
 
-            _progressService = AllServices.Instance.GetSingle<IProgressService>();
+            _progressService = AllServices.Get<IProgressService>();
         }
 
         protected override void OnOpened()

@@ -5,9 +5,9 @@ namespace _Application.Scripts.Control
     public interface IInputService : IService
     {
         public BuildingsController BuildingsController { get; }
-        ISkillController SkillController { get; }
+        SkillController SkillController { get; }
         void HandleInput();
-        void Init(BuildingsController buildingsController, ISkillController skillController);
+        void Init(BuildingsController buildingsController, SkillController skillController);
         void Refresh();
         void Reload();
     }

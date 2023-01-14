@@ -9,12 +9,6 @@ namespace _Application.Scripts.Units
         
         private Buildings.Base.UnitInf _unitInf;
 
-        public Material Materialas
-        {
-            get => skinnedMeshRenderer.material;
-            set { }
-        }
-
         protected override void TargetInRange()
         {
             Ice.DeletingFreezingZone -= Unfreeze;

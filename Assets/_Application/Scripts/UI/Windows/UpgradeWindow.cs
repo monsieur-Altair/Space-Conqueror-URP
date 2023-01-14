@@ -3,6 +3,7 @@ using _Application.Scripts.Infrastructure;
 using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
+using _Application.Scripts.Managers;
 using _Application.Scripts.Upgrades;
 using TMPro;
 using UnityEngine;
@@ -24,8 +25,8 @@ namespace _Application.Scripts.UI.Windows
         private int _money;
         
         private IProgressService _progressService;
-        private IScriptableService _scriptableService;
-        private ICoroutineRunner _coroutineRunner;
+        private ScriptableService _scriptableService;
+        private CoroutineRunner _coroutineRunner;
 
         private readonly List<IProgressReader> _progressReaders = new List<IProgressReader>();
         private readonly List<IProgressWriter> _progressWriters = new List<IProgressWriter>();
@@ -34,9 +35,9 @@ namespace _Application.Scripts.UI.Windows
         
         public override void GetDependencies()
         {
-            _progressService = AllServices.Instance.GetSingle<IProgressService>();
-            _scriptableService = AllServices.Instance.GetSingle<IScriptableService>();
-            _coroutineRunner = AllServices.Instance.GetSingle<ICoroutineRunner>();
+            _progressService = AllServices.Get<IProgressService>();
+            _scriptableService = AllServices.Get<ScriptableService>();
+            _coroutineRunner = AllServices.Get<CoroutineRunner>();
             
             foreach (UpgradeController upgradeController in upgradeControllers) 
                 InitController(upgradeController);

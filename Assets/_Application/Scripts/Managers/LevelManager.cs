@@ -4,7 +4,7 @@ using UnityEngine.AI;
 
 namespace _Application.Scripts.Managers
 {
-    public class Levels : MonoBehaviour
+    public class LevelManager : MonoBehaviourService
     {
         [SerializeField] 
         private NavMeshSurface navMeshSurfaceObj;
@@ -16,15 +16,7 @@ namespace _Application.Scripts.Managers
         private GameObject _currentLevel;
         
         public int CurrentLevelNumber { get;  set; }
-        public static Levels Instance { get; private set; }
-
-
-        public void Awake()
-        {
-            if (Instance == null)
-                Instance = this;
-        }
-
+        
         public void SwitchToNextLevel()
         {
             StartCoroutine(DeleteAllLevel());

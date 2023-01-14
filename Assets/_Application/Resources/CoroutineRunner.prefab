@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3196236092068518992}
   - component: {fileID: 3196236092068518993}
   m_Layer: 0
-  m_Name: GlobalObject
+  m_Name: CoroutineRunner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

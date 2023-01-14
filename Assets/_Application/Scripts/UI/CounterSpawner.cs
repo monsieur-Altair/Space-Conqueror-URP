@@ -18,9 +18,9 @@ namespace _Application.Scripts.UI
         private static Dictionary<int, Image> _backgrounds = new Dictionary<int, Image>();
         private static Dictionary<int, TextMeshProUGUI> _foregrounds = new Dictionary<int, TextMeshProUGUI>();
         private static Transform _container;
-        private static IObjectPool _pool;
+        private static ObjectPool _pool;
 
-        public static void Init(Warehouse warehouse, IObjectPool pool, Transform container)
+        public static void Init(Warehouse warehouse, ObjectPool pool, Transform container)
         {
             _counterBackground = warehouse.counterBackground;
             _counterForeground = warehouse.counterForeground;

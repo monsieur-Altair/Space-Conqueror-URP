@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using _Application.Scripts.Infrastructure;
+using _Application.Scripts.Managers;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -16,8 +17,8 @@ namespace _Application.Scripts.AI
         private const int MaxCountForLaunch = 3;//inclusive
         private const float DelayAfterCasting = 2.0f;
 
-        private readonly ICoroutineRunner _coroutineRunner;
-        private readonly SkillController _skillController;
+        private readonly CoroutineRunner _coroutineRunner;
+        private readonly AISkillController _aiSkillController;
 
         private List<List<Buildings.Base>> _allBuildings;
         private Buildings.Base _target;
@@ -27,9 +28,9 @@ namespace _Application.Scripts.AI
         private bool _isCastedSkill;
 
 
-        public AttackSomeBuilding(ICoroutineRunner coroutineRunner, SkillController skillController)
+        public AttackSomeBuilding(CoroutineRunner coroutineRunner, AISkillController aiSkillController)
         {
-            _skillController = skillController;
+            _aiSkillController = aiSkillController;
             _coroutineRunner = coroutineRunner;
         }
         
@@ -144,12 +145,12 @@ namespace _Application.Scripts.AI
             if (_isCastedSkill) 
                 return;
             
-            bool isApplied = ApplyDecision(AcidProbability, _skillController.Acid.Cost);
+            bool isApplied = ApplyDecision(AcidProbability, _aiSkillController.Acid.Cost);
            // Debug.Log($"Is acid applied? {isApplied}");
 
             if (isApplied)
             {
-                _skillController.AttackByAcid(_target);
+                _aiSkillController.AttackByAcid(_target);
                 _isCastedSkill = true;
             }
         }
@@ -160,13 +161,13 @@ namespace _Application.Scripts.AI
             if (_isCastedSkill) 
                 return;
 
-            bool isApplied = ApplyDecision(CallProbability, _skillController.Call.Cost);
+            bool isApplied = ApplyDecision(CallProbability, _aiSkillController.Call.Cost);
             //Debug.Log($"Is call applied? {isApplied}");
             if (isApplied)
             {
                 int randomIndex = Random.Range(0, _allBuildings[Core.Own].Count);
                 _target = _allBuildings[Core.Own][randomIndex];
-                _skillController.CallSupply(_target);
+                _aiSkillController.CallSupply(_target);
                 _isCastedSkill = true;
             }
         }
@@ -177,13 +178,13 @@ namespace _Application.Scripts.AI
             if (_isCastedSkill)
                 return;
 
-            bool isApplied = ApplyDecision(BuffProbability, _skillController.Buff.Cost);
+            bool isApplied = ApplyDecision(BuffProbability, _aiSkillController.Buff.Cost);
           //  Debug.Log($"Is buff applied? {isApplied}");
 
             if (isApplied)
             {
                 int randomIndex = Random.Range(0, _buildingsForLaunch.Count);
-                _skillController.BuffBuilding(_buildingsForLaunch[randomIndex]);
+                _aiSkillController.BuffBuilding(_buildingsForLaunch[randomIndex]);
                 _isCastedSkill = true;
             }
         }

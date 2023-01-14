@@ -8,15 +8,15 @@ using Base = _Application.Scripts.Buildings.Base;
 
 namespace _Application.Scripts.AI
 {
-    public class SkillController
+    public class AISkillController
     {
         public Call Call { get; }
         public Buff Buff { get; }
         public Acid Acid { get; }
-        private readonly IObjectPool _objectPool;
-        private readonly IScriptableService _scriptableService;
+        private readonly ObjectPool _objectPool;
+        private readonly ScriptableService _scriptableService;
 
-        public SkillController(IObjectPool pool, IScriptableService scriptableService, IObjectPool objectPool)
+        public AISkillController(ObjectPool pool, ScriptableService scriptableService, ObjectPool objectPool)
         {
             _scriptableService = scriptableService;
             _objectPool = objectPool;

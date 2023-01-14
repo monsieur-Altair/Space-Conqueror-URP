@@ -27,7 +27,7 @@ namespace _Application.Scripts.Skills
         protected bool IsOnCooldown;
         protected bool IsForAI;
         protected Buildings.Team TeamConstraint;
-        protected readonly ICoroutineRunner CoroutineRunner;
+        protected readonly CoroutineRunner CoroutineRunner;
 
 
         protected delegate void UniqueActionToBuilding();
@@ -41,7 +41,7 @@ namespace _Application.Scripts.Skills
         protected Base(Buildings.Team? teamConstraint, [CanBeNull] DecreasingCounter function)
         {
             MainCamera = CameraResolution.MainCamera;
-            CoroutineRunner = AllServices.Instance.GetSingle<ICoroutineRunner>();
+            CoroutineRunner = AllServices.Get<CoroutineRunner>();
             _decreaseCounter = function;
             SetTeamConstraint(teamConstraint);
         }

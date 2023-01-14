@@ -20,7 +20,7 @@ namespace _Application.Scripts.Skills
         private float _hitDamage;
         private int _hitCount;
 
-        public Acid(IObjectPool pool ,Team teamConstraint, DecreasingCounter function) : base(teamConstraint, function)
+        public Acid(ObjectPool pool ,Team teamConstraint, DecreasingCounter function) : base(teamConstraint, function)
         {
             _rain = pool.GetObject(PoolObjectType.Rain, Vector3.zero, Quaternion.identity);
             

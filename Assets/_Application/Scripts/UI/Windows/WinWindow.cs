@@ -15,8 +15,8 @@ namespace _Application.Scripts.UI.Windows
         [SerializeField] 
         private Button _toUpgradeButton;
 
-        [SerializeField] 
-        private Button _toStatistic;
+        //[SerializeField] 
+        //private Button _toStatistic;
         
         [SerializeField] 
         private TextMeshProUGUI _moneyText;
@@ -24,14 +24,14 @@ namespace _Application.Scripts.UI.Windows
         private IProgressService _progressService;
 
         public Button NextLevelButton => _nextLevelButton;
-        public Button ToStatisticButton => _toStatistic;
+        //public Button ToStatisticButton => _toStatistic;
         public Button ToUpgradeMenuButton => _toUpgradeButton;
         
         public override void GetDependencies()
         {
             base.GetDependencies();
             
-            _progressService = AllServices.Instance.GetSingle<IProgressService>();
+            _progressService = AllServices.Get<IProgressService>();
         }
 
         protected override void OnOpened()

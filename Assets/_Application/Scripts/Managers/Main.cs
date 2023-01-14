@@ -3,12 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using _Application.Scripts.Control;
-using _Application.Scripts.Infrastructure;
 using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.SavedData;
-using _Application.Scripts.Scriptables;
 using _Application.Scripts.UI;
 using _Application.Scripts.UI.Windows;
 using _Application.Scripts.UI.Windows.Tutorial;
@@ -26,14 +24,15 @@ namespace _Application.Scripts.Managers
     {
         private readonly AI.Core _core;
         private readonly Outlook _outlook;
-        private readonly Levels _levelsManager;
-        private readonly IObjectPool _objectPool;
+        private readonly LevelManager _levelsManager;
+        private readonly ObjectPool _objectPool;
         private readonly UserControl _userControl;
         private readonly TeamManager _teamManager;
-        private readonly ICoroutineRunner _coroutineRunner;
-        private readonly IScriptableService _scriptableService;
+        private readonly CoroutineRunner _coroutineRunner;
+        private readonly ScriptableService _scriptableService;
         private readonly IProgressService _progressService;
         private readonly AudioManager _audioManager;
+        private readonly bool _useTutorial;
 
         private GameObject _buildingsLay;
         private bool _isWin;
@@ -44,12 +43,13 @@ namespace _Application.Scripts.Managers
         private int _lastCompletedLevel;
         private bool _hasUpgradeTutorialShown;
 
-        public Main(Levels levelsManager, TeamManager teamManager, ICoroutineRunner coroutineRunner, AI.Core core,
-            IObjectPool pool, Outlook outlook, UserControl userControl, IScriptableService scriptableService,
+        public Main(LevelManager levelsManager, TeamManager teamManager, CoroutineRunner coroutineRunner, AI.Core core,
+            ObjectPool pool, Outlook outlook, UserControl userControl, ScriptableService scriptableService,
             IProgressService progressService, AudioManager audioManager)
         {
             _allBuildings = new List<Buildings.Base>();
-            
+
+            _useTutorial = AllServices.Get<CoreConfig>().UseTutorial;
             _teamManager = teamManager;
             _coroutineRunner = coroutineRunner;
             _levelsManager = levelsManager;
@@ -67,13 +67,13 @@ namespace _Application.Scripts.Managers
 
             UISystem.GetWindow<WinWindow>().NextLevelButton.onClick.AddListener(NextLevelButton_Clicked);
             UISystem.GetWindow<WinWindow>().ToUpgradeMenuButton.onClick.AddListener(ToUpgradeMenuButton_Clicked);
-            UISystem.GetWindow<WinWindow>().ToStatisticButton.onClick.AddListener(ToStatisticButton_Clicked);
+            //UISystem.GetWindow<WinWindow>().ToStatisticButton.onClick.AddListener(ToStatisticButton_Clicked);
             UISystem.GetWindow<LoseWindow>().RestartButton.onClick.AddListener(RestartLevelButton_Clicked);
             UISystem.GetWindow<LoseWindow>().ToUpgradeMenuButton.onClick.AddListener(ToUpgradeMenuButton_Clicked);
             UISystem.GetWindow<UpgradeWindow>().BackToGameButton.onClick.AddListener(BackToGameButton_Clicked);
             
-            UISystem.GetWindow<StatisticWindow>().BackToGameButton.onClick.RemoveAllListeners();
-            UISystem.GetWindow<StatisticWindow>().BackToGameButton.onClick.AddListener(BackToGameButton_Clicked);
+            //UISystem.GetWindow<StatisticWindow>().BackToGameButton.onClick.RemoveAllListeners();
+            //UISystem.GetWindow<StatisticWindow>().BackToGameButton.onClick.AddListener(BackToGameButton_Clicked);
        }
 
         public void StartGame()
@@ -121,7 +121,7 @@ namespace _Application.Scripts.Managers
 
                     int currentLevelNumber = _levelsManager.CurrentLevelNumber;
 
-                    if (currentLevelNumber <= 5) 
+                    if (currentLevelNumber <= 5 && _useTutorial) 
                         UISystem.ShowTutorialWindow(currentLevelNumber);
 
                     break;
@@ -180,11 +180,11 @@ namespace _Application.Scripts.Managers
 
         private void AddReward()
         {
-            int money = AllServices.Instance.GetSingle<IProgressService>().PlayerProgress.Money;
+            int money = AllServices.Get<IProgressService>().PlayerProgress.Money;
             int rewardMoney = _isWin ? _scriptableService.RewardList.GetReward(_lastCompletedLevel) : 0;
             
             money += rewardMoney;
-            AllServices.Instance.GetSingle<IProgressService>().PlayerProgress.Money = money;
+            AllServices.Get<IProgressService>().PlayerProgress.Money = money;
         }
 
         private IEnumerator StartGameplay()

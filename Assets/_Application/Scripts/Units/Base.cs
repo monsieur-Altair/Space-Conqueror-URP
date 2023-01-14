@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace _Application.Scripts.Units
@@ -22,6 +23,11 @@ namespace _Application.Scripts.Units
 
         private Vector3 _destination;
         private const float MinDistance = 1.0f;
+
+        private void Awake()
+        {
+            Agent = GetComponent<NavMeshAgent>();
+        }
 
         public void Update()
         {
@@ -49,7 +55,7 @@ namespace _Application.Scripts.Units
         private void GoTo(Vector3 destinationPos)
         {
             _destination = destinationPos;
-            Agent = GetComponent<NavMeshAgent>();
+            //Agent = GetComponent<NavMeshAgent>();
             
             SetSpeed();
             Agent.SetDestination(destinationPos);

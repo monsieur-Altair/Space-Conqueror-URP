@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using _Application.Scripts.Infrastructure;
+using _Application.Scripts.Managers;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -17,17 +18,17 @@ namespace _Application.Scripts.AI
 
         private readonly List<List<Buildings.Base>> _allBuildings;
         private readonly IAction _attackByWarrior;
-        private readonly ICoroutineRunner _coroutineRunner;
+        private readonly CoroutineRunner _coroutineRunner;
 
         private const float MinDelay = 4.0f;
         private const float MaxDelay = 7.0f;
 
         
-        public Core(ICoroutineRunner coroutineRunner, SkillController skillController)
+        public Core(CoroutineRunner coroutineRunner, AISkillController aiSkillController)
         {
             _coroutineRunner = coroutineRunner;
             _allBuildings = new List<List<Buildings.Base>>();
-            _attackByWarrior = new AttackSomeBuilding(_coroutineRunner, skillController);
+            _attackByWarrior = new AttackSomeBuilding(_coroutineRunner, aiSkillController);
             
             Buildings.Base.Conquered += AdjustBuildingsList;
         }
@@ -61,7 +62,6 @@ namespace _Application.Scripts.AI
             while (true)
             {
                 float delay = Random.Range(MinDelay, MaxDelay);
-                //Debug.LogError($"AI thinks {delay} seconds...");
                 yield return new WaitForSeconds(delay);
                 _attackByWarrior.Execute();
             }

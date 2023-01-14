@@ -2,11 +2,8 @@
 {
     public static class AssetPaths
     {
-        public const string PoolPath = "Managers/Object Pool";
         public const string UserControlPath = "Managers/User Control";
         public const string Warehouse = "Managers/Warehouse";
-        
-        
         public const string UISystemPath = "UI/UISystem";
         
         public const string AcidPrefabPath = "Skills/Acid rain";
@@ -63,7 +60,6 @@
 
         #endregion
 
-        public const string GlobalObjectPath = "GlobalObject";
         public const string MainCameraPath = "Main Camera";
     }
 }

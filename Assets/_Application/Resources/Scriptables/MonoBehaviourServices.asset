@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b5d5f35cecf4fc58a7ddf2feb2604e6, type: 3}
+  m_Name: MonoBehaviourServices
+  m_EditorClassIdentifier: 
+  _audioManager: {fileID: 1035500207987708673, guid: 1567c6b2131856a4d8780fa03be09f0c, type: 3}
+  _coroutineRunner: {fileID: 3196236092068518993, guid: 510439d727a6204489c263d7d60395c8, type: 3}
+  _objectPool: {fileID: 5628840661832811158, guid: 39b00a19d9b280e4e8d04fa6f29e7227, type: 3}
+  _levelManager: {fileID: 5370934065307269283, guid: 84d6d5a45e55ace4098a9ed18bad1f0a, type: 3}

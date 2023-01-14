@@ -18,7 +18,7 @@ namespace _Application.Scripts.Managers
         Ice = 9
     }
 
-    public class ObjectPool : MonoBehaviour, IObjectPool
+    public class ObjectPool : MonoBehaviourService
     {
         public List<Pool> pools;
         
@@ -32,8 +32,10 @@ namespace _Application.Scripts.Managers
             public int size;
         }
 
-        public void Init()
+        public override void Init()
         {
+            base.Init();
+            
             foreach (Pool pool in pools)
             {
                 Queue<GameObject> objectPool = new Queue<GameObject>(); 
@@ -45,8 +47,6 @@ namespace _Application.Scripts.Managers
                 }
                 _poolDictionary.Add(pool.poolObjectType.GetHashCode(),objectPool);
             }
-            
-            DontDestroyOnLoad(this);
         }
 
         public GameObject GetObject(PoolObjectType type, Vector3 position, Quaternion rotation)

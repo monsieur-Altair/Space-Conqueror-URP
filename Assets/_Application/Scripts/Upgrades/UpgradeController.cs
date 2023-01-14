@@ -4,6 +4,7 @@ using System.Collections;
 using _Application.Scripts.Infrastructure;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
+using _Application.Scripts.Managers;
 using _Application.Scripts.SavedData;
 using _Application.Scripts.Scriptables.Upgrades;
 using TMPro;
@@ -36,11 +37,11 @@ namespace _Application.Scripts.Upgrades
         private int _numberOfCompletedCells;
         private int _cost;
         private UpgradeInfo _upgradeInfo;
-        private ICoroutineRunner _coroutineRunner;
+        private CoroutineRunner _coroutineRunner;
         
         //private readonly List<IEnumerator> _coroutines = new List<IEnumerator>();
         
-        public void Init(IScriptableService scriptableService, ICoroutineRunner coroutineRunner)
+        public void Init(ScriptableService scriptableService, CoroutineRunner coroutineRunner)
         {
             _upgradeInfo = scriptableService.GetUpgradeInfo(upgradeType);
             _coroutineRunner = coroutineRunner;

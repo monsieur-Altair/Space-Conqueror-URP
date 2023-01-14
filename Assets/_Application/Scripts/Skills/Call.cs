@@ -16,7 +16,7 @@ namespace _Application.Scripts.Skills
         private Units.Base _sentUnit;
         private float _callPercent;
 
-        public Call(IObjectPool pool ,Team teamConstraint, DecreasingCounter function) : base(teamConstraint, function)
+        public Call(ObjectPool pool ,Team teamConstraint, DecreasingCounter function) : base(teamConstraint, function)
         {
             _indicator = pool.GetObject(PoolObjectType.Indicator, Vector3.zero, Quaternion.identity);
             _indicator.SetActive(false);

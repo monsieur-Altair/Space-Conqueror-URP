@@ -7,11 +7,11 @@ namespace _Application.Scripts.Control
         protected abstract void AffectToSkills();
         
         public BuildingsController BuildingsController { get; private set; }
-        public ISkillController SkillController { get; private set; }
+        public SkillController SkillController { get; private set; }
 
         public abstract void HandleInput();
 
-        public void Init(BuildingsController buildingsController, ISkillController skillController)
+        public void Init(BuildingsController buildingsController, SkillController skillController)
         {
             BuildingsController = buildingsController;
             SkillController = skillController;

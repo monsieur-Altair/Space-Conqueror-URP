@@ -10,7 +10,7 @@ using Type = _Application.Scripts.Buildings.Type;
 
 namespace _Application.Scripts.Infrastructure.Services.Scriptables
 {
-    public class ScriptableService : IScriptableService
+    public class ScriptableService : IService
     {
         private const int AIIndex = (int)Team.Red;
         private const int PlayerIndex = (int)Team.Blue;
@@ -19,7 +19,7 @@ namespace _Application.Scripts.Infrastructure.Services.Scriptables
         private const int AltarIndex = (int)Type.Altar;
         private const int SpawnerIndex = (int)Type.Spawner;
         
-        private readonly IAssetProvider _assetProvider;
+        private readonly AssetProvider _assetProvider;
         private readonly Building[,] _buildingsInfo = new Building[2,3];
         private readonly Unit[,] _unitsInfo = new Unit[2,3];
         private readonly Mana[] _mana = new Mana[2];
@@ -50,7 +50,7 @@ namespace _Application.Scripts.Infrastructure.Services.Scriptables
         #endregion
 
 
-        public ScriptableService(IAssetProvider assetProvider) => 
+        public ScriptableService(AssetProvider assetProvider) => 
             _assetProvider = assetProvider;
 
         public void LoadAllScriptables()
