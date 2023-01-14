@@ -30,13 +30,13 @@ namespace _Application.Scripts.UI.Windows
         [SerializeField] 
         private Button _backToGameButton;
         
-        private IProgressService _progressService;
+        private ProgressService _progressService;
 
         public override void GetDependencies()
         {
             base.GetDependencies();
 
-            _progressService = AllServices.Get<IProgressService>();
+            _progressService = AllServices.Get<ProgressService>();
         }
 
         protected override void OnOpened()
@@ -55,9 +55,9 @@ namespace _Application.Scripts.UI.Windows
             _backToGameButton.onClick.RemoveAllListeners();
         }
 
-        private static void BackToStartUp()
+        private void BackToStartUp()
         {
-            UISystem.ReturnToPreviousWindow();
+            Close();
             UISystem.ShowWindow<StartUpWindow>();
         }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using _Application.Scripts.Infrastructure;
 using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using UnityEngine;
@@ -9,13 +8,13 @@ namespace _Application.Scripts.Managers
 {
     public class CoroutineRunner : MonoBehaviourService
     {
-        private IReadWriterService _readWriterService;
+        private ReadWriterService _readWriterService;
         
         public override void Init()
         {
             base.Init();
             
-            _readWriterService = AllServices.Get<IReadWriterService>();
+            _readWriterService = AllServices.Get<ReadWriterService>();
         }
 
         public void InvokeWithDelay(Action action, float delay) => 
@@ -27,7 +26,9 @@ namespace _Application.Scripts.Managers
         private void OnApplicationFocus(bool hasFocus)
         {
             if (hasFocus == false)
+            {
                 _readWriterService.WriteProgress();
+            }
         }
 
         private static IEnumerator WaitAndDo(float delay, Action action)

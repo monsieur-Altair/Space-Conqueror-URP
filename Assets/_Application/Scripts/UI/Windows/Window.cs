@@ -6,11 +6,13 @@ namespace _Application.Scripts.UI.Windows
     [RequireComponent(typeof(Canvas))]
     public abstract class Window : MonoBehaviour
     {
+        public bool IsOpened { get; private set; } = false;
         public static event Action<Window> Opened = delegate {  };
         public static event Action<Window> Closed = delegate {  };
 
         public void Open()
         {
+            IsOpened = true;
             OnOpened();
             Opened(this);
             gameObject.SetActive(true); 
@@ -21,6 +23,7 @@ namespace _Application.Scripts.UI.Windows
             OnClosed();
             Closed(this);
             gameObject.SetActive(false);
+            IsOpened = false;
         }
 
         public virtual void GetDependencies()

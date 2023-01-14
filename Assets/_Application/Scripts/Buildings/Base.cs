@@ -40,7 +40,7 @@ namespace _Application.Scripts.Buildings
         private static int _id;
 
         protected ScriptableService ScriptableService;
-        protected IProgressService ProgressService;
+        protected ProgressService ProgressService;
         
         //private const float Speed = 20.0f;
         private const float LaunchCoefficient = 0.5f;
@@ -81,7 +81,7 @@ namespace _Application.Scripts.Buildings
         public void OnDestroy() => 
             Ice.DeletingFreezingZone -= Unfreeze;
 
-        public void Construct(ScriptableService scriptableService, IProgressService progressService)
+        public void Construct(ScriptableService scriptableService, ProgressService progressService)
         {
             ScriptableService = scriptableService;
             ProgressService = progressService;

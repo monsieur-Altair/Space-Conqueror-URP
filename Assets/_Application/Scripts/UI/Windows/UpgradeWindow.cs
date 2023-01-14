@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using _Application.Scripts.Infrastructure;
 using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
@@ -12,7 +11,7 @@ using UnityEngine.UI;
 namespace _Application.Scripts.UI.Windows
 {
     [RequireComponent(typeof(GraphicRaycaster))]
-    public class UpgradeWindow : Window
+    public class UpgradeWindow : PayloadedWindow<bool>
     {
         [SerializeField] 
         private UpgradeController[] upgradeControllers;
@@ -24,18 +23,18 @@ namespace _Application.Scripts.UI.Windows
         private TextMeshProUGUI moneyText;
         private int _money;
         
-        private IProgressService _progressService;
+        private ProgressService _progressService;
         private ScriptableService _scriptableService;
         private CoroutineRunner _coroutineRunner;
+
+        private bool _isWin;
 
         private readonly List<IProgressReader> _progressReaders = new List<IProgressReader>();
         private readonly List<IProgressWriter> _progressWriters = new List<IProgressWriter>();
 
-        public Button BackToGameButton => backButton;
-        
         public override void GetDependencies()
         {
-            _progressService = AllServices.Get<IProgressService>();
+            _progressService = AllServices.Get<ProgressService>();
             _scriptableService = AllServices.Get<ScriptableService>();
             _coroutineRunner = AllServices.Get<CoroutineRunner>();
             
@@ -46,6 +45,8 @@ namespace _Application.Scripts.UI.Windows
         protected override void OnOpened()
         {
             base.OnOpened();
+
+            _isWin = _payload;
             
             foreach (IProgressReader progressReader in _progressReaders)
                 progressReader.ReadProgress(_progressService.PlayerProgress);
@@ -55,6 +56,8 @@ namespace _Application.Scripts.UI.Windows
 
             _money = _progressService.PlayerProgress.Money;
             moneyText.text = _money.ToString();
+            
+            backButton.onClick.AddListener(GoBackToGame);
         }
 
         protected override void OnClosed()
@@ -67,6 +70,17 @@ namespace _Application.Scripts.UI.Windows
             _progressService.PlayerProgress.Money = _money;
             
             _coroutineRunner.StopAllCoroutines();
+            backButton.onClick.RemoveListener(GoBackToGame);
+        }
+
+        private void GoBackToGame()
+        {
+            Close();
+            
+            if(_isWin)
+                UISystem.ShowWindow<WinWindow>();
+            else
+                UISystem.ShowWindow<LoseWindow>();
         }
 
         private void OnDestroy()
@@ -74,8 +88,7 @@ namespace _Application.Scripts.UI.Windows
             foreach (UpgradeController upgradeController in upgradeControllers)
                 upgradeController.TriedPurchaseUpgrade -= UpgradeController_TriedPurchaseUpgrade;
         }
-
-
+        
         private void InitController(UpgradeController upgradeController)
         {
             _progressReaders.Add(upgradeController);

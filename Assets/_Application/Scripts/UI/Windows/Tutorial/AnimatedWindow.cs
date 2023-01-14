@@ -1,5 +1,4 @@
-﻿using System;
-using DG.Tweening;
+﻿using DG.Tweening;
 using UnityEngine;
 
 namespace _Application.Scripts.UI.Windows.Tutorial
@@ -8,7 +7,6 @@ namespace _Application.Scripts.UI.Windows.Tutorial
     public class AnimatedWindow : Window
     {
         private const float MaxAlpha = 1.0f;
-        public static event Action FadeCompleted = delegate {  };
         
         protected float _endAlphaValue = 0.0f;
         protected float _duration = 5.0f;
@@ -25,9 +23,9 @@ namespace _Application.Scripts.UI.Windows.Tutorial
         }
 
         protected override void OnOpened() => 
-            StartFadeAnimation();
+            StartFadeOutAnimation();
 
-        protected virtual void StartFadeAnimation()
+        protected virtual void StartFadeOutAnimation()
         {
             _canvasGroup.alpha = MaxAlpha;
             _canvasGroup
@@ -38,8 +36,8 @@ namespace _Application.Scripts.UI.Windows.Tutorial
 
         private void OnFadeCompleted()
         {
-            if(gameObject.activeSelf)   
-                FadeCompleted();
+            if(IsOpened)   
+                Close();
         }
     }
 }

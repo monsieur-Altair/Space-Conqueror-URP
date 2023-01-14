@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using UnityEngine;
 
 namespace _Application.Scripts.SavedData
 {
@@ -10,7 +11,6 @@ namespace _Application.Scripts.SavedData
         public int Money;
         public AchievedUpgrades[] AchievedUpgrades;
         public Statistic Statistic;
-        
         
         public PlayerProgress(int levelNumber)
         {
@@ -23,7 +23,6 @@ namespace _Application.Scripts.SavedData
 
         public AchievedUpgrades GetAchievedUpgrade(UpgradeType upgradeType) => 
             AchievedUpgrades.First(upgrades => upgrades.upgradeType == upgradeType);
-        //AchievedUpgrades[(int)upgradeType];
 
         private void CreateAchieveUpgrades()
         {

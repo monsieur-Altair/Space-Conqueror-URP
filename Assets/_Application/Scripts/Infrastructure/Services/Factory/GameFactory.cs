@@ -27,13 +27,7 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
             _coreConfig = coreConfig;
         }
 
-        public void CleanUp()
-        {
-            ProgressReaders.Clear();
-            ProgressWriters.Clear();
-        }
-
-        public Main CreateWorld()
+        public GameLoopManager CreateWorld()
         {
             ObjectPool objectPool = AllServices.Get<ObjectPool>();
             CoroutineRunner coroutineRunner = AllServices.Get<CoroutineRunner>();
@@ -51,21 +45,17 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
             CounterSpawner.Init(warehouse, objectPool, UISystem.GetWindow<GameplayWindow>().CounterContainer, globalCamera);
             
             
-            Main mainManager = new Main(AllServices.Get<LevelManager>(), 
-                new TeamManager(AllServices.Get<IProgressService>()), 
-                coroutineRunner,
-                aiManager, 
-                objectPool,
-                outlookManager, 
-                userControl,
+            GameLoopManager gameLoopManager = new GameLoopManager(AllServices.Get<LevelManager>(), 
+                new TeamManager(AllServices.Get<ProgressService>()), 
+                coroutineRunner, aiManager, objectPool, outlookManager, userControl,
                 AllServices.Get<ScriptableService>(),
-                AllServices.Get<IProgressService>(),
+                AllServices.Get<ProgressService>(),
                 AllServices.Get<AudioManager>());
             
-            ProgressReaders.Add(mainManager);
-            ProgressWriters.Add(mainManager);
+            ProgressReaders.Add(gameLoopManager);
+            ProgressWriters.Add(gameLoopManager);
 
-            return mainManager;
+            return gameLoopManager;
         }
 
         public void CreateAndRegisterMonoBeh<T>(T prefab) where T : MonoBehaviourService

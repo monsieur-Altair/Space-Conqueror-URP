@@ -1,5 +1,7 @@
 ﻿using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Infrastructure.Services.Progress;
+using _Application.Scripts.Infrastructure.States;
+using _Application.Scripts.Managers;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,17 +23,19 @@ namespace _Application.Scripts.UI.Windows
         [SerializeField] 
         private TextMeshProUGUI _moneyText;
 
-        private IProgressService _progressService;
+        private ProgressService _progressService;
+        private StateMachine _stateMachine;
+        private AudioManager _audioManager;
+        private LevelManager _levelManager;
 
-        public Button NextLevelButton => _nextLevelButton;
-        //public Button ToStatisticButton => _toStatistic;
-        public Button ToUpgradeMenuButton => _toUpgradeButton;
-        
         public override void GetDependencies()
         {
             base.GetDependencies();
-            
-            _progressService = AllServices.Get<IProgressService>();
+
+            _levelManager = AllServices.Get<LevelManager>();
+            _audioManager = AllServices.Get<AudioManager>();
+            _progressService = AllServices.Get<ProgressService>();
+            _stateMachine = AllServices.Get<StateMachine>();
         }
 
         protected override void OnOpened()
@@ -39,6 +43,32 @@ namespace _Application.Scripts.UI.Windows
             base.OnOpened();
             
             _moneyText.text = _progressService.PlayerProgress.Money.ToString();
+            
+            _nextLevelButton.onClick.AddListener(GoNextLevel);
+            _toUpgradeButton.onClick.AddListener(OpenUpgrades);
+        }
+
+        protected override void OnClosed()
+        {
+            base.OnClosed();
+            
+            _nextLevelButton.onClick.RemoveListener(GoNextLevel);
+            _toUpgradeButton.onClick.RemoveListener(OpenUpgrades);
+        }
+
+        private void OpenUpgrades()
+        {
+            Close();
+            UISystem.ShowPayloadedWindow<UpgradeWindow, bool>(true);
+        }
+
+        private void GoNextLevel()
+        {
+            _audioManager.PlayBackgroundAgain();
+            _levelManager.SwitchToNextLevel();
+            _stateMachine.Enter<GameLoopState>();
+            
+            Close();
         }
     }
 }

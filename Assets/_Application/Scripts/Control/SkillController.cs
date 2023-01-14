@@ -25,7 +25,7 @@ namespace _Application.Scripts.Control
         public Skills.Acid Acid { get; }
         public Skills.Ice Ice { get; }
 
-        private readonly IProgressService _progressService;
+        private readonly ProgressService _progressService;
         private readonly ScriptableService _scriptableService;
         private readonly ObjectPool _objectPool;
 
@@ -34,7 +34,7 @@ namespace _Application.Scripts.Control
         
         public SkillName SelectedSkillName { get; private set; }
 
-        public SkillController(IProgressService progressService, ObjectPool pool, ScriptableService scriptableService,
+        public SkillController(ProgressService progressService, ObjectPool pool, ScriptableService scriptableService,
             GlobalCamera globalCamera)
         {
             ClearSelectedSkill();

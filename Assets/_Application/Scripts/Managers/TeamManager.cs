@@ -13,10 +13,10 @@ namespace _Application.Scripts.Managers
         
         private readonly int _teamNumber = Enum.GetNames(typeof(Team)).Length;
         private readonly List<int> _teamCount;
-        private readonly IProgressService _progressService;
+        private readonly ProgressService _progressService;
 
 
-        public TeamManager(IProgressService progressService)
+        public TeamManager(ProgressService progressService)
         {
             _progressService = progressService;
             _teamCount = new List<int>(_teamNumber);

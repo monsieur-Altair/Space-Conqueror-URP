@@ -2,10 +2,10 @@
 {
     public class Tutorial0Window : AnimatedWindow
     {
-        protected override void StartFadeAnimation()
+        protected override void StartFadeOutAnimation()
         {
             _duration = 15.0f;
-            base.StartFadeAnimation();
+            base.StartFadeOutAnimation();
         }
 
     }

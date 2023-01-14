@@ -15,14 +15,10 @@ namespace _Application.Scripts.UI
         [SerializeField] 
         private Canvas _canvas;
 
-        private readonly Stack<Window> _openedWindows = new Stack<Window>(new HashSet<Window>(new Stack<Window>()));
         private readonly Dictionary<Type, Window> _windows = new Dictionary<Type, Window>();
 
         private static UISystem _instance;
-        public Window CurrentWindow { get; private set; }
         public Canvas GameCanvas => _canvas;
-        public static bool IsTutorialDisplayed { get; private set; }
-
 
         public override void Init()
         {
@@ -38,27 +34,41 @@ namespace _Application.Scripts.UI
         private void OnDestroy() => 
             UnsubscribeEvents();
 
-        public static void ShowWindow<TWindow>() where TWindow : Window => 
-            _instance._windows[typeof(TWindow)].Open();
-
-        public static void ReturnToPreviousWindow() => 
-            _instance._openedWindows.Peek().Close();
+        public static void ShowWindow<TWindow>() where TWindow : Window
+        {
+            Window window = _instance._windows[typeof(TWindow)];
+            if(window.IsOpened==false)
+                window.Open();
+        }
+        
+        public static void ShowPayloadedWindow<TWindow, TPayload>(TPayload payload) 
+            where TWindow : PayloadedWindow<TPayload>
+        {
+            PayloadedWindow<TPayload> window = _instance._windows[typeof(TWindow)] as PayloadedWindow<TPayload>;
+            if(window.IsOpened==false)
+                window.Open(payload);
+        }
 
         public static TWindow GetWindow<TWindow>() where TWindow : Window => 
             _instance._windows[typeof(TWindow)] as TWindow;
+        
+        public static void CloseWindow<TWindow>() where TWindow : Window
+        {
+            Window window = _instance._windows[typeof(TWindow)];
+            if(window.IsOpened)
+                window.Close();
+        }
 
         private void SubscribeEvents()
         {
             Window.Opened += Window_Opened;
             Window.Closed += Window_Closed;
-            AnimatedWindow.FadeCompleted += AnimatedWindow_FadeCompleted;
         }
 
         private void UnsubscribeEvents()
         {
             Window.Opened -= Window_Opened;
             Window.Closed -= Window_Closed;
-            AnimatedWindow.FadeCompleted -= AnimatedWindow_FadeCompleted;
         }
 
         private void GetAllWindows()
@@ -74,52 +84,36 @@ namespace _Application.Scripts.UI
 
         private void Window_Opened(Window window)
         {
-            _openedWindows.Push(window);
             window.transform.SetAsLastSibling();
-            CurrentWindow = window;
         }
 
         private void Window_Closed(Window closedWindow)
         {
-            Window poppedWindow = _openedWindows.Pop();
-            if (poppedWindow.GetType() != closedWindow.GetType())
-                throw new InvalidOperationException("was popped wrong window");
-            
-            poppedWindow.transform.SetAsFirstSibling();
-            CurrentWindow = _openedWindows.Peek();
+            closedWindow.transform.SetAsFirstSibling();
         }
 
-        private static void AnimatedWindow_FadeCompleted() => 
-            IsTutorialDisplayed = false;
-
+        private static Window GetTutorialWindow(int levelsNumber)
+        {
+            return levelsNumber switch
+            {
+                0 => GetWindow<Tutorial0Window>(),
+                1 => GetWindow<Tutorial1Window>(),
+                2 => GetWindow<Tutorial2Window>(),
+                3 => GetWindow<Tutorial3Window>(),
+                4 => GetWindow<Tutorial4Window>(),
+                5 => GetWindow<Tutorial5Window>(),
+                _ => throw new ArgumentOutOfRangeException(nameof(levelsNumber), levelsNumber, null)
+            };
+        }
+        
         public static void ShowTutorialWindow(int levelsNumber)
         {
-            switch (levelsNumber)
-            {
-                case 0:
-                    ShowWindow<Tutorial0Window>();
-                    break;
-                case 1:
-                    ShowWindow<Tutorial1Window>();
-                    break;
-                case 2:
-                    ShowWindow<Tutorial2Window>();
-                    break;
-                case 3:
-                    ShowWindow<Tutorial3Window>();
-                    break;
-                case 4:
-                    ShowWindow<Tutorial4Window>();
-                    break;
-                case 5:
-                    ShowWindow<Tutorial5Window>();
-                    break;
-            }
-
-            IsTutorialDisplayed = true;
+            GetTutorialWindow(levelsNumber).Open();
         }
 
-        public static void DisableTutorialWindow() => 
-            IsTutorialDisplayed = false;
+        public static void CloseTutorialWindow(int currentLevelNumber)
+        {
+            GetTutorialWindow(currentLevelNumber).Close();
+        }
     }
 }

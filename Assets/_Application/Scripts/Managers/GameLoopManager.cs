@@ -16,13 +16,16 @@ namespace _Application.Scripts.Managers
 {
     public enum GameStates
     {
-        Gameplay,
-        GameOver
+        GameStarted,
+        GameEnded, 
+        Exit
     }
 
-    public class Main : IProgressWriter, IProgressReader
+    public class GameLoopManager : IProgressWriter, IProgressReader
     {
-        private readonly AI.Core _core;
+        private const int MaxTutorialCount = 5;
+        
+        private readonly AI.Core _ai;
         private readonly Outlook _outlook;
         private readonly LevelManager _levelsManager;
         private readonly ObjectPool _objectPool;
@@ -30,7 +33,7 @@ namespace _Application.Scripts.Managers
         private readonly TeamManager _teamManager;
         private readonly CoroutineRunner _coroutineRunner;
         private readonly ScriptableService _scriptableService;
-        private readonly IProgressService _progressService;
+        private readonly ProgressService _progressService;
         private readonly AudioManager _audioManager;
         private readonly bool _useTutorial;
 
@@ -43,9 +46,9 @@ namespace _Application.Scripts.Managers
         private int _lastCompletedLevel;
         private bool _hasUpgradeTutorialShown;
 
-        public Main(LevelManager levelsManager, TeamManager teamManager, CoroutineRunner coroutineRunner, AI.Core core,
+        public GameLoopManager(LevelManager levelsManager, TeamManager teamManager, CoroutineRunner coroutineRunner, AI.Core ai,
             ObjectPool pool, Outlook outlook, UserControl userControl, ScriptableService scriptableService,
-            IProgressService progressService, AudioManager audioManager)
+            ProgressService progressService, AudioManager audioManager)
         {
             _allBuildings = new List<Buildings.Base>();
 
@@ -53,7 +56,7 @@ namespace _Application.Scripts.Managers
             _teamManager = teamManager;
             _coroutineRunner = coroutineRunner;
             _levelsManager = levelsManager;
-            _core = core;
+            _ai = ai;
             _objectPool = pool;
             _outlook = outlook;
             _userControl = userControl;
@@ -63,27 +66,20 @@ namespace _Application.Scripts.Managers
 
             Buildings.Base.Conquered += _teamManager.UpdateObjectsCount;
             TeamManager.GameEnded += EndGame;
-            AnimatedWindow.FadeCompleted += AnimatedWindow_FadeCompleted;
 
-            UISystem.GetWindow<WinWindow>().NextLevelButton.onClick.AddListener(NextLevelButton_Clicked);
-            UISystem.GetWindow<WinWindow>().ToUpgradeMenuButton.onClick.AddListener(ToUpgradeMenuButton_Clicked);
             //UISystem.GetWindow<WinWindow>().ToStatisticButton.onClick.AddListener(ToStatisticButton_Clicked);
-            UISystem.GetWindow<LoseWindow>().RestartButton.onClick.AddListener(RestartLevelButton_Clicked);
-            UISystem.GetWindow<LoseWindow>().ToUpgradeMenuButton.onClick.AddListener(ToUpgradeMenuButton_Clicked);
-            UISystem.GetWindow<UpgradeWindow>().BackToGameButton.onClick.AddListener(BackToGameButton_Clicked);
-            
-            //UISystem.GetWindow<StatisticWindow>().BackToGameButton.onClick.RemoveAllListeners();
-            //UISystem.GetWindow<StatisticWindow>().BackToGameButton.onClick.AddListener(BackToGameButton_Clicked);
        }
 
         public void StartGame()
         {
-            _currentGameState = GameStates.Gameplay;
+            _currentGameState = GameStates.GameStarted;
             UpdateState();
         }
 
-        public void WriteProgress(PlayerProgress playerProgress) => 
+        public void WriteProgress(PlayerProgress playerProgress)
+        {
             playerProgress.LevelInfo.lastCompletedLevel = _lastCompletedLevel;
+        }
 
         public void ReadProgress(PlayerProgress playerProgress)
         {
@@ -112,38 +108,38 @@ namespace _Application.Scripts.Managers
         {
             switch (_currentGameState)
             { 
-                case GameStates.Gameplay:
+                case GameStates.GameStarted:
                 {
                     _coroutineRunner.StartCoroutine(StartGameplay());
                     
-                    UISystem.ReturnToPreviousWindow();
                     UISystem.ShowWindow<GameplayWindow>();
 
                     int currentLevelNumber = _levelsManager.CurrentLevelNumber;
 
-                    if (currentLevelNumber <= 5 && _useTutorial) 
+                    if (currentLevelNumber <= MaxTutorialCount && _useTutorial) 
                         UISystem.ShowTutorialWindow(currentLevelNumber);
 
                     break;
                 }
-                case GameStates.GameOver:
+                case GameStates.GameEnded:
                 {
                     _userControl.Refresh();
                     _userControl.Disable();
                     _objectPool.DisableAllUnitsInScene();
-                    _core.Disable();
+                    _ai.Disable();
 
-                    if (UISystem.IsTutorialDisplayed)
-                    {
-                        UISystem.ReturnToPreviousWindow();
-                        UISystem.DisableTutorialWindow();
-                    }
+                    int currentLevelNumber = _levelsManager.CurrentLevelNumber;
+                    if (currentLevelNumber <= MaxTutorialCount && _useTutorial) 
+                        UISystem.CloseTutorialWindow(currentLevelNumber);
                     
                     ShowEndGameWindow();
 
                     _audioManager.PlayEndgame(_isWin);
                     break;
                 }
+                case GameStates.Exit:
+                    
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -151,7 +147,7 @@ namespace _Application.Scripts.Managers
 
         private void ShowEndGameWindow()
         {
-            UISystem.ReturnToPreviousWindow();
+            UISystem.CloseWindow<GameplayWindow>();
 
             if (_isWin)
                 UISystem.ShowWindow<WinWindow>();
@@ -174,17 +170,17 @@ namespace _Application.Scripts.Managers
             
             AddReward();
             
-            _currentGameState = GameStates.GameOver;
+            _currentGameState = GameStates.GameEnded;
             UpdateState();
         }
 
         private void AddReward()
         {
-            int money = AllServices.Get<IProgressService>().PlayerProgress.Money;
+            int money = AllServices.Get<ProgressService>().PlayerProgress.Money;
             int rewardMoney = _isWin ? _scriptableService.RewardList.GetReward(_lastCompletedLevel) : 0;
             
             money += rewardMoney;
-            AllServices.Get<IProgressService>().PlayerProgress.Money = money;
+            AllServices.Get<ProgressService>().PlayerProgress.Money = money;
         }
 
         private IEnumerator StartGameplay()
@@ -193,8 +189,8 @@ namespace _Application.Scripts.Managers
             yield return _coroutineRunner.StartCoroutine(_levelsManager.InstantiateLevel());
             _buildingsLay = _levelsManager.GetCurrentLay();
             PrepareLevel();
-            _core.Init(_allBuildings);
-            _core.Enable();
+            _ai.Init(_allBuildings);
+            _ai.Enable();
             _outlook.PrepareLevel(_allBuildings);
             
             CounterSpawner.ClearList();
@@ -214,55 +210,6 @@ namespace _Application.Scripts.Managers
 
             _teamManager.Clear();
             _allBuildings.Clear();
-        }
-
-        private void NextLevelButton_Clicked()
-        {
-            _audioManager.PlayBackgroundAgain();
-            _levelsManager.SwitchToNextLevel();
-            StartGame();
-        }
-
-        private void RestartLevelButton_Clicked()
-        {
-            _audioManager.PlayBackgroundAgain();
-            _levelsManager.RestartLevel();
-            StartGame();
-        }
-
-        private void ToUpgradeMenuButton_Clicked()
-        {
-            UISystem.ReturnToPreviousWindow();
-            UISystem.ShowWindow<UpgradeWindow>();
-            
-            _buildingsLay.SetActive(false);
-        }
-        
-        private void ToStatisticButton_Clicked()
-        {
-            UISystem.ReturnToPreviousWindow();
-            UISystem.ShowWindow<StatisticWindow>();
-            
-            _buildingsLay.SetActive(false);
-        }
-
-        private static void AnimatedWindow_FadeCompleted() => 
-            UISystem.ReturnToPreviousWindow();
-
-        private void BackToGameButton_Clicked()
-        {
-            _buildingsLay.SetActive(true);
-
-            ShowEndGameWindow();
-        }
-
-        private void ShowUpgradeTutorialWindow()
-        {
-            if (_hasUpgradeTutorialShown == false)
-            {
-                UISystem.ShowWindow<Tutorial05Window>();
-                _hasUpgradeTutorialShown = true;
-            }
         }
     }
 }

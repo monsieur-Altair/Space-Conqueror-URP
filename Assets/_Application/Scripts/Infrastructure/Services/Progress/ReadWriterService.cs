@@ -6,14 +6,14 @@ using UnityEngine;
 
 namespace _Application.Scripts.Infrastructure.Services.Progress
 {
-    public class ReadWriterService : IReadWriterService
+    public class ReadWriterService : IService
     {
         private readonly GameFactory _gameFactory;
-        private readonly IProgressService _progressService;
+        private readonly ProgressService _progressService;
 
         private const string PlayerProgressKey = "PlayerProgress";
 
-        public ReadWriterService(IProgressService progressService, GameFactory gameFactory)
+        public ReadWriterService(ProgressService progressService, GameFactory gameFactory)
         {
             _progressService = progressService;
             _gameFactory = gameFactory;

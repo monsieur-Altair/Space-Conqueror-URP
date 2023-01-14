@@ -16,11 +16,21 @@ namespace _Application.Scripts.Infrastructure.States
         {
             _states = new Dictionary<Type, IBaseState>()
             {
-                [typeof(BootstrapState)] = new BootstrapState(this, sceneLoader, coreConfig),
-                [typeof(LoadLevelState)] = new LoadLevelState(this, sceneLoader, AllServices.Get<GameFactory>(),AllServices.Get<IProgressService>()),
-                [typeof(GameLoopState)] = new GameLoopState(this)
+                [typeof(BootstrapState)] = CreateBootstrapState(sceneLoader, coreConfig),
+                [typeof(LoadLevelState)] = CreateLoadLevelState(sceneLoader),
+                [typeof(GameLoopState)] = CreateGameLoopState()
             };
         }
+
+        private GameLoopState CreateGameLoopState() => 
+            new GameLoopState(this, AllServices.Get<GameFactory>());
+
+        private LoadLevelState CreateLoadLevelState(SceneLoader sceneLoader) => 
+            new LoadLevelState(this, sceneLoader, AllServices.Get<GameFactory>(),
+                AllServices.Get<ProgressService>());
+
+        private BootstrapState CreateBootstrapState(SceneLoader sceneLoader, CoreConfig coreConfig) => 
+            new BootstrapState(this, sceneLoader, coreConfig);
 
         public void Enter<TState>() where TState : class, IState
         {

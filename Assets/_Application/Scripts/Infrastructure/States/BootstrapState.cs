@@ -16,8 +16,8 @@ namespace _Application.Scripts.Infrastructure.States
         private const string Main = "Main";
         private readonly StateMachine _stateMachine;
         private readonly SceneLoader _sceneLoader;
-        private readonly IProgressService _progressService;
-        private readonly IReadWriterService _readWriterService;
+        private readonly ProgressService _progressService;
+        private readonly ReadWriterService _readWriterService;
         private readonly CoreConfig _coreConfig;
         private GameFactory _gameFactory;
 
@@ -31,8 +31,8 @@ namespace _Application.Scripts.Infrastructure.States
             RegisterMonoBehServices();
 
 
-            _progressService = AllServices.Get<IProgressService>();
-            _readWriterService = AllServices.Get<IReadWriterService>();
+            _progressService = AllServices.Get<ProgressService>();
+            _readWriterService = AllServices.Get<ReadWriterService>();
             
             AllServices.Register(new SkillController(_progressService, 
                 AllServices.Get<ObjectPool>(), 
@@ -79,9 +79,9 @@ namespace _Application.Scripts.Infrastructure.States
 
             GameFactory factory = AllServices.Register(new GameFactory(scriptableService, _coreConfig));
 
-            IProgressService progressService = AllServices.Register<IProgressService>(new ProgressService());
+            ProgressService progressService = AllServices.Register(new ProgressService());
 
-            AllServices.Register<IReadWriterService>(new ReadWriterService(progressService, factory));
+            AllServices.Register(new ReadWriterService(progressService, factory));
             AllServices.Register(_stateMachine);
         }
 

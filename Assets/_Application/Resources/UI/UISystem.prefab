@@ -1594,6 +1594,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5516542067334224103}
     m_Modifications:
+    - target: {fileID: 4165664257829216788, guid: 4c0572e8e6878aa40ab97a42a080c3e3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4407900435868371498, guid: 4c0572e8e6878aa40ab97a42a080c3e3, type: 3}
       propertyPath: m_Name
       value: Win_Window
