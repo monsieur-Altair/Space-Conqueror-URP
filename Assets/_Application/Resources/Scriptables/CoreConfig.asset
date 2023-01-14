@@ -13,3 +13,20 @@ MonoBehaviour:
   m_Name: CoreConfig
   m_EditorClassIdentifier: 
   _monoBehaviourServices: {fileID: 11400000, guid: 1e58fb0badccc14489107bb1502a5b6e, type: 2}
+  _useTutorial: 0
+  _playerConfig: {fileID: 11400000, guid: 81e92971cbbfec14f89428a0593a8230, type: 2}
+  _aiConfig: {fileID: 11400000, guid: e8067db245785924f9f6dde4bc949a54, type: 2}
+  _upgrades:
+    _pairs:
+    - _key: 0
+      _value: {fileID: 11400000, guid: 82b77cf9379923a40955c0af1f3f9405, type: 2}
+    - _key: 1
+      _value: {fileID: 11400000, guid: 38d30dc0aa007864c8f37d36a2014b94, type: 2}
+    - _key: 2
+      _value: {fileID: 11400000, guid: 57eaf3d86ce82b34184d803cd3f73b65, type: 2}
+    - _key: 3
+      _value: {fileID: 11400000, guid: f48f8cf0db9035f408de6bbf19b75588, type: 2}
+    - _key: 4
+      _value: {fileID: 11400000, guid: 08e50fddd6e99d847bcb3c1bdd9cb87f, type: 2}
+  _rewardList: {fileID: 11400000, guid: 7dfe441c14d43964180fb877d09fa8cf, type: 2}
+  _warehouse: {fileID: 2309908679417820949, guid: 970f128dd70541040bea813d70aad344, type: 3}

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using _Application.Scripts.AI;
 using _Application.Scripts.Control;
-using _Application.Scripts.Infrastructure.Services.AssetManagement;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
@@ -16,16 +15,16 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
         public List<IProgressReader> ProgressReaders { get; } 
         public List<IProgressWriter> ProgressWriters { get; }
 
-        private readonly AssetProvider _assetProvider;
         private readonly ScriptableService _scriptableService;
+        private readonly CoreConfig _coreConfig;
 
-        public GameFactory(AssetProvider assetProvider, ScriptableService scriptableService)
+        public GameFactory(ScriptableService scriptableService, CoreConfig coreConfig)
         {
             ProgressReaders = new List<IProgressReader>();
             ProgressWriters = new List<IProgressWriter>();
 
-            _assetProvider = assetProvider;
             _scriptableService = scriptableService;
+            _coreConfig = coreConfig;
         }
 
         public void CleanUp()
@@ -34,25 +33,22 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
             ProgressWriters.Clear();
         }
 
-        public UISystem CreateUISystem() => 
-            _assetProvider.Instantiate<UISystem>(AssetPaths.UISystemPath);
-
         public Main CreateWorld()
         {
             ObjectPool objectPool = AllServices.Get<ObjectPool>();
             CoroutineRunner coroutineRunner = AllServices.Get<CoroutineRunner>();
             
-            Warehouse warehouse = _assetProvider.Instantiate<Warehouse>(AssetPaths.Warehouse);
+            Warehouse warehouse = _coreConfig.Warehouse;
 
+            GlobalCamera globalCamera = AllServices.Get<GlobalCamera>();
             AISkillController aiAISkillController = 
-                new AISkillController(objectPool,_scriptableService , objectPool); 
+                new AISkillController(objectPool,_scriptableService , objectPool, globalCamera); 
             
             Core aiManager = new Core(coroutineRunner, aiAISkillController);
             
             Outlook outlookManager = new Outlook(warehouse);
-            UserControl userControl = CreateUserControl();
-            //Managers.UI uiManager = CreateUI(pool, warehouse, playerSkillController);
-            CounterSpawner.Init(warehouse, objectPool, UISystem.GetWindow<GameplayWindow>().CounterContainer);
+            UserControl userControl = AllServices.Get<UserControl>();
+            CounterSpawner.Init(warehouse, objectPool, UISystem.GetWindow<GameplayWindow>().CounterContainer, globalCamera);
             
             
             Main mainManager = new Main(AllServices.Get<LevelManager>(), 
@@ -72,31 +68,11 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
             return mainManager;
         }
 
-        public T CreateMonoBeh<T>(T prefab) where T : MonoBehaviourService
+        public void CreateAndRegisterMonoBeh<T>(T prefab) where T : MonoBehaviourService
         {
             T service = Object.Instantiate(prefab);
             service.Init();
-            return service;
-        }
-
-        public Camera CreateCamera() => 
-            _assetProvider.Instantiate<Camera>(AssetPaths.MainCameraPath);
-
-        public GameObject CreateAcid() => 
-            _assetProvider.Instantiate(AssetPaths.AcidPrefabPath);
-
-        public GameObject CreateIndicator() =>
-            _assetProvider.Instantiate(AssetPaths.IndicatorPrefabPath);
-
-        public GameObject CreateIce() => 
-            _assetProvider.Instantiate(AssetPaths.IcePrefabPath);
-
-        private UserControl CreateUserControl()
-        {
-            UserControl userControl = _assetProvider.Instantiate<UserControl>(AssetPaths.UserControlPath);
-            BuildingsController buildingsController = new BuildingsController(Camera.main);
-            userControl.Init(buildingsController, AllServices.Get<SkillController>());
-            return userControl;
+            AllServices.Register(service);
         }
     }
 }

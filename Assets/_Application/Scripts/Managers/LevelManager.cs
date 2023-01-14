@@ -37,14 +37,12 @@ namespace _Application.Scripts.Managers
             if (CurrentLevelNumber >= levels.Length)
                 CurrentLevelNumber = 0;
 
-            //CurrentLevelNumber = 5;
-            
             yield return StartCoroutine(DeleteAllLevel());
 
             _currentLevel = Instantiate(levels[CurrentLevelNumber], _instantiatePos, Quaternion.identity);
             _currentLevel.SetActive(true);
             navMeshSurfaceObj.BuildNavMesh();
-            _currentLevel.gameObject.transform.SetParent(gameObject.transform.parent);
+            _currentLevel.gameObject.transform.SetParent(transform.parent);
         }
 
         private IEnumerator DeleteAllLevel()

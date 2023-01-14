@@ -16,7 +16,7 @@ namespace _Application.Scripts.Buildings
         White = 2,
     }
 
-    public enum Type
+    public enum BuildingType
     {
         Altar = 0,
         Spawner = 1,
@@ -27,7 +27,7 @@ namespace _Application.Scripts.Buildings
     public abstract class Base : MonoBehaviour, IFreezable, IBuffed
     {
         [SerializeField] private Team team;
-        [SerializeField] private Type type;
+        [SerializeField] private BuildingType _buildingType;
 
         public static event Action<Base, Team, Team> Conquered;
         public event Action<Base, int> CountChanged;
@@ -59,7 +59,7 @@ namespace _Application.Scripts.Buildings
         public int ID { get; private set; }
         public float BuildingsRadius { get; private set; }
         public Team Team { get; private set; }
-        public Type Type { get; private set; }
+        public BuildingType BuildingType { get; private set; }
         public bool IsBuffed { get; private set; }
         public float Count => _count;
 
@@ -97,8 +97,8 @@ namespace _Application.Scripts.Buildings
 
             Team availableTeam = (team == Team.White) ? Team.Red : team;
 
-            Scriptables.Building infoAboutBuilding = ScriptableService.GetBuildingInfo(availableTeam, type);
-            Scriptables.Unit infoAboutUnit = ScriptableService.GetUnitInfo(availableTeam, type);
+            Scriptables.Building infoAboutBuilding = ScriptableService.GetBuildingInfo(availableTeam, _buildingType);
+            Scriptables.Unit infoAboutUnit = ScriptableService.GetUnitInfo(availableTeam, _buildingType);
             
             LoadResources(infoAboutBuilding, infoAboutUnit);
         }
@@ -108,7 +108,7 @@ namespace _Application.Scripts.Buildings
             PlayerProgress playerProgress = ProgressService.PlayerProgress;
             
             Team = team;
-            Type = type;
+            BuildingType = _buildingType;
             
             //bad practice
             float buildingDefenceCoefficient = (team == Team.Blue)
@@ -173,7 +173,7 @@ namespace _Application.Scripts.Buildings
         {
             CalculateLaunchPositions( out Vector3 launchPos,out Vector3 destPos,this,destination);
 
-            PoolObjectType poolObjectType = (PoolObjectType)((int) Type);
+            PoolObjectType poolObjectType = (PoolObjectType)((int) BuildingType);
             Quaternion rotation = Quaternion.LookRotation(destPos - launchPos);
 
             Units.Base unit = LaunchingUnit?.Invoke(poolObjectType, launchPos, rotation);
@@ -251,8 +251,8 @@ namespace _Application.Scripts.Buildings
         {
             team = newTeam;
 
-            Scriptables.Building infoAboutBuilding = ScriptableService.GetBuildingInfo(newTeam , type);
-            Scriptables.Unit infoAboutUnit = ScriptableService.GetUnitInfo(newTeam, type);
+            Scriptables.Building infoAboutBuilding = ScriptableService.GetBuildingInfo(newTeam , _buildingType);
+            Scriptables.Unit infoAboutUnit = ScriptableService.GetUnitInfo(newTeam, _buildingType);
 
             LoadResources(infoAboutBuilding, infoAboutUnit);
 

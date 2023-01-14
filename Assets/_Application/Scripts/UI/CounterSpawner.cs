@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Managers;
 using _Application.Scripts.Misc;
 using TMPro;
@@ -19,9 +20,11 @@ namespace _Application.Scripts.UI
         private static Dictionary<int, TextMeshProUGUI> _foregrounds = new Dictionary<int, TextMeshProUGUI>();
         private static Transform _container;
         private static ObjectPool _pool;
+        private static GlobalCamera _globalCamera;
 
-        public static void Init(Warehouse warehouse, ObjectPool pool, Transform container)
+        public static void Init(Warehouse warehouse, ObjectPool pool, Transform container, GlobalCamera globalCamera)
         {
+            _globalCamera = globalCamera;
             _counterBackground = warehouse.counterBackground;
             _counterForeground = warehouse.counterForeground;
             _container = container;
@@ -65,7 +68,7 @@ namespace _Application.Scripts.UI
         private static Vector3 GetCounterPos(Buildings.Base building)
         {
             Vector3 pos = building.transform.position;
-            Vector3 screenPos = CameraResolution.GetScreenPos(pos);
+            Vector3 screenPos = _globalCamera.GetScreenPos(pos);
             return screenPos + _offset;
         }
 

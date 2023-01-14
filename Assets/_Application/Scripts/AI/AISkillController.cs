@@ -1,4 +1,5 @@
 ﻿using _Application.Scripts.Buildings;
+using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
@@ -16,12 +17,13 @@ namespace _Application.Scripts.AI
         private readonly ObjectPool _objectPool;
         private readonly ScriptableService _scriptableService;
 
-        public AISkillController(ObjectPool pool, ScriptableService scriptableService, ObjectPool objectPool)
+        public AISkillController(ObjectPool pool, ScriptableService scriptableService, ObjectPool objectPool,
+            GlobalCamera globalCamera)
         {
             _scriptableService = scriptableService;
             _objectPool = objectPool;
 
-            Call = new Call(pool,Team.Red, DecreaseAIManaCounter);
+            Call = new Call(pool,Team.Red, DecreaseAIManaCounter, globalCamera);
             Acid = new Acid(pool,Team.Red, DecreaseAIManaCounter);
             Buff = new Buff(Team.Red, DecreaseAIManaCounter);
 

@@ -1,8 +1,7 @@
 ﻿using System.Collections;
 using _Application.Scripts.Buildings;
-using _Application.Scripts.Infrastructure.Services.Factory;
+using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Managers;
-using _Application.Scripts.Misc;
 using _Application.Scripts.Scriptables;
 using UnityEngine;
 
@@ -10,23 +9,20 @@ namespace _Application.Scripts.Skills
 {
     public class Call : Base
     {
+        private readonly GlobalCamera _globalCamera;
         private readonly GameObject _indicator;
         private readonly Vector3 _indicatorOffset = new Vector3(0, 1.9f, 0);
         private Coroutine _displayingIndicatorCor;
         private Units.Base _sentUnit;
         private float _callPercent;
 
-        public Call(ObjectPool pool ,Team teamConstraint, DecreasingCounter function) : base(teamConstraint, function)
+        public Call(ObjectPool pool, Team teamConstraint, DecreasingCounter function, GlobalCamera globalCamera) 
+            : base(teamConstraint, function)
         {
+            _globalCamera = globalCamera;
             _indicator = pool.GetObject(PoolObjectType.Indicator, Vector3.zero, Quaternion.identity);
             _indicator.SetActive(false);
         }
-
-        // public override void SetSkillObject(GameObject skillObject)
-        // {
-        //     _indicator = skillObject;
-        //     _indicator.SetActive(false);
-        // }
 
         protected override void LoadResources(Skill resource, float coefficient = 1.0f)
         {
@@ -60,10 +56,10 @@ namespace _Application.Scripts.Skills
 
         private void CallSupply()
         {
-            Vector3 launchPos = CameraResolution.FindSpawnPoint(SelectedBuilding);
+            Vector3 launchPos = _globalCamera.FindSpawnPoint(SelectedBuilding);
             Vector3 destPos = CalculateDestPos(launchPos, SelectedBuilding);
             
-            PoolObjectType poolObjectType = (PoolObjectType) ((int) SelectedBuilding.Type);
+            PoolObjectType poolObjectType = (PoolObjectType) ((int) SelectedBuilding.BuildingType);
             
             _sentUnit = OnNeedObjectFromPool(poolObjectType,launchPos, Quaternion.LookRotation(destPos - launchPos));
             

@@ -60,7 +60,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   team: 2
-  type: 2
+  _buildingType: 2
 --- !u!54 &-7072601439543158682
 Rigidbody:
   m_ObjectHideFlags: 0

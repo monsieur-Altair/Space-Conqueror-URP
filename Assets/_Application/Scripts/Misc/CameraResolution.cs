@@ -16,7 +16,7 @@ namespace _Application.Scripts.Misc
         private float _initialFov;
         private float _horizontalFov = 120f;
 
-        public static Camera MainCamera { get; private set; }
+        public Camera MainCamera { get; private set; }
 
         public void Init(Camera mainCamera)
         {
@@ -48,7 +48,7 @@ namespace _Application.Scripts.Misc
             }
         }
 
-        public static Vector3 GetScreenPos(Vector3 pos) => 
+        public Vector3 GetScreenPos(Vector3 pos) => 
             MainCamera.WorldToScreenPoint(pos);
 
         private static float CalcVerticalFov(float hFovInDeg, float aspectRatio)
@@ -58,7 +58,7 @@ namespace _Application.Scripts.Misc
             return vFovInRads * Mathf.Rad2Deg;
         }
 
-        public static Vector3 FindOffset(Vector3 worldPos)// go to camera resolution
+        public Vector3 FindOffset(Vector3 worldPos)// go to camera resolution
         {
             int coefficient = MainCamera.pixelHeight / MainCamera.pixelWidth;
             Vector3 screenPos = MainCamera.WorldToScreenPoint(worldPos);
@@ -74,7 +74,7 @@ namespace _Application.Scripts.Misc
         //calculate a min way on SCREEN (NOT WORLD) coordinates for supply
 
 
-        public static Vector3 FindSpawnPoint(Base destination)
+        public Vector3 FindSpawnPoint(Base destination)
         {
             Vector3 destPosWorld = destination.transform.position;
             Vector3 destPosScreen = MainCamera.WorldToScreenPoint(destPosWorld);
@@ -121,7 +121,7 @@ namespace _Application.Scripts.Misc
             return minIndex;
         }
 
-        private static void GetCameraDepths(out float min, out float max)
+        private void GetCameraDepths(out float min, out float max)
         {
             min = max = 0.0f;
             

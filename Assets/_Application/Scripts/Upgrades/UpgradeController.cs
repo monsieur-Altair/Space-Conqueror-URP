@@ -1,7 +1,6 @@
 ﻿#nullable enable
 using System;
 using System.Collections;
-using _Application.Scripts.Infrastructure;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
@@ -38,8 +37,6 @@ namespace _Application.Scripts.Upgrades
         private int _cost;
         private UpgradeInfo _upgradeInfo;
         private CoroutineRunner _coroutineRunner;
-        
-        //private readonly List<IEnumerator> _coroutines = new List<IEnumerator>();
         
         public void Init(ScriptableService scriptableService, CoroutineRunner coroutineRunner)
         {
@@ -83,7 +80,7 @@ namespace _Application.Scripts.Upgrades
             
             if (stats != null)
             {
-                _cost = (int) (stats?.cost);
+                _cost = (int) stats?.cost;
                 costText.text = _cost.ToString();
             }
             else
@@ -91,7 +88,6 @@ namespace _Application.Scripts.Upgrades
                 addButton.gameObject.SetActive(false);
             }
 
-            //AddToCoroutinesList(PurchaseAnimation(startFill, lastFill));
             _coroutineRunner.StartCoroutine(PurchaseAnimation(startFill, lastFill));
         }
 
@@ -105,22 +101,7 @@ namespace _Application.Scripts.Upgrades
                 improvedBar.fillAmount += delta;
                 yield return new WaitForSeconds(0.025f);
             }
-            //RemoveFromCoroutinesList();
         }
-
-        // private void AddToCoroutinesList(IEnumerator purchaseAnimation)
-        // {
-        //     _coroutines.Add(purchaseAnimation);
-        //     if (_coroutines.Count == 1)
-        //         _coroutineRunner.StartCoroutine(_coroutines[0]);
-        // }
-        //
-        // private void RemoveFromCoroutinesList()
-        // {
-        //     _coroutines.Remove(_coroutines[0]);
-        //     if (_coroutines.Count > 0)
-        //         _coroutineRunner.StartCoroutine(_coroutines[0]);
-        // }
 
         private void ButtonClickHandler()
         {

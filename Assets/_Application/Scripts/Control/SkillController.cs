@@ -34,7 +34,8 @@ namespace _Application.Scripts.Control
         
         public SkillName SelectedSkillName { get; private set; }
 
-        public SkillController(IProgressService progressService ,ObjectPool pool, ScriptableService scriptableService)
+        public SkillController(IProgressService progressService, ObjectPool pool, ScriptableService scriptableService,
+            GlobalCamera globalCamera)
         {
             ClearSelectedSkill();
 
@@ -42,7 +43,7 @@ namespace _Application.Scripts.Control
             _scriptableService = scriptableService;
             _objectPool = pool;
             
-            Call = new Skills.Call(pool ,Team.Blue, Altar.DecreaseManaCount);
+            Call = new Skills.Call(pool ,Team.Blue, Altar.DecreaseManaCount, globalCamera);
             Buff = new Skills.Buff(Team.Blue, Altar.DecreaseManaCount);
             Acid = new Skills.Acid(pool,Team.Blue, Altar.DecreaseManaCount);
             Ice = new Skills.Ice(pool);

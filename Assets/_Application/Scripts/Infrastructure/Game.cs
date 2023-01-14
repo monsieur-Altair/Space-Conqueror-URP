@@ -1,6 +1,4 @@
-﻿using _Application.Scripts.Infrastructure.Services;
-using _Application.Scripts.Infrastructure.Services.Factory;
-using _Application.Scripts.Infrastructure.States;
+﻿using _Application.Scripts.Infrastructure.States;
 using _Application.Scripts.Managers;
 using UnityEngine;
 
@@ -12,7 +10,7 @@ namespace _Application.Scripts.Infrastructure
         public Game(MonoBehaviour behaviour, CoreConfig coreConfig)
         {
             StateMachine = new StateMachine(new SceneLoader(behaviour), coreConfig);
-            AllServices.Get<GameFactory>().CreateUISystem().Setup();
+            //AllServices.Get<GameFactory>().CreateUISystem();
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using _Application.Scripts.Buildings;
 using _Application.Scripts.Units;
 using UnityEngine;
 using Base = _Application.Scripts.Units.Base;
-using Type = _Application.Scripts.Buildings.Type;
 
 namespace _Application.Scripts.Managers
 {    
@@ -104,22 +104,22 @@ namespace _Application.Scripts.Managers
         private void SetOutlook(Buildings.Base building)
         {
             int team = (int)building.Team;
-            Type type = building.Type;
+            BuildingType buildingType = building.BuildingType;
             int index = building.ID.GetHashCode();
 
-            _buildingsRenderer[index].materials = GetMaterials(type, team);
+            _buildingsRenderer[index].materials = GetMaterials(buildingType, team);
         }
 
-        private Material[] GetMaterials(Type type, int team)
+        private Material[] GetMaterials(BuildingType buildingType, int team)
         {
-            switch (type)
+            switch (buildingType)
             {
-                case Type.Altar:
+                case BuildingType.Altar:
                     Material crystalMat = new Material(_baseCrystalMaterial);
                     crystalMat.SetTexture(BaseMap, _allTextures[CrystalBaseHash][team]);
                     crystalMat.SetTexture(EmissionMap, _allTextures[CrystalEmissionHash][team]);
                     return new[] {crystalMat, _baseBuildingMaterial, _baseBuildingMaterial};
-                case Type.Spawner:
+                case BuildingType.Spawner:
                     Material flagSpawnerMat = new Material(_baseFlagMaterial)
                     {
                         mainTexture = _allTextures[FlagHash][team]
@@ -129,14 +129,14 @@ namespace _Application.Scripts.Managers
                         mainTexture =  _allTextures[RoofHash][team]
                     };
                     return new[] { roofMat, flagSpawnerMat, _baseBuildingMaterial, _baseBuildingMaterial };
-                case Type.Attacker:
+                case BuildingType.Attacker:
                     Material flagMat = new Material(_baseFlagMaterial)
                     {
                         mainTexture = _allTextures[FlagHash][team]
                     };
                     return new[] { flagMat, _baseBuildingMaterial, _baseBuildingMaterial};
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+                    throw new ArgumentOutOfRangeException(nameof(buildingType), buildingType, null);
             }
         }
 

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using _Application.Scripts.Managers;
 using _Application.Scripts.UI.Windows;
 using _Application.Scripts.UI.Windows.Tutorial;
 using UnityEngine;
 
 namespace _Application.Scripts.UI
 {
-    public class UISystem : MonoBehaviour
+    public class UISystem : MonoBehaviourService
     {
         [SerializeField] 
         private Transform _windowsContainer;
@@ -17,39 +18,34 @@ namespace _Application.Scripts.UI
         private readonly Stack<Window> _openedWindows = new Stack<Window>(new HashSet<Window>(new Stack<Window>()));
         private readonly Dictionary<Type, Window> _windows = new Dictionary<Type, Window>();
 
-        public static UISystem Instance { get; private set; }
+        private static UISystem _instance;
         public Window CurrentWindow { get; private set; }
         public Canvas GameCanvas => _canvas;
         public static bool IsTutorialDisplayed { get; private set; }
 
 
-        public void Setup()
+        public override void Init()
         {
-            if (Instance == null)
-            {
-                Instance = this;
-
-                GetAllWindows();
-                
-                SubscribeEvents();
-
-                ShowWindow<EmptyWindow>();
-
-                DontDestroyOnLoad(this);
-            }
+            base.Init();
+            
+            _instance = this;
+            
+            GetAllWindows();
+            SubscribeEvents();
+            ShowWindow<EmptyWindow>();
         }
 
         private void OnDestroy() => 
             UnsubscribeEvents();
 
         public static void ShowWindow<TWindow>() where TWindow : Window => 
-            Instance._windows[typeof(TWindow)].Open();
+            _instance._windows[typeof(TWindow)].Open();
 
         public static void ReturnToPreviousWindow() => 
-            Instance._openedWindows.Peek().Close();
+            _instance._openedWindows.Peek().Close();
 
         public static TWindow GetWindow<TWindow>() where TWindow : Window => 
-            Instance._windows[typeof(TWindow)] as TWindow;
+            _instance._windows[typeof(TWindow)] as TWindow;
 
         private void SubscribeEvents()
         {

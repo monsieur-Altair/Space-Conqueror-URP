@@ -1,19 +1,21 @@
-﻿using UnityEngine;
+﻿using _Application.Scripts.Infrastructure.Services;
+using _Application.Scripts.Managers;
+using UnityEngine;
 
 namespace _Application.Scripts.Control
 {
-    public class UserControl : MonoBehaviour
+    public class UserControl : MonoBehaviourService
     {
         private bool _isActive;
 
         private IInputService _inputService;
 
-        public void Init(BuildingsController buildingsController , SkillController skillController)
+        public override void Init()
         {
-            //_inputService = Game.InputService;
-            //_inputService.Init(new BuildingsController(MainCamera.main), GetComponent<SkillController>());
-            _inputService = RegisterInputService(buildingsController ,skillController);
-            //_inputService = AllServices.Instance.Single<IInputService>();
+            base.Init();
+            
+            BuildingsController buildingsController = new BuildingsController(AllServices.Get<GlobalCamera>().MainCamera);
+            _inputService = RegisterInputService(buildingsController, AllServices.Get<SkillController>());
         }
 
         public void Update()

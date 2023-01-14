@@ -1,8 +1,6 @@
 ﻿using System;
-using _Application.Scripts.Infrastructure;
 using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Managers;
-using _Application.Scripts.Misc;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -18,7 +16,6 @@ namespace _Application.Scripts.Skills
         
         protected abstract void CancelSkill();
         protected abstract void ApplySkill();
-        //public abstract void SetSkillObject(GameObject skillObject);
 
         protected readonly Camera MainCamera;
         protected Buildings.Base SelectedBuilding;
@@ -40,7 +37,7 @@ namespace _Application.Scripts.Skills
 
         protected Base(Buildings.Team? teamConstraint, [CanBeNull] DecreasingCounter function)
         {
-            MainCamera = CameraResolution.MainCamera;
+            MainCamera = AllServices.Get<GlobalCamera>().MainCamera;
             CoroutineRunner = AllServices.Get<CoroutineRunner>();
             _decreaseCounter = function;
             SetTeamConstraint(teamConstraint);
