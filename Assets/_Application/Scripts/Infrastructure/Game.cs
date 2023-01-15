@@ -9,7 +9,7 @@ namespace _Application.Scripts.Infrastructure
         public readonly StateMachine StateMachine;
         public Game(MonoBehaviour behaviour, CoreConfig coreConfig)
         {
-            StateMachine = new StateMachine(new SceneLoader(behaviour), coreConfig);
+            StateMachine = new StateMachine(behaviour, new SceneLoader(behaviour), coreConfig);
             //AllServices.Get<GameFactory>().CreateUISystem();
         }
     }

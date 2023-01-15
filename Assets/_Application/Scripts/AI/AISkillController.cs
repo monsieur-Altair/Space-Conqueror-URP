@@ -4,6 +4,7 @@ using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
 using _Application.Scripts.Skills;
+using Pool_And_Particles;
 using UnityEngine;
 using Base = _Application.Scripts.Buildings.Base;
 
@@ -14,10 +15,10 @@ namespace _Application.Scripts.AI
         public Call Call { get; }
         public Buff Buff { get; }
         public Acid Acid { get; }
-        private readonly ObjectPool _objectPool;
+        private readonly GlobalPool _objectPool;
         private readonly ScriptableService _scriptableService;
 
-        public AISkillController(ObjectPool pool, ScriptableService scriptableService, ObjectPool objectPool,
+        public AISkillController(GlobalPool pool, ScriptableService scriptableService, GlobalPool objectPool,
             GlobalCamera globalCamera)
         {
             _scriptableService = scriptableService;
@@ -25,9 +26,7 @@ namespace _Application.Scripts.AI
 
             Call = new Call(pool,Team.Red, DecreaseAIManaCounter, globalCamera);
             Acid = new Acid(pool,Team.Red, DecreaseAIManaCounter);
-            Buff = new Buff(Team.Red, DecreaseAIManaCounter);
-
-            Call.NeedObjectFromPool += SpawnUnit;
+            Buff = new Buff(pool,Team.Red, DecreaseAIManaCounter);
 
             ReloadSkills();
         }
@@ -57,9 +56,5 @@ namespace _Application.Scripts.AI
 
         public void CallSupply(Base target) => 
             Call.ExecuteForAI(target);
-
-        private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
-            _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.Base>();
-        
     }   
 }

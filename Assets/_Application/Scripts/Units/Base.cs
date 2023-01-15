@@ -1,4 +1,5 @@
 ﻿using System;
+using Pool_And_Particles;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,8 +10,11 @@ namespace _Application.Scripts.Units
         typeof(Collider), 
         typeof(Rigidbody))]
     
-    public abstract class Base : MonoBehaviour
+    public abstract class Base : PooledBehaviour
     {
+        public static event Action<Base> Launched = delegate { };
+        public static event Action<Base> Approached = delegate { };
+        
         public abstract float GetActualCount(float countAfterAttack);
         public abstract void SetData(in Buildings.Base.UnitInf unitInf);
         public abstract Buildings.Team GetTeam();
@@ -50,16 +54,21 @@ namespace _Application.Scripts.Units
             if(Agent.isActiveAndEnabled)
                 Agent.isStopped = true;
             TargetInRange();
+            Approached(this);
+        }
+
+        public void Stop()
+        {
+            Target = null;
         }
 
         private void GoTo(Vector3 destinationPos)
         {
             _destination = destinationPos;
-            //Agent = GetComponent<NavMeshAgent>();
-            
             SetSpeed();
             Agent.SetDestination(destinationPos);
             Agent.isStopped = false;
+            Launched(this);
         }
     }
 }

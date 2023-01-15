@@ -16,7 +16,6 @@ namespace _Application.Scripts.Units
             if(Target!=null)
                 Target.AttackedByUnit(this);
        
-            gameObject.SetActive(false);
             Target = null;
         }
 

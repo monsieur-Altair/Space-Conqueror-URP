@@ -2,6 +2,7 @@
 using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Managers;
 using JetBrains.Annotations;
+using Pool_And_Particles;
 using UnityEngine;
 
 namespace _Application.Scripts.Skills
@@ -10,7 +11,6 @@ namespace _Application.Scripts.Skills
     {
         public event Action CanceledSkill = delegate {  };
         public static event Action<int> SkillIsAppliedForPlayer = delegate {  };
-        public event Func<PoolObjectType, Vector3, Quaternion, Units.Base> NeedObjectFromPool = delegate { return null; };
         
         public delegate void DecreasingCounter(float count);
         
@@ -26,17 +26,18 @@ namespace _Application.Scripts.Skills
         protected Buildings.Team TeamConstraint;
         protected readonly CoroutineRunner CoroutineRunner;
 
-
         protected delegate void UniqueActionToBuilding();
 
         private readonly DecreasingCounter _decreaseCounter;
+        protected GlobalPool _globalPool;
 
         public int Cost { get; private set; }
         protected Vector3 SelectedScreenPos { get; private set; }
 
 
-        protected Base(Buildings.Team? teamConstraint, [CanBeNull] DecreasingCounter function)
+        protected Base(GlobalPool globalPool, Buildings.Team? teamConstraint, [CanBeNull] DecreasingCounter function)
         {
+            _globalPool = globalPool;
             MainCamera = AllServices.Get<GlobalCamera>().MainCamera;
             CoroutineRunner = AllServices.Get<CoroutineRunner>();
             _decreaseCounter = function;
@@ -104,9 +105,6 @@ namespace _Application.Scripts.Skills
             if(!IsOnCooldown)
                 CanceledSkill();
         }
-
-        protected Units.Base OnNeedObjectFromPool(PoolObjectType type, Vector3 pos, Quaternion rotation) => 
-            NeedObjectFromPool(type, pos, rotation);
 
         private void SetTeamConstraint(Buildings.Team? team)
         {

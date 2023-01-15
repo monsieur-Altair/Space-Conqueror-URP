@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4170495023006334308}
   - component: {fileID: 4074678197504514775}
   - component: {fileID: -2585040375450254483}
+  - component: {fileID: 7084033852704802165}
   m_Layer: 0
   m_Name: Ice
   m_TagString: Untagged
@@ -58,6 +59,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 309d41e6c9234930bba3f652ae98cef5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7084033852704802165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5070550477755079263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 278093cbae90bb7458eb6b88884aefc6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _freeTimeout: 0
+  _freeAfterTime: 0
 --- !u!1001 &3623296850119346564
 PrefabInstance:
   m_ObjectHideFlags: 0

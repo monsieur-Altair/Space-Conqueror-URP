@@ -1,33 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using _Application.Scripts.Managers;
+using _Application.Scripts.UI;
+using Pool_And_Particles;
 using UnityEngine;
 
 namespace _Application.Scripts.Control
 {
     public class BuildingsController
     {
-        private event Action<Buildings.Base> CancelingSelection;
-        private event Action<Buildings.Base> BuildingSelected;
-        
         private readonly List<Buildings.Base> _selectableBuildings;
         private readonly Camera _mainCamera;
+        private readonly WorldArrowManager _worldArrowManager;
+        private readonly List<Color> _circleColors;
 
-        public BuildingsController(Camera camera)
+        public BuildingsController(Camera camera, CoreConfig coreConfig, GlobalPool globalPool)
         {
             _mainCamera = camera;
             _selectableBuildings = new List<Buildings.Base>();
-            CancelingSelection += DecreaseScale;
-            BuildingSelected += IncreaseScale;
-            BuildingSelected += AddToList;
+
+            _circleColors = coreConfig.Warehouse.circleColors;
+            PooledBehaviour prefab = coreConfig.PoolObjects.PooledPrefabs.GetValue(PoolObjectType.WorldArrow).prefab;
+            _worldArrowManager = new WorldArrowManager(globalPool, prefab.GetComponent<WorldArrow>(), _mainCamera);
         }
 
         public void HandleClick(Vector3 pos)
         {
             Buildings.Base building = RaycastForBuilding(pos);
-            if (building != null)
-                if (_selectableBuildings.Contains(building) == false && building.Team == Buildings.Team.Blue)
-                    OnSelecting(building);
+            if (building == null) 
+                return;
+            
+            if (_selectableBuildings.Contains(building) == false && building.Team == Buildings.Team.Blue)
+                Select(building);
         }
 
         public void HandleRelease(Vector3 pos)
@@ -39,15 +43,22 @@ namespace _Application.Scripts.Control
             }
         
             int count = _selectableBuildings.Count;
-            if (count > 1) 
+            if (count > 1)
+            {
                 StartLaunching(count);
+                ClearAllSelection();
+            }
         }
 
-        public void HandleMultipleSelection(Vector3 pos)
+        public void HandleMultipleSelection(Vector3 screenPointPos)
         {
-            Buildings.Base building = RaycastForBuilding(pos);
-            if (building == null) 
+            Buildings.Base building = RaycastForBuilding(screenPointPos);
+            _worldArrowManager.UpdateAll(screenPointPos);
+
+            if (building == null)
+            {
                 return;
+            }
             //1 - empty: only blue,
             //2 - not empty: if user has selected blue, check container + if the last isn't blue, delete them 
 
@@ -56,7 +67,7 @@ namespace _Application.Scripts.Control
             if (team == Buildings.Team.Blue)
             {
                 if(count==0)
-                    OnSelecting(building);
+                    Select(building);
                 else
                     MoveAllyToTheEnd(building);
             }
@@ -66,28 +77,44 @@ namespace _Application.Scripts.Control
                     MoveEnemyToTheEnd(building, count);
             }
         }
+        
+        private void CancelSelection(Buildings.Base building)
+        {
+            //DecreaseScale(building);
+            
+            if (building.Team == Buildings.Team.Blue) 
+                _worldArrowManager.DisableArrow(building.transform);
+            
+            building.Deselect();
+        }
+
+        private void Select(Buildings.Base building)
+        {
+            AddToList(building);
+            building.Select(_circleColors[(int) building.Team]);
+
+            if (building.Team == Buildings.Team.Blue) 
+                _worldArrowManager.AddArrow(building.transform);
+
+            //IncreaseScale(building);
+        }
 
         private void StartLaunching(int count)
         {
             Buildings.Base destination = _selectableBuildings[count - 1];
             _selectableBuildings.Remove(destination);
-            OnCancelingSelection(destination);
+            CancelSelection(destination);
             LaunchToDestination(destination);
-            _selectableBuildings.Clear();
         }
 
         private void ClearAllSelection()
         {
             foreach (Buildings.Base building in _selectableBuildings)
-                OnCancelingSelection(building);
+                CancelSelection(building);
+            
             _selectableBuildings.Clear();
+            _worldArrowManager.DisableAll();
         }
-
-        private void OnSelecting(Buildings.Base building) => 
-            BuildingSelected?.Invoke(building);
-
-        private void OnCancelingSelection(Buildings.Base building) => 
-            CancelingSelection?.Invoke(building);
 
         private Buildings.Base RaycastForBuilding(Vector3 pos)
         {
@@ -106,11 +133,11 @@ namespace _Application.Scripts.Control
 
             if (lastBuilding.Team != Buildings.Team.Blue)
             {
-                OnCancelingSelection(lastBuilding);
+                CancelSelection(lastBuilding);
                 _selectableBuildings.RemoveAt(count - 1);
             }
 
-            OnSelecting(building);
+            Select(building);
         }
 
         private void MoveAllyToTheEnd(Buildings.Base building)
@@ -125,7 +152,7 @@ namespace _Application.Scripts.Control
             if (_selectableBuildings.Contains(building))
                 PlaceInTheEnd(building);
             else
-                OnSelecting(building);
+                Select(building);
         }
 
         private void PlaceInTheEnd(Buildings.Base building)
@@ -136,7 +163,7 @@ namespace _Application.Scripts.Control
 
         private void RemoveLastFromList(Buildings.Base lastBuilding)
         {
-            OnCancelingSelection(lastBuilding);
+            CancelSelection(lastBuilding);
             _selectableBuildings.RemoveAt(_selectableBuildings.Count - 1);
         }
 
@@ -144,13 +171,14 @@ namespace _Application.Scripts.Control
         {
             foreach (Buildings.Base building in _selectableBuildings)
             {
-                OnCancelingSelection(building);
                 if(building.Team==Buildings.Team.Blue)
                     building.LaunchUnit(destination);
             }
-            
         }
 
+        private void AddToList(Buildings.Base planet) => 
+            _selectableBuildings.Add(planet);
+        
         private static void DecreaseScale(Buildings.Base planet)
         {
             if(planet!=null)
@@ -162,8 +190,6 @@ namespace _Application.Scripts.Control
             if(planet!=null) 
                 planet.transform.localScale *= 1.5f;
         }
-    
-        private void AddToList(Buildings.Base planet) => 
-            _selectableBuildings.Add(planet);
+        
     }
 }

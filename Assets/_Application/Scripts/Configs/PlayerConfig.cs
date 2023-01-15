@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using _Application.Scripts.Buildings;
 using _Application.Scripts.Control;
@@ -23,7 +24,6 @@ namespace _Application.Scripts.Managers
     
     [Serializable]
     public class Pair<TKey, TValue> where TKey : Enum 
-        where TValue : ScriptableObject  
     {
         [SerializeField] private TKey _key;
         [SerializeField] private TValue _value;
@@ -34,7 +34,6 @@ namespace _Application.Scripts.Managers
 
     [Serializable] 
     public class MyDictionary<TKey, TValue> where TKey : Enum 
-        where TValue : ScriptableObject
     {
         [SerializeField] private Pair<TKey, TValue>[] _pairs;
             
@@ -42,5 +41,6 @@ namespace _Application.Scripts.Managers
         {
             return _pairs.First(pair => pair.Key.Equals(key)).Value;
         }
+        public Pair<TKey, TValue>[] Pairs => _pairs;
     } 
 }

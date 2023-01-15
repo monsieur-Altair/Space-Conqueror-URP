@@ -4,6 +4,7 @@ using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Managers;
+using UnityEngine;
 
 namespace _Application.Scripts.Infrastructure.States
 {
@@ -12,11 +13,11 @@ namespace _Application.Scripts.Infrastructure.States
         private readonly Dictionary<Type, IBaseState> _states;
         private IBaseState _activeState;
 
-        public StateMachine(SceneLoader sceneLoader, CoreConfig coreConfig)
+        public StateMachine(MonoBehaviour monoBehaviour, SceneLoader sceneLoader, CoreConfig coreConfig)
         {
             _states = new Dictionary<Type, IBaseState>()
             {
-                [typeof(BootstrapState)] = CreateBootstrapState(sceneLoader, coreConfig),
+                [typeof(BootstrapState)] = CreateBootstrapState(monoBehaviour, sceneLoader, coreConfig),
                 [typeof(LoadLevelState)] = CreateLoadLevelState(sceneLoader),
                 [typeof(GameLoopState)] = CreateGameLoopState()
             };
@@ -29,8 +30,9 @@ namespace _Application.Scripts.Infrastructure.States
             new LoadLevelState(this, sceneLoader, AllServices.Get<GameFactory>(),
                 AllServices.Get<ProgressService>());
 
-        private BootstrapState CreateBootstrapState(SceneLoader sceneLoader, CoreConfig coreConfig) => 
-            new BootstrapState(this, sceneLoader, coreConfig);
+        private BootstrapState CreateBootstrapState(MonoBehaviour monoBehaviour, SceneLoader sceneLoader,
+            CoreConfig coreConfig) => 
+            new BootstrapState(monoBehaviour, this, sceneLoader, coreConfig);
 
         public void Enter<TState>() where TState : class, IState
         {

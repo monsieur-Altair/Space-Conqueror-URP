@@ -2,9 +2,9 @@
 using System.Collections;
 using _Application.Scripts.Buildings;
 using _Application.Scripts.Control;
-using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Managers;
 using _Application.Scripts.Scriptables;
+using Pool_And_Particles;
 using UnityEngine;
 
 namespace _Application.Scripts.Skills
@@ -21,9 +21,9 @@ namespace _Application.Scripts.Skills
         private Plane _plane;
         private Coroutine _spawnCoroutine;
 
-        public Ice(ObjectPool pool) : base(null, null)
+        public Ice(GlobalPool pool) : base(pool, null, null)
         {
-            _freezingObject = pool.GetObject(PoolObjectType.Ice, Vector3.zero, Quaternion.identity);
+            _freezingObject = pool.GetObject(PoolObjectType.Ice, Vector3.zero, Quaternion.identity).gameObject;
              
             _freezingZone = _freezingObject.GetComponent<Zone>(); 
             _freezingZone.SetTriggerFunction(FreezingEnteredObjects);
@@ -31,18 +31,8 @@ namespace _Application.Scripts.Skills
             _freezingObject.SetActive(false);
             _plane = new Plane(Vector3.up, new Vector3(0, BuildingLayHeight, 0));
         }
-
-        // public override void SetSkillObject(GameObject skillObject)
-        // {
-        //     _freezingObject = skillObject;
-        //      
-        //     _freezingZone = _freezingObject.GetComponent<Zone>(); 
-        //     _freezingZone.SetTriggerFunction(FreezingEnteredObjects);
-        //     
-        //     _freezingObject.SetActive(false);
-        //     _plane = new Plane(Vector3.up, new Vector3(0, BuildingLayHeight, 0));
-        // }
-
+        
+        
         protected override void LoadResources(Skill resource, float coefficient = 1.0f)
         {
             base.LoadResources(resource, coefficient);

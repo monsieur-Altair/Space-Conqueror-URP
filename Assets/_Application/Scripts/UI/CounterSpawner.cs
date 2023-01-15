@@ -2,6 +2,7 @@
 using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Managers;
 using _Application.Scripts.Misc;
+using Pool_And_Particles;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,10 +20,10 @@ namespace _Application.Scripts.UI
         private static Dictionary<int, Image> _backgrounds = new Dictionary<int, Image>();
         private static Dictionary<int, TextMeshProUGUI> _foregrounds = new Dictionary<int, TextMeshProUGUI>();
         private static Transform _container;
-        private static ObjectPool _pool;
+        private static GlobalPool _pool;
         private static GlobalCamera _globalCamera;
 
-        public static void Init(Warehouse warehouse, ObjectPool pool, Transform container, GlobalCamera globalCamera)
+        public static void Init(Warehouse warehouse, GlobalPool pool, Transform container, GlobalCamera globalCamera)
         {
             _globalCamera = globalCamera;
             _counterBackground = warehouse.counterBackground;
@@ -58,7 +59,7 @@ namespace _Application.Scripts.UI
         private static GameObject SpawnCounterTo(Buildings.Base building)
         {
             Vector3 counterPos = GetCounterPos(building);
-            GameObject counter = _pool.GetObject(PoolObjectType.Counter, counterPos, Quaternion.identity);
+            GameObject counter = _pool.GetObject(PoolObjectType.Counter, counterPos, Quaternion.identity).gameObject;
             counter.transform.SetParent(_container);
             counter.transform.localScale = _baseCounterScale;
             _countersList.Add(counter);

@@ -30,3 +30,4 @@ MonoBehaviour:
       _value: {fileID: 11400000, guid: 08e50fddd6e99d847bcb3c1bdd9cb87f, type: 2}
   _rewardList: {fileID: 11400000, guid: 7dfe441c14d43964180fb877d09fa8cf, type: 2}
   _warehouse: {fileID: 2309908679417820949, guid: 970f128dd70541040bea813d70aad344, type: 3}
+  _poolObjects: {fileID: 11400000, guid: c30ead70c7ccbc74384d901a9b8742c3, type: 2}

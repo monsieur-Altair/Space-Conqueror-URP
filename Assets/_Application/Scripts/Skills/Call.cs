@@ -3,6 +3,8 @@ using _Application.Scripts.Buildings;
 using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Managers;
 using _Application.Scripts.Scriptables;
+using Pool_And_Particles;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace _Application.Scripts.Skills
@@ -10,18 +12,17 @@ namespace _Application.Scripts.Skills
     public class Call : Base
     {
         private readonly GlobalCamera _globalCamera;
-        private readonly GameObject _indicator;
+        private PooledBehaviour _indicator;
         private readonly Vector3 _indicatorOffset = new Vector3(0, 1.9f, 0);
         private Coroutine _displayingIndicatorCor;
         private Units.Base _sentUnit;
         private float _callPercent;
+        private bool _isIndicatorActive;
 
-        public Call(ObjectPool pool, Team teamConstraint, DecreasingCounter function, GlobalCamera globalCamera) 
-            : base(teamConstraint, function)
+        public Call( GlobalPool pool, Team teamConstraint, DecreasingCounter function, GlobalCamera globalCamera) 
+            : base(pool, teamConstraint, function)
         {
             _globalCamera = globalCamera;
-            _indicator = pool.GetObject(PoolObjectType.Indicator, Vector3.zero, Quaternion.identity);
-            _indicator.SetActive(false);
         }
 
         protected override void LoadResources(Skill resource, float coefficient = 1.0f)
@@ -48,10 +49,18 @@ namespace _Application.Scripts.Skills
             CoroutineRunner.StopCoroutine(_displayingIndicatorCor);
             if (_sentUnit != null)
                 _sentUnit.StopAndDestroy();
-            _indicator.SetActive(false);
+            
+            FreeIndicator();
+            
             SelectedBuilding = null;
             IsOnCooldown = false;
             OnCanceledSkill();
+        }
+
+        private void FreeIndicator()
+        {
+            if (_isIndicatorActive)
+                _globalPool.Free(_indicator);
         }
 
         private void CallSupply()
@@ -59,22 +68,23 @@ namespace _Application.Scripts.Skills
             Vector3 launchPos = _globalCamera.FindSpawnPoint(SelectedBuilding);
             Vector3 destPos = CalculateDestPos(launchPos, SelectedBuilding);
             
-            PoolObjectType poolObjectType = (PoolObjectType) ((int) SelectedBuilding.BuildingType);
-            
-            _sentUnit = OnNeedObjectFromPool(poolObjectType,launchPos, Quaternion.LookRotation(destPos - launchPos));
-            
+            _sentUnit = _globalPool.Get(SelectedBuilding.UnitPrefab, launchPos, Quaternion.LookRotation(destPos - launchPos));
+
             SelectedBuilding.AdjustUnit(_sentUnit, _callPercent / 100.0f);
             _sentUnit.GoTo(SelectedBuilding, destPos);
 
             _displayingIndicatorCor = CoroutineRunner.StartCoroutine(DisplayIndicator());
         }
+        
 
         private IEnumerator DisplayIndicator()
         {
-            _indicator.SetActive(true);
-            _indicator.transform.position = SelectedBuilding.transform.position + _indicatorOffset;
+            _indicator = _globalPool.GetObject(PoolObjectType.Indicator, 
+                pos: SelectedBuilding.transform.position + _indicatorOffset, 
+                rot: Quaternion.identity);
+            _isIndicatorActive = true;
             yield return new WaitForSeconds(1.5f);
-            _indicator.SetActive(false);
+            FreeIndicator();
         }
 
         private static Vector3 CalculateDestPos(in Vector3 launchPos, Buildings.Base destinationPlanet)

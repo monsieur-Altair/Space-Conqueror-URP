@@ -5,6 +5,7 @@ using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
 using _Application.Scripts.SavedData;
+using Pool_And_Particles;
 using UnityEngine;
 
 namespace _Application.Scripts.Control
@@ -27,14 +28,14 @@ namespace _Application.Scripts.Control
 
         private readonly ProgressService _progressService;
         private readonly ScriptableService _scriptableService;
-        private readonly ObjectPool _objectPool;
+        private readonly GlobalPool _objectPool;
 
         public bool IsSkillNotSelected => 
             SelectedSkillName == SkillName.None;
         
         public SkillName SelectedSkillName { get; private set; }
 
-        public SkillController(ProgressService progressService, ObjectPool pool, ScriptableService scriptableService,
+        public SkillController(ProgressService progressService, GlobalPool pool, ScriptableService scriptableService,
             GlobalCamera globalCamera)
         {
             ClearSelectedSkill();
@@ -44,11 +45,10 @@ namespace _Application.Scripts.Control
             _objectPool = pool;
             
             Call = new Skills.Call(pool ,Team.Blue, Altar.DecreaseManaCount, globalCamera);
-            Buff = new Skills.Buff(Team.Blue, Altar.DecreaseManaCount);
+            Buff = new Skills.Buff(pool, Team.Blue, Altar.DecreaseManaCount);
             Acid = new Skills.Acid(pool,Team.Blue, Altar.DecreaseManaCount);
             Ice = new Skills.Ice(pool);
 
-            Call.NeedObjectFromPool += SpawnUnit;
             Skills.Base.SkillIsAppliedForPlayer += Base_SkillIsAppliedForPlayer;
             //ReloadSkills();
         }

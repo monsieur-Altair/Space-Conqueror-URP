@@ -24,5 +24,8 @@ namespace _Application.Scripts.Managers
 
         public List<Color> counterBackground;
         public List<Color> counterForeground;
+        
+        public List<Color> circleColors;
+        
     }
 }

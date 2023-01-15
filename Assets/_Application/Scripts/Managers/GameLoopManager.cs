@@ -10,6 +10,7 @@ using _Application.Scripts.SavedData;
 using _Application.Scripts.UI;
 using _Application.Scripts.UI.Windows;
 using _Application.Scripts.UI.Windows.Tutorial;
+using Pool_And_Particles;
 using UnityEngine;
 
 namespace _Application.Scripts.Managers
@@ -28,7 +29,7 @@ namespace _Application.Scripts.Managers
         private readonly AI.Core _ai;
         private readonly Outlook _outlook;
         private readonly LevelManager _levelsManager;
-        private readonly ObjectPool _objectPool;
+        private readonly GlobalPool _objectPool;
         private readonly UserControl _userControl;
         private readonly TeamManager _teamManager;
         private readonly CoroutineRunner _coroutineRunner;
@@ -45,11 +46,15 @@ namespace _Application.Scripts.Managers
 
         private int _lastCompletedLevel;
         private bool _hasUpgradeTutorialShown;
+        private CoreConfig _coreConfig;
+        private readonly UnitSupervisor _unitSupervisor;
 
         public GameLoopManager(LevelManager levelsManager, TeamManager teamManager, CoroutineRunner coroutineRunner, AI.Core ai,
-            ObjectPool pool, Outlook outlook, UserControl userControl, ScriptableService scriptableService,
-            ProgressService progressService, AudioManager audioManager)
+            GlobalPool pool, Outlook outlook, UserControl userControl, ScriptableService scriptableService,
+            ProgressService progressService, AudioManager audioManager, CoreConfig coreConfig)
         {
+            _unitSupervisor = new UnitSupervisor(pool);
+            _coreConfig = coreConfig;
             _allBuildings = new List<Buildings.Base>();
 
             _useTutorial = AllServices.Get<CoreConfig>().UseTutorial;
@@ -94,15 +99,14 @@ namespace _Application.Scripts.Managers
             foreach (Buildings.Base building in _allBuildings)
             {
                 building.gameObject.SetActive(true);
-                building.Construct(_scriptableService, _progressService);
-                building.LaunchingUnit += SpawnUnit;
+                PoolObjectType poolObjectType = (PoolObjectType)((int) building.BuildingType);
+                var prefab = _objectPool.GetPooledBehaviourPrefab(poolObjectType);
+                building.Construct(_scriptableService, _progressService, prefab.GetComponent<Units.Base>(), _objectPool);
             }
             
             _teamManager.FillTeamCount(_allBuildings);
         }
-
-        private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
-            _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.Base>();
+        
 
         private void UpdateState()
         {
@@ -125,7 +129,7 @@ namespace _Application.Scripts.Managers
                 {
                     _userControl.Refresh();
                     _userControl.Disable();
-                    _objectPool.DisableAllUnitsInScene();
+                    _unitSupervisor.DisableAll();
                     _ai.Disable();
 
                     int currentLevelNumber = _levelsManager.CurrentLevelNumber;
@@ -205,9 +209,6 @@ namespace _Application.Scripts.Managers
 
         private void ClearLists()
         {
-            foreach (Buildings.Base building in _allBuildings) 
-                building.LaunchingUnit -= SpawnUnit;
-
             _teamManager.Clear();
             _allBuildings.Clear();
         }

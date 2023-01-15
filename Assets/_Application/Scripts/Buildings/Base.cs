@@ -1,9 +1,11 @@
 using System;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
-using _Application.Scripts.Managers;
 using _Application.Scripts.SavedData;
+using _Application.Scripts.Scriptables;
 using _Application.Scripts.Skills;
+using DG.Tweening;
+using Pool_And_Particles;
 using UnityEngine;
 using Ice = _Application.Scripts.Skills.Ice;
 
@@ -28,6 +30,7 @@ namespace _Application.Scripts.Buildings
     {
         [SerializeField] private Team team;
         [SerializeField] private BuildingType _buildingType;
+        [SerializeField] private SpriteRenderer _spriteRenderer;
 
         public static event Action<Base, Team, Team> Conquered;
         public event Action<Base, int> CountChanged;
@@ -35,7 +38,6 @@ namespace _Application.Scripts.Buildings
         public event Action<Base> Buffed;
         public event Action<Base> UnBuffed;
         public event Action<Base, Units.Base> LaunchedUnit;
-        public event Func<PoolObjectType, Vector3, Quaternion, Units.Base> LaunchingUnit;
         
         private static int _id;
 
@@ -54,12 +56,14 @@ namespace _Application.Scripts.Buildings
         private float _produceTime;
         private float _defense;
         private float _reducingSpeed;
+        private GlobalPool _globalPool;
 
 
         public int ID { get; private set; }
         public float BuildingsRadius { get; private set; }
         public Team Team { get; private set; }
         public BuildingType BuildingType { get; private set; }
+        public Units.Base UnitPrefab { get; private set; }
         public bool IsBuffed { get; private set; }
         public float Count => _count;
 
@@ -81,8 +85,11 @@ namespace _Application.Scripts.Buildings
         public void OnDestroy() => 
             Ice.DeletingFreezingZone -= Unfreeze;
 
-        public void Construct(ScriptableService scriptableService, ProgressService progressService)
+        public void Construct(ScriptableService scriptableService, ProgressService progressService, 
+            Units.Base unitPrefab, GlobalPool globalPool)
         {
+            _globalPool = globalPool;
+            UnitPrefab = unitPrefab;
             ScriptableService = scriptableService;
             ProgressService = progressService;
             
@@ -97,13 +104,15 @@ namespace _Application.Scripts.Buildings
 
             Team availableTeam = (team == Team.White) ? Team.Red : team;
 
-            Scriptables.Building infoAboutBuilding = ScriptableService.GetBuildingInfo(availableTeam, _buildingType);
-            Scriptables.Unit infoAboutUnit = ScriptableService.GetUnitInfo(availableTeam, _buildingType);
+            Building infoAboutBuilding = ScriptableService.GetBuildingInfo(availableTeam, _buildingType);
+            Unit infoAboutUnit = ScriptableService.GetUnitInfo(availableTeam, _buildingType);
             
             LoadResources(infoAboutBuilding, infoAboutUnit);
+            
+            Deselect();
         }
 
-        protected virtual void LoadResources(Scriptables.Building infoAboutBuilding, Scriptables.Unit infoAboutUnit)
+        protected virtual void LoadResources(Building infoAboutBuilding, Unit infoAboutUnit)
         {
             PlayerProgress playerProgress = ProgressService.PlayerProgress;
             
@@ -149,6 +158,23 @@ namespace _Application.Scripts.Buildings
             }
         }
 
+        public void Select(Color color)
+        {
+            _spriteRenderer.color = color;
+            _spriteRenderer.gameObject.SetActive(true);
+            _spriteRenderer.transform
+                .DORotate(new Vector3(0, 360f, 0), 30f, RotateMode.WorldAxisAdd)
+                .SetLoops(-1, LoopType.Incremental)
+                .SetEase(Ease.Linear);
+        }
+
+        public void Deselect()
+        {
+            _spriteRenderer.transform.DOKill();
+            _spriteRenderer.gameObject.SetActive(false);
+        }
+        
+        
         public void Buff(float percent)
         {
             IsBuffed = true;
@@ -173,10 +199,9 @@ namespace _Application.Scripts.Buildings
         {
             CalculateLaunchPositions( out Vector3 launchPos,out Vector3 destPos,this,destination);
 
-            PoolObjectType poolObjectType = (PoolObjectType)((int) BuildingType);
             Quaternion rotation = Quaternion.LookRotation(destPos - launchPos);
 
-            Units.Base unit = LaunchingUnit?.Invoke(poolObjectType, launchPos, rotation);
+            Units.Base unit = _globalPool.Get(UnitPrefab, position: launchPos, rotation: rotation);
             if(unit==null)
                 return;
 
@@ -251,8 +276,8 @@ namespace _Application.Scripts.Buildings
         {
             team = newTeam;
 
-            Scriptables.Building infoAboutBuilding = ScriptableService.GetBuildingInfo(newTeam , _buildingType);
-            Scriptables.Unit infoAboutUnit = ScriptableService.GetUnitInfo(newTeam, _buildingType);
+            Building infoAboutBuilding = ScriptableService.GetBuildingInfo(newTeam , _buildingType);
+            Unit infoAboutUnit = ScriptableService.GetUnitInfo(newTeam, _buildingType);
 
             LoadResources(infoAboutBuilding, infoAboutUnit);
 

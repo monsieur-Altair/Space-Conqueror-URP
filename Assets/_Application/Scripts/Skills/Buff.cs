@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using _Application.Scripts.Buildings;
 using _Application.Scripts.Scriptables;
+using Pool_And_Particles;
 using UnityEngine;
 
 namespace _Application.Scripts.Skills
@@ -13,7 +14,8 @@ namespace _Application.Scripts.Skills
         private IBuffed _buffedEntity;
         private Coroutine _buffCoroutine;
 
-        public Buff(Team teamConstraint, DecreasingCounter function) : base(teamConstraint, function)
+        public Buff(GlobalPool globalPool, Team teamConstraint, DecreasingCounter function) 
+            : base(globalPool, teamConstraint, function)
         {
         }
 

@@ -2,6 +2,7 @@
 using _Application.Scripts.Buildings;
 using _Application.Scripts.Managers;
 using _Application.Scripts.Scriptables;
+using Pool_And_Particles;
 using UnityEngine;
 
 namespace _Application.Scripts.Skills
@@ -20,10 +21,10 @@ namespace _Application.Scripts.Skills
         private float _hitDamage;
         private int _hitCount;
 
-        public Acid(ObjectPool pool ,Team teamConstraint, DecreasingCounter function) : base(teamConstraint, function)
+        public Acid(GlobalPool pool ,Team teamConstraint, DecreasingCounter function) 
+            : base(pool, teamConstraint, function)
         {
-            _rain = pool.GetObject(PoolObjectType.Rain, Vector3.zero, Quaternion.identity);
-            
+            _rain = pool.GetObject(PoolObjectType.Rain, Vector3.zero, Quaternion.identity).gameObject;
             _rainParticles = _rain.transform.GetChild(0).GetComponent<ParticleSystem>();
         }
 

@@ -4,8 +4,8 @@ using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Infrastructure.Services.Progress;
 using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
-using _Application.Scripts.Misc;
 using _Application.Scripts.SavedData;
+using Pool_And_Particles;
 using UnityEngine;
 
 namespace _Application.Scripts.Infrastructure.States
@@ -20,9 +20,12 @@ namespace _Application.Scripts.Infrastructure.States
         private readonly ReadWriterService _readWriterService;
         private readonly CoreConfig _coreConfig;
         private GameFactory _gameFactory;
+        private MonoBehaviour _monoBehaviour;
 
-        public BootstrapState(StateMachine stateMachine, SceneLoader sceneLoader, CoreConfig coreConfig)
+        public BootstrapState(MonoBehaviour monoBehaviour, StateMachine stateMachine, SceneLoader sceneLoader,
+            CoreConfig coreConfig)
         {
+            _monoBehaviour = monoBehaviour;
             _coreConfig = coreConfig;
             _stateMachine = stateMachine;
             _sceneLoader = sceneLoader;
@@ -35,7 +38,7 @@ namespace _Application.Scripts.Infrastructure.States
             _readWriterService = AllServices.Get<ReadWriterService>();
             
             AllServices.Register(new SkillController(_progressService, 
-                AllServices.Get<ObjectPool>(), 
+                AllServices.Get<GlobalPool>(), 
                 AllServices.Get<ScriptableService>(), 
                 AllServices.Get<GlobalCamera>()));
 
@@ -51,7 +54,6 @@ namespace _Application.Scripts.Infrastructure.States
 
             _gameFactory.CreateAndRegisterMonoBeh(servicePrefabs.AudioManager);
             _gameFactory.CreateAndRegisterMonoBeh(servicePrefabs.CoroutineRunner);
-            _gameFactory.CreateAndRegisterMonoBeh(servicePrefabs.ObjectPool);
             _gameFactory.CreateAndRegisterMonoBeh(servicePrefabs.LevelManager);
             _gameFactory.CreateAndRegisterMonoBeh(servicePrefabs.GlobalCamera);
         }
@@ -73,7 +75,8 @@ namespace _Application.Scripts.Infrastructure.States
         private void RegisterServices()
         {
             AllServices.Register(_coreConfig);
-            
+            RegisterPool();
+
             ScriptableService scriptableService = AllServices.Register(new ScriptableService(_coreConfig));
             scriptableService.LoadAllScriptables();
 
@@ -85,5 +88,16 @@ namespace _Application.Scripts.Infrastructure.States
             AllServices.Register(_stateMachine);
         }
 
+        private void RegisterPool()
+        {
+            GlobalPool globalPool = new GlobalPool(_coreConfig, _monoBehaviour.transform);
+
+            foreach (var pair in _coreConfig.PoolObjects.PooledPrefabs.Pairs)
+            {
+                globalPool.Prepare(pair.Value.prefab, pair.Value.size);
+            }
+
+            AllServices.Register(globalPool);
+        }
     }
 }

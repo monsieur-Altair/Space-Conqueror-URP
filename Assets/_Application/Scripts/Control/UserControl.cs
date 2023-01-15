@@ -1,5 +1,6 @@
 ﻿using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Managers;
+using Pool_And_Particles;
 using UnityEngine;
 
 namespace _Application.Scripts.Control
@@ -14,7 +15,11 @@ namespace _Application.Scripts.Control
         {
             base.Init();
             
-            BuildingsController buildingsController = new BuildingsController(AllServices.Get<GlobalCamera>().MainCamera);
+            BuildingsController buildingsController = new BuildingsController(
+                AllServices.Get<GlobalCamera>().MainCamera, 
+                AllServices.Get<CoreConfig>(), 
+                AllServices.Get<GlobalPool>());
+            
             _inputService = RegisterInputService(buildingsController, AllServices.Get<SkillController>());
         }
 

@@ -17,7 +17,8 @@ namespace _Application.Scripts.Managers
         [Space, SerializeField] private MyDictionary<UpgradeType, UpgradeInfo> _upgrades;
         [SerializeField] private RewardList _rewardList;
         [SerializeField] private Warehouse _warehouse;
-
+        [SerializeField] private PoolObjects _poolObjects;
+        
         public MonoBehaviourServices MonoBehaviourServices => _monoBehaviourServices;
         public bool UseTutorial => _useTutorial;
         public PlayerConfig PlayerConfig => _playerConfig;
@@ -25,5 +26,6 @@ namespace _Application.Scripts.Managers
         public MyDictionary<UpgradeType, UpgradeInfo> Upgrades => _upgrades;
         public RewardList RewardList => _rewardList;
         public Warehouse Warehouse => _warehouse;
+        public PoolObjects PoolObjects => _poolObjects;
     }
 }

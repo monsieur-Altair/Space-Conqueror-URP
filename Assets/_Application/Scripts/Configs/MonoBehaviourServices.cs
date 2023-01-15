@@ -10,7 +10,6 @@ namespace _Application.Scripts.Managers
     {
         [SerializeField] private AudioManager _audioManager;
         [SerializeField] private CoroutineRunner _coroutineRunner;
-        [SerializeField] private ObjectPool _objectPool;
         [SerializeField] private LevelManager _levelManager;
         [SerializeField] private GlobalCamera _globalCamera;
         [SerializeField] private UISystem _uiSystem;
@@ -18,7 +17,6 @@ namespace _Application.Scripts.Managers
 
         public AudioManager AudioManager => _audioManager;
         public CoroutineRunner CoroutineRunner => _coroutineRunner;
-        public ObjectPool ObjectPool => _objectPool;
         public LevelManager LevelManager => _levelManager;
         public GlobalCamera GlobalCamera => _globalCamera;
         public UISystem UISystem => _uiSystem;

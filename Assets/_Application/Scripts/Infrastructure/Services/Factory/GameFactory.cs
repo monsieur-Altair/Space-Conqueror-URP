@@ -6,6 +6,7 @@ using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
 using _Application.Scripts.UI;
 using _Application.Scripts.UI.Windows;
+using Pool_And_Particles;
 using UnityEngine;
 
 namespace _Application.Scripts.Infrastructure.Services.Factory
@@ -29,7 +30,7 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
 
         public GameLoopManager CreateWorld()
         {
-            ObjectPool objectPool = AllServices.Get<ObjectPool>();
+            GlobalPool objectPool = AllServices.Get<GlobalPool>();
             CoroutineRunner coroutineRunner = AllServices.Get<CoroutineRunner>();
             
             Warehouse warehouse = _coreConfig.Warehouse;
@@ -50,7 +51,8 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
                 coroutineRunner, aiManager, objectPool, outlookManager, userControl,
                 AllServices.Get<ScriptableService>(),
                 AllServices.Get<ProgressService>(),
-                AllServices.Get<AudioManager>());
+                AllServices.Get<AudioManager>(), 
+                _coreConfig);
             
             ProgressReaders.Add(gameLoopManager);
             ProgressWriters.Add(gameLoopManager);
