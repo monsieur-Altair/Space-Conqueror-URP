@@ -13,10 +13,10 @@ namespace _Application.Scripts.UI.Windows
     {
         [SerializeField] 
         private Button _restartLevelButton;
-        
-        [SerializeField] 
-        private Button _toUpgradeButton;
 
+        [SerializeField] 
+        private Button _toLobbyButton;
+        
         [SerializeField]
         private TextMeshProUGUI _moneyText;
 
@@ -43,7 +43,7 @@ namespace _Application.Scripts.UI.Windows
             _moneyText.text = _progressService.PlayerProgress.Money.ToString();
             
             _restartLevelButton.onClick.AddListener(RestartLevel);
-            _toUpgradeButton.onClick.AddListener(OpenUpgrades);
+            _toLobbyButton.onClick.AddListener(GoToLobby);
         }
 
         protected override void OnClosed()
@@ -51,13 +51,13 @@ namespace _Application.Scripts.UI.Windows
             base.OnClosed();
             
             _restartLevelButton.onClick.RemoveListener(RestartLevel);
-            _toUpgradeButton.onClick.RemoveListener(OpenUpgrades);
+            _toLobbyButton.onClick.RemoveListener(GoToLobby);
         }
         
-        private void OpenUpgrades()
+        private void GoToLobby()
         {
             Close();
-            UISystem.ShowPayloadedWindow<UpgradeWindow, bool>(false);
+            _stateMachine.Enter<LobbyState>();
         }
 
         private void RestartLevel()

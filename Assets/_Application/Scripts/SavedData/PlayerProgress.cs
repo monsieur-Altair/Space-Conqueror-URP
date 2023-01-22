@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using UnityEngine;
 
 namespace _Application.Scripts.SavedData
 {
@@ -11,12 +10,14 @@ namespace _Application.Scripts.SavedData
         public int Money;
         public AchievedUpgrades[] AchievedUpgrades;
         public Statistic Statistic;
+        public LobbyInfo LobbyInfo;
         
         public PlayerProgress(int levelNumber)
         {
             Money = 0;
             LevelInfo = new LevelInfo(levelNumber);
             Statistic = new Statistic();
+            LobbyInfo = new LobbyInfo();
             
             CreateAchieveUpgrades();
         }

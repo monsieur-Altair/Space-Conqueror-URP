@@ -61,9 +61,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77127332bcea4bdd857364099bc29f24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _freeTimeout: 0
+  _freeAfterTime: 1
   team: 5
   _buildingType: 0
   _spriteRenderer: {fileID: 7333222116276325153}
+  _meshRenderer: {fileID: 202865750263634550}
 --- !u!54 &5140267705438508648
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -247,6 +250,11 @@ PrefabInstance:
 --- !u!4 &1340829758062158105 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 66a5dad1198021e41b748bae466ef658, type: 3}
+  m_PrefabInstance: {fileID: 1518043971172697842}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &202865750263634550 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 66a5dad1198021e41b748bae466ef658, type: 3}
   m_PrefabInstance: {fileID: 1518043971172697842}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8630646377195296847

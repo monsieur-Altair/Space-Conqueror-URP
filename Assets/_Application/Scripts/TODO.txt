@@ -1,7 +1,5 @@
 ﻿1. add planets to pool
 2. ai add own balance and reload balance after conquering player planet
-3. main manager -> state machine (gameloop)
-
 
 
 1. move ui from ref
@@ -10,3 +8,8 @@
 -4. create spells (rework)
 5. remove navmesh
 7, create timer for units
+
+
+create places, 
+create lobby screen, cells,
+adjust buttons in win, lose window 

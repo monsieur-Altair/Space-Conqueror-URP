@@ -19,7 +19,7 @@ namespace _Application.Scripts.Infrastructure.Services.Progress
             _gameFactory = gameFactory;
         }
 
-        public PlayerProgress ReadProgress() => 
+        public static PlayerProgress ReadProgress() => 
             PlayerPrefs.GetString(PlayerProgressKey)?.ConvertFromJson<PlayerProgress>();
 
         public void WriteProgress()

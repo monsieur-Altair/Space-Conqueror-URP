@@ -11,7 +11,7 @@ using UnityEngine.UI;
 namespace _Application.Scripts.UI.Windows
 {
     [RequireComponent(typeof(GraphicRaycaster))]
-    public class UpgradeWindow : PayloadedWindow<bool>
+    public class UpgradeWindow : Window
     {
         [SerializeField] 
         private UpgradeController[] upgradeControllers;
@@ -26,9 +26,7 @@ namespace _Application.Scripts.UI.Windows
         private ProgressService _progressService;
         private ScriptableService _scriptableService;
         private CoroutineRunner _coroutineRunner;
-
-        private bool _isWin;
-
+        
         private readonly List<IProgressReader> _progressReaders = new List<IProgressReader>();
         private readonly List<IProgressWriter> _progressWriters = new List<IProgressWriter>();
 
@@ -46,8 +44,6 @@ namespace _Application.Scripts.UI.Windows
         {
             base.OnOpened();
 
-            _isWin = _payload;
-            
             foreach (IProgressReader progressReader in _progressReaders)
                 progressReader.ReadProgress(_progressService.PlayerProgress);
 
@@ -77,10 +73,7 @@ namespace _Application.Scripts.UI.Windows
         {
             Close();
             
-            if(_isWin)
-                UISystem.ShowWindow<WinWindow>();
-            else
-                UISystem.ShowWindow<LoseWindow>();
+            UISystem.ShowWindow<LobbyWindow>();
         }
 
         private void OnDestroy()

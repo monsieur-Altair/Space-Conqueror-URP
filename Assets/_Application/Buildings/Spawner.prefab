@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2676314171168896608
 Transform:
   m_ObjectHideFlags: 0
@@ -143,9 +143,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d564053b5fe4ff3a18b977e2cce1e72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _freeTimeout: 0
+  _freeAfterTime: 1
   team: 2
   _buildingType: 1
   _spriteRenderer: {fileID: 8603921938020538210}
+  _meshRenderer: {fileID: 4835928673963705651}
 --- !u!54 &-4838908423273356698
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -318,12 +321,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 5f42311e3b500da458fa5cd3102092a3, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5f42311e3b500da458fa5cd3102092a3, type: 3}
 --- !u!4 &6005417463748263516 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5f42311e3b500da458fa5cd3102092a3, type: 3}
+  m_PrefabInstance: {fileID: 6115112176200522167}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &4835928673963705651 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 5f42311e3b500da458fa5cd3102092a3, type: 3}
   m_PrefabInstance: {fileID: 6115112176200522167}
   m_PrefabAsset: {fileID: 0}

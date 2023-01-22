@@ -41,14 +41,13 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
             
             Core aiManager = new Core(coroutineRunner, aiAISkillController);
             
-            Outlook outlookManager = new Outlook(warehouse);
             UserControl userControl = AllServices.Get<UserControl>();
             CounterSpawner.Init(warehouse, objectPool, UISystem.GetWindow<GameplayWindow>().CounterContainer, globalCamera);
             
             
             GameLoopManager gameLoopManager = new GameLoopManager(AllServices.Get<LevelManager>(), 
                 new TeamManager(AllServices.Get<ProgressService>()), 
-                coroutineRunner, aiManager, objectPool, outlookManager, userControl,
+                coroutineRunner, aiManager, objectPool, AllServices.Get<OutlookService>(), userControl,
                 AllServices.Get<ScriptableService>(),
                 AllServices.Get<ProgressService>(),
                 AllServices.Get<AudioManager>(), 

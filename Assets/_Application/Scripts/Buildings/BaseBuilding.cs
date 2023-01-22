@@ -22,15 +22,17 @@ namespace _Application.Scripts.Buildings
     {
         Altar = 0,
         Spawner = 1,
-        Attacker = 2
+        Attacker = 2,
+        None = 3,
     }
 
     [RequireComponent(typeof(Collider))]//,typeof(Rigidbody))]
-    public abstract class BaseBuilding : MonoBehaviour, IFreezable, IBuffed
+    public abstract class BaseBuilding : PooledBehaviour, IFreezable, IBuffed
     {
         [SerializeField] private Team team;
         [SerializeField] private BuildingType _buildingType;
         [SerializeField] private SpriteRenderer _spriteRenderer;
+        [Space, SerializeField] private MeshRenderer _meshRenderer;
 
         public static event Action<BaseBuilding, Team, Team> Conquered;
         public event Action<BaseBuilding, int> CountChanged;
@@ -66,6 +68,7 @@ namespace _Application.Scripts.Buildings
         public Units.BaseUnit UnitPrefab { get; private set; }
         public bool IsBuffed { get; private set; }
         public float Count => _count;
+        public MeshRenderer MeshRenderer => _meshRenderer;
 
 
         public struct UnitInf

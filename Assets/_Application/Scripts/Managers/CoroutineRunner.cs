@@ -2,6 +2,7 @@
 using System.Collections;
 using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Infrastructure.Services.Progress;
+using Pool_And_Particles;
 using UnityEngine;
 
 namespace _Application.Scripts.Managers
@@ -26,6 +27,14 @@ namespace _Application.Scripts.Managers
         private void OnApplicationFocus(bool hasFocus)
         {
             if (hasFocus == false)
+            {
+                _readWriterService.WriteProgress();
+            }
+        }
+
+        private void OnApplicationPause(bool pauseStatus)
+        {
+            if (pauseStatus)
             {
                 _readWriterService.WriteProgress();
             }

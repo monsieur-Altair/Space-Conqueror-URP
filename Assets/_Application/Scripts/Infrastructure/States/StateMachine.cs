@@ -19,8 +19,14 @@ namespace _Application.Scripts.Infrastructure.States
             {
                 [typeof(BootstrapState)] = CreateBootstrapState(monoBehaviour, sceneLoader, coreConfig),
                 [typeof(LoadLevelState)] = CreateLoadLevelState(sceneLoader),
+                [typeof(LobbyState)] = CreateLobbyState(),
                 [typeof(GameLoopState)] = CreateGameLoopState()
             };
+        }
+
+        private LobbyState CreateLobbyState()
+        {
+            return new LobbyState(this, AllServices.Get<LobbyManager>());
         }
 
         private GameLoopState CreateGameLoopState() => 

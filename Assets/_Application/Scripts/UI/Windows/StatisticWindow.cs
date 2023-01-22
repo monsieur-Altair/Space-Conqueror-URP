@@ -45,7 +45,7 @@ namespace _Application.Scripts.UI.Windows
 
             UpdateAllFields();
             
-            _backToGameButton.onClick.AddListener(BackToStartUp);
+            _backToGameButton.onClick.AddListener(GoBack);
         }
 
         protected override void OnClosed()
@@ -55,10 +55,10 @@ namespace _Application.Scripts.UI.Windows
             _backToGameButton.onClick.RemoveAllListeners();
         }
 
-        private void BackToStartUp()
+        private void GoBack()
         {
             Close();
-            UISystem.ShowWindow<StartUpWindow>();
+            UISystem.ShowWindow<LobbyWindow>();
         }
 
         private void UpdateAllFields()

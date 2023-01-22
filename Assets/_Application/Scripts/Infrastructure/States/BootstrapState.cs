@@ -50,12 +50,13 @@ namespace _Application.Scripts.Infrastructure.States
         private void RegisterMonoBehServices()
         {
             _gameFactory = AllServices.Get<GameFactory>();
-            var servicePrefabs = _coreConfig.MonoBehaviourServices;
+            MonoBehaviourServices servicePrefabs = _coreConfig.MonoBehaviourServices;
 
             _gameFactory.CreateAndRegisterMonoBeh(servicePrefabs.AudioManager);
             _gameFactory.CreateAndRegisterMonoBeh(servicePrefabs.CoroutineRunner);
             _gameFactory.CreateAndRegisterMonoBeh(servicePrefabs.LevelManager);
             _gameFactory.CreateAndRegisterMonoBeh(servicePrefabs.GlobalCamera);
+            _gameFactory.CreateAndRegisterMonoBeh(servicePrefabs.LobbyManager);
         }
 
         public void Enter()
@@ -69,7 +70,7 @@ namespace _Application.Scripts.Infrastructure.States
         }
 
         private void ReadProgress() => 
-            _progressService.PlayerProgress = _readWriterService.ReadProgress() ?? new PlayerProgress(-1);
+            _progressService.PlayerProgress = ReadWriterService.ReadProgress() ?? new PlayerProgress(-1);
 
 
         private void RegisterServices()
@@ -83,6 +84,8 @@ namespace _Application.Scripts.Infrastructure.States
             GameFactory factory = AllServices.Register(new GameFactory(scriptableService, _coreConfig));
 
             ProgressService progressService = AllServices.Register(new ProgressService());
+
+            AllServices.Register(new OutlookService(_coreConfig.Warehouse));
 
             AllServices.Register(new ReadWriterService(progressService, factory));
             AllServices.Register(_stateMachine);

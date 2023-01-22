@@ -27,7 +27,7 @@ namespace _Application.Scripts.Managers
         private const int MaxTutorialCount = 5;
         
         private readonly AI.Core _ai;
-        private readonly Outlook _outlook;
+        private readonly OutlookService _outlookService;
         private readonly LevelManager _levelsManager;
         private readonly GlobalPool _objectPool;
         private readonly UserControl _userControl;
@@ -50,7 +50,7 @@ namespace _Application.Scripts.Managers
         private readonly UnitSupervisor _unitSupervisor;
 
         public GameLoopManager(LevelManager levelsManager, TeamManager teamManager, CoroutineRunner coroutineRunner, AI.Core ai,
-            GlobalPool pool, Outlook outlook, UserControl userControl, ScriptableService scriptableService,
+            GlobalPool pool, OutlookService outlookService, UserControl userControl, ScriptableService scriptableService,
             ProgressService progressService, AudioManager audioManager, CoreConfig coreConfig)
         {
             _unitSupervisor = new UnitSupervisor(pool);
@@ -63,7 +63,7 @@ namespace _Application.Scripts.Managers
             _levelsManager = levelsManager;
             _ai = ai;
             _objectPool = pool;
-            _outlook = outlook;
+            _outlookService = outlookService;
             _userControl = userControl;
             _scriptableService = scriptableService;
             _progressService = progressService;
@@ -100,8 +100,8 @@ namespace _Application.Scripts.Managers
             {
                 building.gameObject.SetActive(true);
                 PoolObjectType poolObjectType = (PoolObjectType)((int) building.BuildingType);
-                var prefab = _objectPool.GetPooledBehaviourPrefab(poolObjectType);
-                building.Construct(_scriptableService, _progressService, prefab.GetComponent<Units.BaseUnit>(), _objectPool);
+                var unitPrefab = _objectPool.GetPooledBehaviourPrefab(poolObjectType);
+                building.Construct(_scriptableService, _progressService, unitPrefab.GetComponent<Units.BaseUnit>(), _objectPool);
             }
             
             _teamManager.FillTeamCount(_allBuildings);
@@ -196,7 +196,7 @@ namespace _Application.Scripts.Managers
             PrepareLevel();
             _ai.Init(_allBuildings);
             _ai.Enable();
-            _outlook.PrepareLevel(_allBuildings);
+            _outlookService.PrepareLevel(_allBuildings);
             
             CounterSpawner.ClearList();
             CounterSpawner.FillLists(_allBuildings);

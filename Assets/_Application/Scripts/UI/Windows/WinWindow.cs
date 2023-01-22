@@ -15,10 +15,7 @@ namespace _Application.Scripts.UI.Windows
         private Button _nextLevelButton;
         
         [SerializeField] 
-        private Button _toUpgradeButton;
-
-        //[SerializeField] 
-        //private Button _toStatistic;
+        private Button _toLobby;
         
         [SerializeField] 
         private TextMeshProUGUI _moneyText;
@@ -45,7 +42,7 @@ namespace _Application.Scripts.UI.Windows
             _moneyText.text = _progressService.PlayerProgress.Money.ToString();
             
             _nextLevelButton.onClick.AddListener(GoNextLevel);
-            _toUpgradeButton.onClick.AddListener(OpenUpgrades);
+            _toLobby.onClick.AddListener(GoToLobby);
         }
 
         protected override void OnClosed()
@@ -53,13 +50,13 @@ namespace _Application.Scripts.UI.Windows
             base.OnClosed();
             
             _nextLevelButton.onClick.RemoveListener(GoNextLevel);
-            _toUpgradeButton.onClick.RemoveListener(OpenUpgrades);
+            _toLobby.onClick.RemoveListener(GoToLobby);
         }
 
-        private void OpenUpgrades()
+        private void GoToLobby()
         {
             Close();
-            UISystem.ShowPayloadedWindow<UpgradeWindow, bool>(true);
+            _stateMachine.Enter<LobbyState>();
         }
 
         private void GoNextLevel()

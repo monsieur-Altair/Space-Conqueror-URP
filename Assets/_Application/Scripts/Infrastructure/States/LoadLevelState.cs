@@ -35,7 +35,7 @@ namespace _Application.Scripts.Infrastructure.States
             foreach (IProgressReader progressReader in _gameFactory.ProgressReaders)
                 progressReader.ReadProgress(_progressService.PlayerProgress);
 
-            _stateMachine.Enter<GameLoopState>();
+            _stateMachine.Enter<LobbyState>();
         }
     }
 }
