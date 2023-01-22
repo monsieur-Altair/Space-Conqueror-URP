@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace _Application.Scripts.Buildings
 {
-    public class Altar : Base
+    public class Altar : BaseBuilding
     {
         public static event Action<float, int> ManaCountUpdated = delegate {  }; 
         

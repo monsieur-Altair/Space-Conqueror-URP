@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace _Application.Scripts.Skills
 {
-    public class Ice : Base
+    public class Ice : BaseSkill
     {
         public static event Action DeletingFreezingZone;
 

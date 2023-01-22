@@ -7,7 +7,6 @@
 1. move ui from ref
 2. create 5 own places (create lobby)
 3. create building's level system
-4. create spells (rework)
+-4. create spells (rework)
 5. remove navmesh
-6. create arrow
 7, create timer for units

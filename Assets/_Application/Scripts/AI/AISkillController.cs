@@ -6,7 +6,6 @@ using _Application.Scripts.Managers;
 using _Application.Scripts.Skills;
 using Pool_And_Particles;
 using UnityEngine;
-using Base = _Application.Scripts.Buildings.Base;
 
 namespace _Application.Scripts.AI
 {
@@ -48,13 +47,13 @@ namespace _Application.Scripts.AI
             Acid.Refresh();
         }
         
-        public void AttackByAcid(Base target) => 
+        public void AttackByAcid(BaseBuilding target) => 
             Acid.ExecuteForAI(target);
 
-        public void BuffBuilding(Base target) => 
+        public void BuffBuilding(BaseBuilding target) => 
             Buff.ExecuteForAI(target);
 
-        public void CallSupply(Base target) => 
+        public void CallSupply(BaseBuilding target) => 
             Call.ExecuteForAI(target);
     }   
 }

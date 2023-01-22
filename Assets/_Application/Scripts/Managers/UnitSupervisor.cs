@@ -7,18 +7,18 @@ namespace _Application.Scripts.Managers
     public class UnitSupervisor
     {
         private readonly GlobalPool _globalPool;
-        private readonly List<Base> _units;
+        private readonly List<BaseUnit> _units;
 
         public UnitSupervisor(GlobalPool globalPool)
         {
             _globalPool = globalPool;
-            _units = new List<Base>();
+            _units = new List<BaseUnit>();
             Enable();
         }
 
         public void DisableAll()
         {
-            foreach (Base unit in _units)
+            foreach (BaseUnit unit in _units)
             {
                 Disable(unit);
             }
@@ -27,23 +27,23 @@ namespace _Application.Scripts.Managers
 
         private void Enable()
         {
-            Units.Base.Launched += BaseOnLaunched;   
-            Units.Base.Approached += BaseOnApproached;   
+            Units.BaseUnit.Launched += BaseOnLaunched;   
+            Units.BaseUnit.Approached += BaseOnApproached;   
         }
 
-        private void BaseOnApproached(Base unit)
+        private void BaseOnApproached(BaseUnit unit)
         {
             _units.Remove(unit);
             Disable(unit);
         }
 
-        private void Disable(Base unit)
+        private void Disable(BaseUnit unit)
         {
             _globalPool.Free(unit);
             unit.Stop();
         }
 
-        private void BaseOnLaunched(Base unit)
+        private void BaseOnLaunched(BaseUnit unit)
         {
             _units.Add(unit);
         }

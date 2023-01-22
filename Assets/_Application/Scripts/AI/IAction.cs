@@ -6,6 +6,6 @@ namespace _Application.Scripts.AI
     public interface IAction
     {
         void Execute();
-        public void InitAction(List<List<Buildings.Base>> buildings, Vector3 mainPos);
+        public void InitAction(List<List<Buildings.BaseBuilding>> buildings, Vector3 mainPos);
     }
 }

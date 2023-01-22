@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using _Application.Scripts.Buildings;
 using _Application.Scripts.Units;
 using UnityEngine;
-using Base = _Application.Scripts.Units.Base;
 
 namespace _Application.Scripts.Managers
 {    
@@ -33,7 +32,7 @@ namespace _Application.Scripts.Managers
 
         private readonly Dictionary<int, List<Texture>> _allTextures = new Dictionary<int, List<Texture>>();
         private readonly Dictionary<int, MeshRenderer> _buildingsRenderer = new Dictionary<int, MeshRenderer>();
-        private List<Buildings.Base> _allBuildings = new List<Buildings.Base>();
+        private List<Buildings.BaseBuilding> _allBuildings = new List<Buildings.BaseBuilding>();
 
 
         public Outlook(Warehouse warehouse)
@@ -58,16 +57,16 @@ namespace _Application.Scripts.Managers
             _allTextures.Add(FlagHash,_warehouse.flagTextures);
         }
        
-        public void PrepareLevel(List<Buildings.Base> planets)
+        public void PrepareLevel(List<Buildings.BaseBuilding> planets)
         {
             ClearLists();
-            _allBuildings = new List<Buildings.Base>(planets);
+            _allBuildings = new List<Buildings.BaseBuilding>(planets);
             FillList();
         }
 
         private void ClearLists()
         {
-            foreach (Buildings.Base building in _allBuildings)
+            foreach (Buildings.BaseBuilding building in _allBuildings)
             {
                 building.Buffed -= SetBuff;
                 building.UnBuffed -= UnSetBuff;
@@ -80,7 +79,7 @@ namespace _Application.Scripts.Managers
 
         private void FillList()
         {
-            foreach (Buildings.Base building in _allBuildings)
+            foreach (Buildings.BaseBuilding building in _allBuildings)
             {
                 //building.SetOutlookManager();
                 building.Buffed += SetBuff;
@@ -94,14 +93,14 @@ namespace _Application.Scripts.Managers
             }
         }
 
-        private void Decompose(Buildings.Base building)
+        private void Decompose(Buildings.BaseBuilding building)
         {
             int index = building.ID.GetHashCode();
             Transform circle = building.transform.GetChild(0);
             _buildingsRenderer.Add(index, circle.GetComponent<MeshRenderer>());
         }
 
-        private void SetOutlook(Buildings.Base building)
+        private void SetOutlook(Buildings.BaseBuilding building)
         {
             int team = (int)building.Team;
             BuildingType buildingType = building.BuildingType;
@@ -140,7 +139,7 @@ namespace _Application.Scripts.Managers
             }
         }
 
-        private void SetUnitOutlook(Buildings.Base building, Base unit)
+        private void SetUnitOutlook(Buildings.BaseBuilding building, BaseUnit unit)
         {
             int team = (int) building.Team;
             //also we can add all rockets materials to list 
@@ -159,13 +158,13 @@ namespace _Application.Scripts.Managers
             return new[] {mainMaterial, secondMat};
         }
 
-        private void SetBuff(Buildings.Base building)
+        private void SetBuff(Buildings.BaseBuilding building)
         {
             int index = building.ID.GetHashCode();
             SetBuffMaterial(index, _buffedBuildingMaterial);
         }
 
-        private void UnSetBuff(Buildings.Base building)
+        private void UnSetBuff(Buildings.BaseBuilding building)
         {
             int index = building.ID.GetHashCode();
             SetBuffMaterial(index, _baseBuildingMaterial);

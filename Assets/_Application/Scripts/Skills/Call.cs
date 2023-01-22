@@ -9,13 +9,13 @@ using UnityEngine;
 
 namespace _Application.Scripts.Skills
 {
-    public class Call : Base
+    public class Call : BaseSkill
     {
         private readonly GlobalCamera _globalCamera;
         private PooledBehaviour _indicator;
         private readonly Vector3 _indicatorOffset = new Vector3(0, 1.9f, 0);
         private Coroutine _displayingIndicatorCor;
-        private Units.Base _sentUnit;
+        private Units.BaseUnit _sentUnit;
         private float _callPercent;
         private bool _isIndicatorActive;
 
@@ -87,7 +87,7 @@ namespace _Application.Scripts.Skills
             FreeIndicator();
         }
 
-        private static Vector3 CalculateDestPos(in Vector3 launchPos, Buildings.Base destinationPlanet)
+        private static Vector3 CalculateDestPos(in Vector3 launchPos, Buildings.BaseBuilding destinationPlanet)
         {
             Vector3 destPos = destinationPlanet.transform.position;
             Vector3 offset = (destPos - launchPos).normalized;

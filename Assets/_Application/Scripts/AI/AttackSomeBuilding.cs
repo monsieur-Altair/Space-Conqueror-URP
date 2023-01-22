@@ -20,9 +20,9 @@ namespace _Application.Scripts.AI
         private readonly CoroutineRunner _coroutineRunner;
         private readonly AISkillController _aiSkillController;
 
-        private List<List<Buildings.Base>> _allBuildings;
-        private Buildings.Base _target;
-        private readonly List<Buildings.Base> _buildingsForLaunch = new List<Buildings.Base>();
+        private List<List<Buildings.BaseBuilding>> _allBuildings;
+        private Buildings.BaseBuilding _target;
+        private readonly List<Buildings.BaseBuilding> _buildingsForLaunch = new List<Buildings.BaseBuilding>();
         private Vector3 _mainPos;
         private int _countForLaunch;
         private bool _isCastedSkill;
@@ -34,7 +34,7 @@ namespace _Application.Scripts.AI
             _coroutineRunner = coroutineRunner;
         }
         
-        public void InitAction(List<List<Buildings.Base>> buildings, Vector3 mainPos)
+        public void InitAction(List<List<Buildings.BaseBuilding>> buildings, Vector3 mainPos)
         {
             _allBuildings = buildings;
             _mainPos = mainPos;
@@ -57,7 +57,7 @@ namespace _Application.Scripts.AI
         private IEnumerator LaunchToTarget()
         {
             yield return _coroutineRunner.StartCoroutine(FindAllBuildingsToAttack());
-            foreach (Buildings.Base building in _buildingsForLaunch)
+            foreach (Buildings.BaseBuilding building in _buildingsForLaunch)
             {
                 if((int)building.Team==Core.Own)
                     building.LaunchUnit(_target);
@@ -74,11 +74,11 @@ namespace _Application.Scripts.AI
             yield return null;
             
             Vector3 launchPos = _target.transform.position;
-            List<KeyValuePair<Buildings.Base, float>> dataForLaunch = new List<KeyValuePair<Buildings.Base, float>>();
-            foreach (Buildings.Base buildingForLaunch in _allBuildings[Core.Own])
+            List<KeyValuePair<Buildings.BaseBuilding, float>> dataForLaunch = new List<KeyValuePair<Buildings.BaseBuilding, float>>();
+            foreach (Buildings.BaseBuilding buildingForLaunch in _allBuildings[Core.Own])
             {
                 float distance = Vector3.Distance(launchPos, buildingForLaunch.transform.position);
-                dataForLaunch.Add(new KeyValuePair<Buildings.Base, float>(buildingForLaunch,distance));
+                dataForLaunch.Add(new KeyValuePair<Buildings.BaseBuilding, float>(buildingForLaunch,distance));
                 yield return null;
             }
 
@@ -113,7 +113,7 @@ namespace _Application.Scripts.AI
             
             float minDistance = float.PositiveInfinity;
 
-            foreach (Buildings.Base possibleTarget in _allBuildings[teamForAttack])
+            foreach (Buildings.BaseBuilding possibleTarget in _allBuildings[teamForAttack])
             {
                 float distance = Vector3.Distance(_mainPos, possibleTarget.transform.position);
                 if (distance < minDistance)

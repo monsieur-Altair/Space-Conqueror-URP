@@ -24,7 +24,7 @@ namespace _Application.Scripts.Managers
                 _teamCount.Add(0);
         }
 
-        public void UpdateObjectsCount(Base building, Team oldTeam, Team newTeam)
+        public void UpdateObjectsCount(BaseBuilding building, Team oldTeam, Team newTeam)
         {
             _teamCount[(int) oldTeam]--;
             _teamCount[(int) newTeam]++;
@@ -49,9 +49,9 @@ namespace _Application.Scripts.Managers
                 _teamCount[i] = 0;
         }
 
-        public void FillTeamCount(List<Base> allBuildings)
+        public void FillTeamCount(List<BaseBuilding> allBuildings)
         {
-            foreach (Base building in allBuildings)
+            foreach (BaseBuilding building in allBuildings)
             {
                 int team = (int) building.Team;
                 _teamCount[team]++;

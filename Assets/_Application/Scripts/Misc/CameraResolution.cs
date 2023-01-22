@@ -74,7 +74,7 @@ namespace _Application.Scripts.Misc
         //calculate a min way on SCREEN (NOT WORLD) coordinates for supply
 
 
-        public Vector3 FindSpawnPoint(Base destination)
+        public Vector3 FindSpawnPoint(BaseBuilding destination)
         {
             Vector3 destPosWorld = destination.transform.position;
             Vector3 destPosScreen = MainCamera.WorldToScreenPoint(destPosWorld);

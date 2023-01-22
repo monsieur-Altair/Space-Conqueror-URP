@@ -15,7 +15,7 @@ namespace _Application.Scripts.UI
         private static List<Color> _counterForeground;
         private static Vector3 _offset = new Vector3(0, -35, 0);
         private static Vector3 _baseCounterScale = new Vector3(1, 1, 1);
-        private static List<Buildings.Base> _allBuildings = new List<Buildings.Base>();
+        private static List<Buildings.BaseBuilding> _allBuildings = new List<Buildings.BaseBuilding>();
         private static List<GameObject> _countersList = new List<GameObject>();
         private static Dictionary<int, Image> _backgrounds = new Dictionary<int, Image>();
         private static Dictionary<int, TextMeshProUGUI> _foregrounds = new Dictionary<int, TextMeshProUGUI>();
@@ -32,11 +32,11 @@ namespace _Application.Scripts.UI
             _pool = pool;
         }
         
-        public static void FillLists(List<Buildings.Base> allBuildings)
+        public static void FillLists(List<Buildings.BaseBuilding> allBuildings)
         {
-            _allBuildings = new List<Buildings.Base>(allBuildings);
+            _allBuildings = new List<Buildings.BaseBuilding>(allBuildings);
 
-            foreach (Buildings.Base building in _allBuildings)
+            foreach (Buildings.BaseBuilding building in _allBuildings)
             {
                 building.CountChanged += SetCounter;
                 building.TeamChanged += SetCounterColor;
@@ -49,14 +49,14 @@ namespace _Application.Scripts.UI
             }
         }
         
-        private static void DecomposeCounter(GameObject counter, Buildings.Base building)
+        private static void DecomposeCounter(GameObject counter, Buildings.BaseBuilding building)
         {
             int index = building.ID.GetHashCode();
             _foregrounds.Add(index, counter.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>());
             _backgrounds.Add(index, counter.GetComponentInChildren<Image>());
         }
 
-        private static GameObject SpawnCounterTo(Buildings.Base building)
+        private static GameObject SpawnCounterTo(Buildings.BaseBuilding building)
         {
             Vector3 counterPos = GetCounterPos(building);
             GameObject counter = _pool.GetObject(PoolObjectType.Counter, counterPos, Quaternion.identity).gameObject;
@@ -66,14 +66,14 @@ namespace _Application.Scripts.UI
             return counter;
         }
 
-        private static Vector3 GetCounterPos(Buildings.Base building)
+        private static Vector3 GetCounterPos(Buildings.BaseBuilding building)
         {
             Vector3 pos = building.transform.position;
             Vector3 screenPos = _globalCamera.GetScreenPos(pos);
             return screenPos + _offset;
         }
 
-        private static void SetCounterColor(Buildings.Base building)
+        private static void SetCounterColor(Buildings.BaseBuilding building)
         {
             int team = (int) building.Team;
             int index = building.ID.GetHashCode();
@@ -81,7 +81,7 @@ namespace _Application.Scripts.UI
             _backgrounds[index].color = _counterBackground[team];
         }
 
-        private static void SetCounter(Buildings.Base building, int value)
+        private static void SetCounter(Buildings.BaseBuilding building, int value)
         {
             int index = building.ID.GetHashCode();
             _foregrounds[index].text = value.ToString();
@@ -92,7 +92,7 @@ namespace _Application.Scripts.UI
             foreach (GameObject counter in _countersList) 
                 counter.gameObject.SetActive(false);
             
-            foreach (Buildings.Base building in _allBuildings)
+            foreach (Buildings.BaseBuilding building in _allBuildings)
             {
                 building.CountChanged -= SetCounter;
                 building.TeamChanged -= SetCounterColor;

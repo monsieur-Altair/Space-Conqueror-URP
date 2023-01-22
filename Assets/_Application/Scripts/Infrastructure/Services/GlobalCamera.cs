@@ -12,7 +12,7 @@ namespace _Application.Scripts.Infrastructure.Services
 
         public Camera MainCamera => _camera;
 
-        public Vector3 FindSpawnPoint(Base destination) => 
+        public Vector3 FindSpawnPoint(BaseBuilding destination) => 
             _cameraResolution.FindSpawnPoint(destination);
 
         public override void Init()

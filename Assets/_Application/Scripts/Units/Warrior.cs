@@ -3,11 +3,11 @@ using UnityEngine;
 
 namespace _Application.Scripts.Units
 {
-    public class Warrior : Base, IFreezable
+    public class Warrior : BaseUnit, IFreezable
     {
         public SkinnedMeshRenderer skinnedMeshRenderer;
         
-        private Buildings.Base.UnitInf _unitInf;
+        private Buildings.BaseBuilding.UnitInf _unitInf;
 
         protected override void TargetInRange()
         {
@@ -22,7 +22,7 @@ namespace _Application.Scripts.Units
         public void OnDisable() => 
             Ice.DeletingFreezingZone -= Unfreeze;
 
-        public override void SetData(in Buildings.Base.UnitInf unitInf) => 
+        public override void SetData(in Buildings.BaseBuilding.UnitInf unitInf) => 
             _unitInf = unitInf;
 
         public override Buildings.Team GetTeam() => 

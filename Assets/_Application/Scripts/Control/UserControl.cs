@@ -8,8 +8,7 @@ namespace _Application.Scripts.Control
     public class UserControl : MonoBehaviourService
     {
         private bool _isActive;
-
-        private IInputService _inputService;
+        public IInputService InputService { get; private set; }
 
         public override void Init()
         {
@@ -20,7 +19,7 @@ namespace _Application.Scripts.Control
                 AllServices.Get<CoreConfig>(), 
                 AllServices.Get<GlobalPool>());
             
-            _inputService = RegisterInputService(buildingsController, AllServices.Get<SkillController>());
+            InputService = RegisterInputService(buildingsController, AllServices.Get<SkillController>());
         }
 
         public void Update()
@@ -28,7 +27,7 @@ namespace _Application.Scripts.Control
             if(!_isActive)
                 return;
             
-            _inputService.HandleInput();
+            InputService.HandleInput();
         }
 
         public void Disable() => 
@@ -38,10 +37,10 @@ namespace _Application.Scripts.Control
             _isActive = true;
 
         public void Refresh() => 
-            _inputService.Refresh();
+            InputService.Refresh();
 
         public void Reload() =>
-            _inputService.Reload();
+            InputService.Reload();
 
         private static IInputService RegisterInputService(BuildingsController buildingsController ,
             SkillController skillController)

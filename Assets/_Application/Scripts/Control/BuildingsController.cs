@@ -9,7 +9,7 @@ namespace _Application.Scripts.Control
 {
     public class BuildingsController
     {
-        private readonly List<Buildings.Base> _selectableBuildings;
+        private readonly List<Buildings.BaseBuilding> _selectableBuildings;
         private readonly Camera _mainCamera;
         private readonly WorldArrowManager _worldArrowManager;
         private readonly List<Color> _circleColors;
@@ -17,7 +17,7 @@ namespace _Application.Scripts.Control
         public BuildingsController(Camera camera, CoreConfig coreConfig, GlobalPool globalPool)
         {
             _mainCamera = camera;
-            _selectableBuildings = new List<Buildings.Base>();
+            _selectableBuildings = new List<Buildings.BaseBuilding>();
 
             _circleColors = coreConfig.Warehouse.circleColors;
             PooledBehaviour prefab = coreConfig.PoolObjects.PooledPrefabs.GetValue(PoolObjectType.WorldArrow).prefab;
@@ -26,7 +26,7 @@ namespace _Application.Scripts.Control
 
         public void HandleClick(Vector3 pos)
         {
-            Buildings.Base building = RaycastForBuilding(pos);
+            Buildings.BaseBuilding building = RaycastForBuilding(pos);
             if (building == null) 
                 return;
             
@@ -52,7 +52,7 @@ namespace _Application.Scripts.Control
 
         public void HandleMultipleSelection(Vector3 screenPointPos)
         {
-            Buildings.Base building = RaycastForBuilding(screenPointPos);
+            Buildings.BaseBuilding building = RaycastForBuilding(screenPointPos);
             _worldArrowManager.UpdateAll(screenPointPos);
 
             if (building == null)
@@ -78,7 +78,7 @@ namespace _Application.Scripts.Control
             }
         }
         
-        private void CancelSelection(Buildings.Base building)
+        private void CancelSelection(Buildings.BaseBuilding building)
         {
             //DecreaseScale(building);
             
@@ -88,7 +88,7 @@ namespace _Application.Scripts.Control
             building.Deselect();
         }
 
-        private void Select(Buildings.Base building)
+        private void Select(Buildings.BaseBuilding building)
         {
             AddToList(building);
             building.Select(_circleColors[(int) building.Team]);
@@ -101,33 +101,33 @@ namespace _Application.Scripts.Control
 
         private void StartLaunching(int count)
         {
-            Buildings.Base destination = _selectableBuildings[count - 1];
+            Buildings.BaseBuilding destination = _selectableBuildings[count - 1];
             _selectableBuildings.Remove(destination);
             CancelSelection(destination);
             LaunchToDestination(destination);
         }
 
-        private void ClearAllSelection()
+        public void ClearAllSelection()
         {
-            foreach (Buildings.Base building in _selectableBuildings)
+            foreach (Buildings.BaseBuilding building in _selectableBuildings)
                 CancelSelection(building);
             
             _selectableBuildings.Clear();
             _worldArrowManager.DisableAll();
         }
 
-        private Buildings.Base RaycastForBuilding(Vector3 pos)
+        private Buildings.BaseBuilding RaycastForBuilding(Vector3 pos)
         {
             int layerMask = 1 << 0;
             layerMask = ~layerMask;
             Ray ray = _mainCamera.ScreenPointToRay(pos);
             return Physics.Raycast(ray, out RaycastHit hit,Mathf.Infinity, layerMask) 
-                ? hit.collider.GetComponent<Buildings.Base>() : null;
+                ? hit.collider.GetComponent<Buildings.BaseBuilding>() : null;
         }
 
-        private void MoveEnemyToTheEnd(Buildings.Base building, int count)
+        private void MoveEnemyToTheEnd(Buildings.BaseBuilding building, int count)
         {
-            Buildings.Base lastBuilding = _selectableBuildings.Last();
+            Buildings.BaseBuilding lastBuilding = _selectableBuildings.Last();
             if (building == lastBuilding)
                 return;
 
@@ -140,9 +140,9 @@ namespace _Application.Scripts.Control
             Select(building);
         }
 
-        private void MoveAllyToTheEnd(Buildings.Base building)
+        private void MoveAllyToTheEnd(Buildings.BaseBuilding building)
         {
-            Buildings.Base lastBuilding = _selectableBuildings.Last();
+            Buildings.BaseBuilding lastBuilding = _selectableBuildings.Last();
             if (building == lastBuilding)
                 return;
 
@@ -155,37 +155,37 @@ namespace _Application.Scripts.Control
                 Select(building);
         }
 
-        private void PlaceInTheEnd(Buildings.Base building)
+        private void PlaceInTheEnd(Buildings.BaseBuilding building)
         {
             _selectableBuildings.Remove(building);
             _selectableBuildings.Add(building);
         }
 
-        private void RemoveLastFromList(Buildings.Base lastBuilding)
+        private void RemoveLastFromList(Buildings.BaseBuilding lastBuilding)
         {
             CancelSelection(lastBuilding);
             _selectableBuildings.RemoveAt(_selectableBuildings.Count - 1);
         }
 
-        private void LaunchToDestination(Buildings.Base destination)
+        private void LaunchToDestination(Buildings.BaseBuilding destination)
         {
-            foreach (Buildings.Base building in _selectableBuildings)
+            foreach (Buildings.BaseBuilding building in _selectableBuildings)
             {
                 if(building.Team==Buildings.Team.Blue)
                     building.LaunchUnit(destination);
             }
         }
 
-        private void AddToList(Buildings.Base planet) => 
+        private void AddToList(Buildings.BaseBuilding planet) => 
             _selectableBuildings.Add(planet);
         
-        private static void DecreaseScale(Buildings.Base planet)
+        private static void DecreaseScale(Buildings.BaseBuilding planet)
         {
             if(planet!=null)
                 planet.transform.localScale /= 1.5f;
         }
     
-        private static void IncreaseScale(Buildings.Base planet)
+        private static void IncreaseScale(Buildings.BaseBuilding planet)
         {
             if(planet!=null) 
                 planet.transform.localScale *= 1.5f;

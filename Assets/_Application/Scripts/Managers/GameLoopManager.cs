@@ -42,7 +42,7 @@ namespace _Application.Scripts.Managers
         private bool _isWin;
         private GameStates _currentGameState;
 
-        private List<Buildings.Base> _allBuildings;
+        private List<Buildings.BaseBuilding> _allBuildings;
 
         private int _lastCompletedLevel;
         private bool _hasUpgradeTutorialShown;
@@ -55,7 +55,7 @@ namespace _Application.Scripts.Managers
         {
             _unitSupervisor = new UnitSupervisor(pool);
             _coreConfig = coreConfig;
-            _allBuildings = new List<Buildings.Base>();
+            _allBuildings = new List<Buildings.BaseBuilding>();
 
             _useTutorial = AllServices.Get<CoreConfig>().UseTutorial;
             _teamManager = teamManager;
@@ -69,7 +69,7 @@ namespace _Application.Scripts.Managers
             _progressService = progressService;
             _audioManager = audioManager;
 
-            Buildings.Base.Conquered += _teamManager.UpdateObjectsCount;
+            Buildings.BaseBuilding.Conquered += _teamManager.UpdateObjectsCount;
             TeamManager.GameEnded += EndGame;
 
             //UISystem.GetWindow<WinWindow>().ToStatisticButton.onClick.AddListener(ToStatisticButton_Clicked);
@@ -94,14 +94,14 @@ namespace _Application.Scripts.Managers
 
         private void PrepareLevel()
         {
-            _allBuildings = _buildingsLay.GetComponentsInChildren<Buildings.Base>().ToList();
+            _allBuildings = _buildingsLay.GetComponentsInChildren<Buildings.BaseBuilding>().ToList();
             
-            foreach (Buildings.Base building in _allBuildings)
+            foreach (Buildings.BaseBuilding building in _allBuildings)
             {
                 building.gameObject.SetActive(true);
                 PoolObjectType poolObjectType = (PoolObjectType)((int) building.BuildingType);
                 var prefab = _objectPool.GetPooledBehaviourPrefab(poolObjectType);
-                building.Construct(_scriptableService, _progressService, prefab.GetComponent<Units.Base>(), _objectPool);
+                building.Construct(_scriptableService, _progressService, prefab.GetComponent<Units.BaseUnit>(), _objectPool);
             }
             
             _teamManager.FillTeamCount(_allBuildings);
@@ -129,6 +129,7 @@ namespace _Application.Scripts.Managers
                 {
                     _userControl.Refresh();
                     _userControl.Disable();
+                    _userControl.InputService.BuildingsController.ClearAllSelection();
                     _unitSupervisor.DisableAll();
                     _ai.Disable();
 

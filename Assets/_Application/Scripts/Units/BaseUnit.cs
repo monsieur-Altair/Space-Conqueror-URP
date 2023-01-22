@@ -10,17 +10,17 @@ namespace _Application.Scripts.Units
         typeof(Collider), 
         typeof(Rigidbody))]
     
-    public abstract class Base : PooledBehaviour
+    public abstract class BaseUnit : PooledBehaviour
     {
-        public static event Action<Base> Launched = delegate { };
-        public static event Action<Base> Approached = delegate { };
+        public static event Action<BaseUnit> Launched = delegate { };
+        public static event Action<BaseUnit> Approached = delegate { };
         
         public abstract float GetActualCount(float countAfterAttack);
-        public abstract void SetData(in Buildings.Base.UnitInf unitInf);
+        public abstract void SetData(in Buildings.BaseBuilding.UnitInf unitInf);
         public abstract Buildings.Team GetTeam();
         public abstract float CalculateAttack(Buildings.Team buildingTeam,float defence);
 
-        protected Buildings.Base Target;
+        protected Buildings.BaseBuilding Target;
         protected abstract void TargetInRange();
         protected abstract void SetSpeed();
         protected NavMeshAgent Agent;
@@ -43,7 +43,7 @@ namespace _Application.Scripts.Units
             }
         }
 
-        public void GoTo(Buildings.Base destination,Vector3 destinationPos)
+        public void GoTo(Buildings.BaseBuilding destination,Vector3 destinationPos)
         {
             Target = destination;
             GoTo(destinationPos);

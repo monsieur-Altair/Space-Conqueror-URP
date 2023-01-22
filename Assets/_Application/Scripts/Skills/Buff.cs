@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace _Application.Scripts.Skills
 {
-    public class Buff : Base
+    public class Buff : BaseSkill
     {
         private float _duration;
         private float _buffPercent;

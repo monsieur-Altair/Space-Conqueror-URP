@@ -7,7 +7,7 @@ namespace _Application.Scripts.Skills
         public bool IsBuffed { get; }
         void Buff(float percent);
         void UnBuff(float percent);
-        event Action<Buildings.Base> Buffed;
-        event Action<Buildings.Base> UnBuffed;
+        event Action<Buildings.BaseBuilding> Buffed;
+        event Action<Buildings.BaseBuilding> UnBuffed;
     }
 }

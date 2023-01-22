@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _Application.Scripts.Buildings
 {
-    public class Attacker : Base
+    public class Attacker : BaseBuilding
     {
         // [SerializeField] private Unit resourceBullet;
         // private UnitInf _bulletInf;

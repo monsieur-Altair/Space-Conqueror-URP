@@ -49,7 +49,7 @@ namespace _Application.Scripts.Control
             Acid = new Skills.Acid(pool,Team.Blue, Altar.DecreaseManaCount);
             Ice = new Skills.Ice(pool);
 
-            Skills.Base.SkillIsAppliedForPlayer += Base_SkillIsAppliedForPlayer;
+            Skills.BaseSkill.SkillIsAppliedForPlayer += Base_SkillIsAppliedForPlayer;
             //ReloadSkills();
         }
 
@@ -99,8 +99,8 @@ namespace _Application.Scripts.Control
             };
         }
 
-        private Units.Base SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
-            _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.Base>();
+        private Units.BaseUnit SpawnUnit(PoolObjectType poolObjectType, Vector3 launchPos, Quaternion rotation) => 
+            _objectPool.GetObject(poolObjectType, launchPos, rotation).GetComponent<Units.BaseUnit>();
 
         private void Base_SkillIsAppliedForPlayer(int cost)
         {

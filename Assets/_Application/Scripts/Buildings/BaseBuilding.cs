@@ -26,18 +26,18 @@ namespace _Application.Scripts.Buildings
     }
 
     [RequireComponent(typeof(Collider))]//,typeof(Rigidbody))]
-    public abstract class Base : MonoBehaviour, IFreezable, IBuffed
+    public abstract class BaseBuilding : MonoBehaviour, IFreezable, IBuffed
     {
         [SerializeField] private Team team;
         [SerializeField] private BuildingType _buildingType;
         [SerializeField] private SpriteRenderer _spriteRenderer;
 
-        public static event Action<Base, Team, Team> Conquered;
-        public event Action<Base, int> CountChanged;
-        public event Action<Base> TeamChanged;
-        public event Action<Base> Buffed;
-        public event Action<Base> UnBuffed;
-        public event Action<Base, Units.Base> LaunchedUnit;
+        public static event Action<BaseBuilding, Team, Team> Conquered;
+        public event Action<BaseBuilding, int> CountChanged;
+        public event Action<BaseBuilding> TeamChanged;
+        public event Action<BaseBuilding> Buffed;
+        public event Action<BaseBuilding> UnBuffed;
+        public event Action<BaseBuilding, Units.BaseUnit> LaunchedUnit;
         
         private static int _id;
 
@@ -63,7 +63,7 @@ namespace _Application.Scripts.Buildings
         public float BuildingsRadius { get; private set; }
         public Team Team { get; private set; }
         public BuildingType BuildingType { get; private set; }
-        public Units.Base UnitPrefab { get; private set; }
+        public Units.BaseUnit UnitPrefab { get; private set; }
         public bool IsBuffed { get; private set; }
         public float Count => _count;
 
@@ -86,7 +86,7 @@ namespace _Application.Scripts.Buildings
             Ice.DeletingFreezingZone -= Unfreeze;
 
         public void Construct(ScriptableService scriptableService, ProgressService progressService, 
-            Units.Base unitPrefab, GlobalPool globalPool)
+            Units.BaseUnit unitPrefab, GlobalPool globalPool)
         {
             _globalPool = globalPool;
             UnitPrefab = unitPrefab;
@@ -195,13 +195,13 @@ namespace _Application.Scripts.Buildings
         public void Unfreeze() => 
             _isFrozen = false;
 
-        public void LaunchUnit(Base destination)
+        public void LaunchUnit(BaseBuilding destination)
         {
             CalculateLaunchPositions( out Vector3 launchPos,out Vector3 destPos,this,destination);
 
             Quaternion rotation = Quaternion.LookRotation(destPos - launchPos);
 
-            Units.Base unit = _globalPool.Get(UnitPrefab, position: launchPos, rotation: rotation);
+            Units.BaseUnit unit = _globalPool.Get(UnitPrefab, position: launchPos, rotation: rotation);
             if(unit==null)
                 return;
 
@@ -220,21 +220,21 @@ namespace _Application.Scripts.Buildings
             CountChanged?.Invoke(this ,(int)_count);
         }
 
-        private void AdjustUnit(Units.Base unit)
+        private void AdjustUnit(Units.BaseUnit unit)
         {
             SetUnitCount();
             LaunchedUnit?.Invoke(this, unit);
             unit.SetData(in _unitInf);
         }
 
-        public void AdjustUnit(Units.Base unit, float supplyCoefficient)
+        public void AdjustUnit(Units.BaseUnit unit, float supplyCoefficient)
         {
             SetUnitCount(supplyCoefficient);
             LaunchedUnit?.Invoke(this, unit);
             unit.SetData(in _unitInf);
         }
 
-        public void AttackedByUnit(Units.Base unit)
+        public void AttackedByUnit(Units.BaseUnit unit)
         {
             Team unitTeam = unit.GetTeam();
             float attack = unit.CalculateAttack(Team, _defense);
@@ -263,13 +263,13 @@ namespace _Application.Scripts.Buildings
             CountChanged?.Invoke(this, (int) _count);
         }
 
-        private static void CalculateLaunchPositions(out Vector3 st, out Vector3 dest, Base stBase, Base destBase)
+        private static void CalculateLaunchPositions(out Vector3 st, out Vector3 dest, BaseBuilding stBaseBuilding, BaseBuilding destBaseBuilding)
         {
-            Vector3 stPos = stBase.transform.position;
-            Vector3 destPos = destBase.transform.position;
+            Vector3 stPos = stBaseBuilding.transform.position;
+            Vector3 destPos = destBaseBuilding.transform.position;
             Vector3 offset = (destPos - stPos).normalized;
-            st = stPos + offset * stBase.BuildingsRadius;
-            dest = destPos - offset * destBase.BuildingsRadius;
+            st = stPos + offset * stBaseBuilding.BuildingsRadius;
+            dest = destPos - offset * destBaseBuilding.BuildingsRadius;
         }
 
         private void SwitchTeam(Team newTeam)

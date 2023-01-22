@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace _Application.Scripts.Skills
 {
-    public class Acid : Base
+    public class Acid : BaseSkill
     {
         private readonly Vector3 _offset = new Vector3(0.8f, 3, 0);
         private readonly Quaternion _rotation = Quaternion.Euler(-90f,0,0);

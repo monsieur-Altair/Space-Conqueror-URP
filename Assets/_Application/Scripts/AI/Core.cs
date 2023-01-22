@@ -16,7 +16,7 @@ namespace _Application.Scripts.AI
         public const int Enemy = (int) Buildings.Team.Blue;
         public const int Neutral = (int) Buildings.Team.White;
 
-        private readonly List<List<Buildings.Base>> _allBuildings;
+        private readonly List<List<Buildings.BaseBuilding>> _allBuildings;
         private readonly IAction _attackByWarrior;
         private readonly CoroutineRunner _coroutineRunner;
 
@@ -27,23 +27,23 @@ namespace _Application.Scripts.AI
         public Core(CoroutineRunner coroutineRunner, AISkillController aiSkillController)
         {
             _coroutineRunner = coroutineRunner;
-            _allBuildings = new List<List<Buildings.Base>>();
+            _allBuildings = new List<List<Buildings.BaseBuilding>>();
             _attackByWarrior = new AttackSomeBuilding(_coroutineRunner, aiSkillController);
             
-            Buildings.Base.Conquered += AdjustBuildingsList;
+            Buildings.BaseBuilding.Conquered += AdjustBuildingsList;
         }
 
-        public void Init(List<Buildings.Base> planets)
+        public void Init(List<Buildings.BaseBuilding> planets)
         {
             _allBuildings.Clear();
             
             for (int i = 0; i < 3; i++)
-                _allBuildings.Add(new List<Buildings.Base>());
+                _allBuildings.Add(new List<Buildings.BaseBuilding>());
             
-            foreach (Buildings.Base planet in planets) 
+            foreach (Buildings.BaseBuilding planet in planets) 
                 _allBuildings[(int) planet.Team].Add(planet);
 
-            Buildings.Base mainBuilding = _allBuildings[Own][0];
+            Buildings.BaseBuilding mainBuilding = _allBuildings[Own][0];
             Vector3 mainPos = mainBuilding.transform.position;
 
             _attackByWarrior.InitAction(_allBuildings, mainPos);
@@ -67,7 +67,7 @@ namespace _Application.Scripts.AI
             }
         }
 
-        private void AdjustBuildingsList(Buildings.Base building, Buildings.Team oldTeam, Buildings.Team newTeam)
+        private void AdjustBuildingsList(Buildings.BaseBuilding building, Buildings.Team oldTeam, Buildings.Team newTeam)
         {
             _allBuildings[(int) oldTeam].Remove(building);
             _allBuildings[(int) newTeam].Add(building);

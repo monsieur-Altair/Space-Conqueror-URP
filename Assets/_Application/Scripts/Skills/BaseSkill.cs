@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace _Application.Scripts.Skills
 {
-    public abstract class Base : ISkill
+    public abstract class BaseSkill : ISkill
     {
         public event Action CanceledSkill = delegate {  };
         public static event Action<int> SkillIsAppliedForPlayer = delegate {  };
@@ -18,7 +18,7 @@ namespace _Application.Scripts.Skills
         protected abstract void ApplySkill();
 
         protected readonly Camera MainCamera;
-        protected Buildings.Base SelectedBuilding;
+        protected Buildings.BaseBuilding SelectedBuilding;
 
         protected float Cooldown;
         protected bool IsOnCooldown;
@@ -35,7 +35,7 @@ namespace _Application.Scripts.Skills
         protected Vector3 SelectedScreenPos { get; private set; }
 
 
-        protected Base(GlobalPool globalPool, Buildings.Team? teamConstraint, [CanBeNull] DecreasingCounter function)
+        protected BaseSkill(GlobalPool globalPool, Buildings.Team? teamConstraint, [CanBeNull] DecreasingCounter function)
         {
             _globalPool = globalPool;
             MainCamera = AllServices.Get<GlobalCamera>().MainCamera;
@@ -75,20 +75,20 @@ namespace _Application.Scripts.Skills
                 OnCanceledSkill();
         }
 
-        public void ExecuteForAI(Buildings.Base planet)
+        public void ExecuteForAI(Buildings.BaseBuilding planet)
         {
             SelectedBuilding = planet;
             if (AI.Core.ManaCount > Cost && !IsOnCooldown) 
                 ApplySkill();
         }
 
-        protected Buildings.Base RaycastForBuilding()
+        protected Buildings.BaseBuilding RaycastForBuilding()
         {
             int layerMask = 1 << 0;
             layerMask = ~layerMask;
             Ray ray = MainCamera.ScreenPointToRay(SelectedScreenPos);
             return Physics.Raycast(ray, out RaycastHit hit,Mathf.Infinity, layerMask) 
-                ? hit.collider.GetComponent<Buildings.Base>() 
+                ? hit.collider.GetComponent<Buildings.BaseBuilding>() 
                 : null;
         }
 
