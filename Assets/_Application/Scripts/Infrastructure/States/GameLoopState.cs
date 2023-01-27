@@ -16,7 +16,7 @@ namespace _Application.Scripts.Infrastructure.States
 
         public void Exit()
         {
-            
+            _gameLoopManager.Clear();
         }
 
         public void Enter()

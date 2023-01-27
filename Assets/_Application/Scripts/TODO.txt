@@ -11,5 +11,6 @@
 
 
 create places, 
+adjust outlook of lobby buildings
 create lobby screen, cells,
 adjust buttons in win, lose window 

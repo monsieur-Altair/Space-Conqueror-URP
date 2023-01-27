@@ -61,17 +61,18 @@ namespace _Application.Scripts.Infrastructure.States
 
         public void Enter()
         {
-            _sceneLoader.Load(StartUp, onLoaded: ReadProgress);
+            _sceneLoader.Load(StartUp, EnterLoadLevel);
         }
 
         public void Exit()
         {
             
         }
-
-        private void ReadProgress() => 
-            _progressService.PlayerProgress = ReadWriterService.ReadProgress() ?? new PlayerProgress(-1);
-
+        
+        private void EnterLoadLevel()
+        {
+            _stateMachine.Enter<LoadLevelState, string>(Main);
+        }
 
         private void RegisterServices()
         {
@@ -84,6 +85,7 @@ namespace _Application.Scripts.Infrastructure.States
             GameFactory factory = AllServices.Register(new GameFactory(scriptableService, _coreConfig));
 
             ProgressService progressService = AllServices.Register(new ProgressService());
+            progressService.PlayerProgress = ReadWriterService.ReadProgress() ?? new PlayerProgress(-1);
 
             AllServices.Register(new OutlookService(_coreConfig.Warehouse));
 

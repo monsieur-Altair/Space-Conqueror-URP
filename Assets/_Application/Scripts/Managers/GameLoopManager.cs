@@ -92,6 +92,11 @@ namespace _Application.Scripts.Managers
             _levelsManager.CurrentLevelNumber = _lastCompletedLevel + 1;
         }
 
+        public void Clear()
+        {
+            _levelsManager.DeleteCurrentLevel();
+        }
+
         private void PrepareLevel()
         {
             _allBuildings = _buildingsLay.GetComponentsInChildren<Buildings.BaseBuilding>().ToList();
@@ -106,7 +111,7 @@ namespace _Application.Scripts.Managers
             
             _teamManager.FillTeamCount(_allBuildings);
         }
-        
+
 
         private void UpdateState()
         {

@@ -45,10 +45,20 @@ namespace _Application.Scripts.Managers
             _currentLevel.gameObject.transform.SetParent(transform.parent);
         }
 
+        public void DeleteCurrentLevel()
+        {
+            StartCoroutine(DeleteAllLevel());
+        }
+
         private IEnumerator DeleteAllLevel()
         {
-            if(_currentLevel!=null)
+            if (_currentLevel != null)
+            {
+                _currentLevel.gameObject.SetActive(false);
+                Debug.Log("destroy" + _currentLevel.name);
                 Destroy(_currentLevel.gameObject);
+            }
+            
             yield break;
         }
     }

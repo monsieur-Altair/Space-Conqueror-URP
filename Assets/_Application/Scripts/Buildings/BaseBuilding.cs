@@ -33,6 +33,7 @@ namespace _Application.Scripts.Buildings
         [SerializeField] private BuildingType _buildingType;
         [SerializeField] private SpriteRenderer _spriteRenderer;
         [Space, SerializeField] private MeshRenderer _meshRenderer;
+        [SerializeField] private Collider _collider;
 
         public static event Action<BaseBuilding, Team, Team> Conquered;
         public event Action<BaseBuilding, int> CountChanged;
@@ -63,8 +64,8 @@ namespace _Application.Scripts.Buildings
 
         public int ID { get; private set; }
         public float BuildingsRadius { get; private set; }
-        public Team Team { get; private set; }
-        public BuildingType BuildingType { get; private set; }
+        public Team Team => team;
+        public BuildingType BuildingType => _buildingType;
         public Units.BaseUnit UnitPrefab { get; private set; }
         public bool IsBuffed { get; private set; }
         public float Count => _count;
@@ -118,10 +119,7 @@ namespace _Application.Scripts.Buildings
         protected virtual void LoadResources(Building infoAboutBuilding, Unit infoAboutUnit)
         {
             PlayerProgress playerProgress = ProgressService.PlayerProgress;
-            
-            Team = team;
-            BuildingType = _buildingType;
-            
+  
             //bad practice
             float buildingDefenceCoefficient = (team == Team.Blue)
                 ? playerProgress.GetAchievedUpgrade(UpgradeType.BuildingDefence).upgradeCoefficient
@@ -177,7 +175,6 @@ namespace _Application.Scripts.Buildings
             _spriteRenderer.gameObject.SetActive(false);
         }
         
-        
         public void Buff(float percent)
         {
             IsBuffed = true;
@@ -213,7 +210,6 @@ namespace _Application.Scripts.Buildings
             
             unit.GoTo(destination, destPos);
         }
-
 
         public void DecreaseCounter(float value)
         {
@@ -251,6 +247,19 @@ namespace _Application.Scripts.Buildings
                 SwitchTeam(unitTeam);
             }
             CountChanged?.Invoke(this, (int)_count);
+        }
+
+        public void DisableCollider()
+        {
+            _collider.enabled = false;
+        }
+        
+        public override void OnSpawnFromPool()
+        {
+            base.OnSpawnFromPool();
+            
+            _spriteRenderer.gameObject.SetActive(false);
+            _collider.enabled = true;
         }
 
         protected virtual void IncreaseResources()

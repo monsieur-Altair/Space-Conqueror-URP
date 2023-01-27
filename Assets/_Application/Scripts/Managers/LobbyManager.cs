@@ -34,6 +34,7 @@ namespace _Application.Scripts.Managers
         private List<BuildingInfo> _buildingInfos;
         private GameFactory _gameFactory;
         private ProgressService _progressService;
+        private OutlookService _outlookService;
         private LobbyInfo LobbyInfo => _progressService.PlayerProgress.LobbyInfo;
 
         public override void Init()
@@ -44,7 +45,8 @@ namespace _Application.Scripts.Managers
             _progressService = AllServices.Get<ProgressService>();
             _buildingInfos = new List<BuildingInfo>();
             _gameFactory = AllServices.Get<GameFactory>();
-            
+            _outlookService = AllServices.Get<OutlookService>();
+
             _gameFactory.ProgressWriters.Add(this);
 
             _buildingPrefabs = new Dictionary<BuildingType, BaseBuilding>
@@ -75,6 +77,8 @@ namespace _Application.Scripts.Managers
 
         public void OnEnter()
         {
+            gameObject.SetActive(true);
+            
             for (int i = 0; i < MaxPlaceCount; i++) 
                 CreateBuilding(_buildingInfos[i].BuildingType, i);
 
@@ -89,6 +93,8 @@ namespace _Application.Scripts.Managers
             
             foreach (BuildingPoint point in _buildingPoints) 
                 point.Clicked -= OnPointClicked;
+            
+            gameObject.SetActive(false);
         }
 
         public void WriteProgress(PlayerProgress playerProgress)
@@ -109,21 +115,30 @@ namespace _Application.Scripts.Managers
         {
             BuildingInfo buildingInfo = _buildingInfos[index];
             buildingInfo.BuildingType = buildingType;
-
+            
+            _buildingPoints[index].SetOutlook(true);
+            
             if(buildingType == BuildingType.None)
                 return;
-            
+
+            _buildingPoints[index].SetOutlook(false);
+
             BaseBuilding building = _globalPool.Get(_buildingPrefabs[buildingType]);
+            
             Transform buildingPoint = buildingInfo.Point;
             building.transform.position = buildingPoint.position;
             building.transform.rotation = buildingPoint.rotation;
             
             buildingInfo.BaseBuilding = building;
+            
+            building.DisableCollider();
+            _outlookService.SetOutlook(building, (int)Team.Blue);
         }
 
         private void DeleteBuilding(int index)
         {
-            _globalPool.Free(_buildingInfos[index].BaseBuilding);
+            if (_buildingInfos[index].BaseBuilding != null)
+                _globalPool.Free(_buildingInfos[index].BaseBuilding);
             _buildingInfos[index].BaseBuilding = null;
         }
 

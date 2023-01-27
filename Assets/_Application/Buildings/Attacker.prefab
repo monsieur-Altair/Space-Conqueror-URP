@@ -66,6 +66,7 @@ MonoBehaviour:
   _buildingType: 2
   _spriteRenderer: {fileID: 408843853294657462}
   _meshRenderer: {fileID: 7610484005428543097}
+  _collider: {fileID: 5977008749326909735}
 --- !u!54 &-7072601439543158682
 Rigidbody:
   m_ObjectHideFlags: 0

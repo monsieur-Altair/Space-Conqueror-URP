@@ -18,7 +18,7 @@ namespace _Application.Scripts.Infrastructure
             _game = new Game(this, _coreConfig);
             _game.StateMachine.Enter<BootstrapState>();
             AllServices.Get<AudioManager>().StartPlayBack();
-            UISystem.ShowWindow<StartUpWindow>();
+            //UISystem.ShowWindow<StartUpWindow>();
             DontDestroyOnLoad(this);
         }
     }

@@ -36,6 +36,7 @@ namespace _Application.Scripts.Infrastructure.States
 
         private void ShowWindow(BuildingType boughtType, int index)
         {
+            UISystem.CloseWindow<LobbyWindow>();
             UISystem.ShowPayloadedWindow<BuyBuildingWindow, BuyBuildingWindowPayload>(new BuyBuildingWindowPayload()
             {
                 BuildingType = boughtType,

@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _audioManager: {fileID: 1035500207987708673, guid: 1567c6b2131856a4d8780fa03be09f0c, type: 3}
   _coroutineRunner: {fileID: 3196236092068518993, guid: 510439d727a6204489c263d7d60395c8, type: 3}
-  _objectPool: {fileID: 5628840661832811158, guid: 39b00a19d9b280e4e8d04fa6f29e7227, type: 3}
   _levelManager: {fileID: 5370934065307269283, guid: 84d6d5a45e55ace4098a9ed18bad1f0a, type: 3}
   _globalCamera: {fileID: 5475993287305410778, guid: 862d3d01d4842114dbfb5e189b9042f1, type: 3}
   _uiSystem: {fileID: 5516542067424819507, guid: d4b2a95da944b5c42a42b5304a148ccb, type: 3}
   _userControl: {fileID: 8089378677498342063, guid: 3467925e8bc1149409aa84bd02ee7fff, type: 3}
+  _lobbyManager: {fileID: 9076143484404181139, guid: 944a1130ea0ce434baa872384c1bb306, type: 3}

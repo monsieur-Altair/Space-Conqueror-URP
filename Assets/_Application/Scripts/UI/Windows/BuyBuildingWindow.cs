@@ -35,7 +35,7 @@ namespace _Application.Scripts.UI.Windows
 
             foreach (BuyBuildingCell cell in _cells)
             {
-                cell.OnOpened(cell.BuildingType == _payload.BuildingType);
+                cell.OnOpened(cell.BuildingType == _payload.BuildingType || cell.Cost > _progressService.PlayerProgress.Money);
                 cell.Clicked += TryBuyBuilding;
             }
             
