@@ -144,19 +144,8 @@ namespace _Application.Scripts.Managers
 
         private BaseBuilding GetBuilding(BuildingType type)
         {
-            return _globalPool.GetPooledBehaviourPrefab(GetPrefabType(type))
+            return _globalPool.GetPooledBehaviourPrefab(GlobalPool.GetBuildingPrefabType(type))
                 .GetComponent<BaseBuilding>();
-        }
-
-        private static PoolObjectType GetPrefabType(BuildingType type)
-        {
-            return type switch
-            {
-                BuildingType.Altar => PoolObjectType.AltarBuilding,
-                BuildingType.Spawner => PoolObjectType.SpawnerBuilding,
-                BuildingType.Attacker => PoolObjectType.AttackerBuilding,
-                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-            };
         }
     }
 }

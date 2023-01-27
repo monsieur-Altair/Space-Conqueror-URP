@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using _Application.Scripts.Control;
 using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Infrastructure.Services.Progress;
@@ -9,9 +8,7 @@ using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.SavedData;
 using _Application.Scripts.UI;
 using _Application.Scripts.UI.Windows;
-using _Application.Scripts.UI.Windows.Tutorial;
 using Pool_And_Particles;
-using UnityEngine;
 
 namespace _Application.Scripts.Managers
 {
@@ -38,7 +35,6 @@ namespace _Application.Scripts.Managers
         private readonly AudioManager _audioManager;
         private readonly bool _useTutorial;
 
-        private GameObject _buildingsLay;
         private bool _isWin;
         private GameStates _currentGameState;
 
@@ -46,7 +42,6 @@ namespace _Application.Scripts.Managers
 
         private int _lastCompletedLevel;
         private bool _hasUpgradeTutorialShown;
-        private CoreConfig _coreConfig;
         private readonly UnitSupervisor _unitSupervisor;
 
         public GameLoopManager(LevelManager levelsManager, TeamManager teamManager, CoroutineRunner coroutineRunner, AI.Core ai,
@@ -54,7 +49,6 @@ namespace _Application.Scripts.Managers
             ProgressService progressService, AudioManager audioManager, CoreConfig coreConfig)
         {
             _unitSupervisor = new UnitSupervisor(pool);
-            _coreConfig = coreConfig;
             _allBuildings = new List<Buildings.BaseBuilding>();
 
             _useTutorial = AllServices.Get<CoreConfig>().UseTutorial;
@@ -71,8 +65,6 @@ namespace _Application.Scripts.Managers
 
             Buildings.BaseBuilding.Conquered += _teamManager.UpdateObjectsCount;
             TeamManager.GameEnded += EndGame;
-
-            //UISystem.GetWindow<WinWindow>().ToStatisticButton.onClick.AddListener(ToStatisticButton_Clicked);
        }
 
         public void StartGame()
@@ -99,7 +91,7 @@ namespace _Application.Scripts.Managers
 
         private void PrepareLevel()
         {
-            _allBuildings = _buildingsLay.GetComponentsInChildren<Buildings.BaseBuilding>().ToList();
+            _allBuildings = _levelsManager.GetCurrentBuildings();
             
             foreach (Buildings.BaseBuilding building in _allBuildings)
             {
@@ -196,8 +188,7 @@ namespace _Application.Scripts.Managers
         private IEnumerator StartGameplay()
         {
             ClearLists();
-            yield return _coroutineRunner.StartCoroutine(_levelsManager.InstantiateLevel());
-            _buildingsLay = _levelsManager.GetCurrentLay();
+            yield return _coroutineRunner.StartCoroutine(_levelsManager.CreateLevel());
             PrepareLevel();
             _ai.Init(_allBuildings);
             _ai.Enable();

@@ -284,7 +284,7 @@ namespace _Application.Scripts.Buildings
             dest = destPos - offset * destBaseBuilding.BuildingsRadius;
         }
 
-        private void SwitchTeam(Team newTeam)
+        public void SwitchTeam(Team newTeam)
         {
             team = newTeam;
 
@@ -294,6 +294,11 @@ namespace _Application.Scripts.Buildings
             LoadResources(infoAboutBuilding, infoAboutUnit);
 
             TeamChanged?.Invoke(this);
+        }
+
+        public void SetTeam(Team newTeam)
+        {
+            team = newTeam;
         }
 
         private void LaunchFromCounter()

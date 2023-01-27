@@ -45,13 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   navMeshSurfaceObj: {fileID: 9135979760727816829}
-  levels:
-  - {fileID: 4071430356184442372, guid: 7ebe898b88a1f7743978012cf0dcf84c, type: 3}
-  - {fileID: 4071430356184442372, guid: fc813bedc299c6243bb2946181b21bf0, type: 3}
-  - {fileID: 895594771697078988, guid: d166210df5e305e4b8322eb36380dc50, type: 3}
-  - {fileID: 895594771697078988, guid: c943a3469736d4644a936f487b69635b, type: 3}
-  - {fileID: 895594771697078988, guid: 44e6120e7817d2c47b3b2e885a9c23f1, type: 3}
-  - {fileID: 895594771697078988, guid: 0c4f49044e14c3e44bd2c750de21da53, type: 3}
+  _levels:
+  - {fileID: 1836314666132735418, guid: 7ebe898b88a1f7743978012cf0dcf84c, type: 3}
 --- !u!1001 &153591430329835417
 PrefabInstance:
   m_ObjectHideFlags: 0

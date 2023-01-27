@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using _Application.Scripts.Buildings;
 using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Managers;
 using UnityEngine;
@@ -368,5 +369,17 @@ namespace Pool_And_Particles
         {
             return _coreConfig.PoolObjects.PooledPrefabs.GetValue(type).prefab;
         }
+        
+        public static PoolObjectType GetBuildingPrefabType(BuildingType type)
+        {
+            return type switch
+            {
+                BuildingType.Altar => PoolObjectType.AltarBuilding,
+                BuildingType.Spawner => PoolObjectType.SpawnerBuilding,
+                BuildingType.Attacker => PoolObjectType.AttackerBuilding,
+                _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            };
+        }
+
     }
 }

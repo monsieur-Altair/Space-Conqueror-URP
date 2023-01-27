@@ -1,4 +1,9 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
+using _Application.Scripts.Buildings;
+using _Application.Scripts.Infrastructure.Services;
+using _Application.Scripts.Infrastructure.Services.Progress;
+using Pool_And_Particles;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -10,47 +15,57 @@ namespace _Application.Scripts.Managers
         private NavMeshSurface navMeshSurfaceObj;
         
         [SerializeField] 
-        private GameObject[] levels;
+        private Level[] _levels;
 
         private readonly Vector3 _instantiatePos = new Vector3(0, 0, 0);
-        private GameObject _currentLevel;
-        
+        private Level _currentLevel;
+        private GlobalPool _globalPool;
+        private ProgressService _progressService;
+
         public int CurrentLevelNumber { get;  set; }
-        
+
+        public override void Init()
+        {
+            base.Init();
+
+            _globalPool = AllServices.Get<GlobalPool>();
+            _progressService = AllServices.Get<ProgressService>();
+        }
+
         public void SwitchToNextLevel()
         {
-            StartCoroutine(DeleteAllLevel());
+            StartCoroutine(DeleteLevel());
             CurrentLevelNumber++;
         }
 
         public void RestartLevel()
         {
-            if(_currentLevel!=null)
-                Destroy(_currentLevel);
+            DeleteCurrentLevel();
         }
 
-        public GameObject GetCurrentLay() => 
-            _currentLevel;
+        public List<BaseBuilding> GetCurrentBuildings() => 
+            _currentLevel.GetAllBuildings();
         
-        public IEnumerator InstantiateLevel()
+        public IEnumerator CreateLevel()
         {
-            if (CurrentLevelNumber >= levels.Length)
+            if (CurrentLevelNumber >= _levels.Length)
                 CurrentLevelNumber = 0;
 
-            yield return StartCoroutine(DeleteAllLevel());
+            yield return StartCoroutine(DeleteLevel());
 
-            _currentLevel = Instantiate(levels[CurrentLevelNumber], _instantiatePos, Quaternion.identity);
-            _currentLevel.SetActive(true);
+            _currentLevel = Instantiate(_levels[CurrentLevelNumber], _instantiatePos, Quaternion.identity);
+            _currentLevel.Prepare(_globalPool, _progressService.PlayerProgress.LobbyInfo);
+            _currentLevel.gameObject.SetActive(true);
             navMeshSurfaceObj.BuildNavMesh();
-            _currentLevel.gameObject.transform.SetParent(transform.parent);
+            _currentLevel.transform.SetParent(transform.parent);
         }
 
         public void DeleteCurrentLevel()
         {
-            StartCoroutine(DeleteAllLevel());
+            StartCoroutine(DeleteLevel());
         }
 
-        private IEnumerator DeleteAllLevel()
+        private IEnumerator DeleteLevel()
         {
             if (_currentLevel != null)
             {
