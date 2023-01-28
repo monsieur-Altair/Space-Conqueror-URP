@@ -13,8 +13,13 @@ namespace _Application.Scripts.Units
     public abstract class BaseUnit : PooledBehaviour
     {
         public static event Action<BaseUnit> Launched = delegate { };
+        public static event Action<BaseUnit> Updated = delegate { };
         public static event Action<BaseUnit> Approached = delegate { };
         
+        [SerializeField] protected Transform _counterPoint;
+        [SerializeField] protected float _radius;
+        [SerializeField] SkinnedMeshRenderer _skinnedMeshRenderer;
+
         public abstract float GetActualCount(float countAfterAttack);
         public abstract void SetData(in Buildings.BaseBuilding.UnitInf unitInf);
         public abstract Buildings.Team GetTeam();
@@ -27,6 +32,10 @@ namespace _Application.Scripts.Units
 
         private Vector3 _destination;
         private const float MinDistance = 1.0f;
+        public Buildings.BaseBuilding.UnitInf UnitInf { get; protected set; }
+        public Transform CounterPoint => _counterPoint;
+        public SkinnedMeshRenderer SkinnedMeshRenderer => _skinnedMeshRenderer;
+
 
         private void Awake()
         {
@@ -37,10 +46,21 @@ namespace _Application.Scripts.Units
         {
             if (Target != null)
             {
+                OnUpdate();
+
                 float distance = Vector3.Distance(_destination, transform.position);
                 if (distance < MinDistance) 
                     StopAndDestroy();
             }
+        }
+
+        protected virtual void OnUpdate()
+        {
+        }
+
+        protected void OnUpdated()
+        {
+            Updated(this);
         }
 
         public void GoTo(Buildings.BaseBuilding destination,Vector3 destinationPos)

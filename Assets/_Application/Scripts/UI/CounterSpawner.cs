@@ -1,105 +1,121 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using _Application.Scripts.Buildings;
 using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Managers;
-using _Application.Scripts.Misc;
+using _Application.Scripts.Units;
 using Pool_And_Particles;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace _Application.Scripts.UI
 {
-    public static class CounterSpawner
+    public class CounterSpawner
     {
-        private static List<Color> _counterBackground;
-        private static List<Color> _counterForeground;
-        private static Vector3 _offset = new Vector3(0, -35, 0);
-        private static Vector3 _baseCounterScale = new Vector3(1, 1, 1);
-        private static List<Buildings.BaseBuilding> _allBuildings = new List<Buildings.BaseBuilding>();
-        private static List<GameObject> _countersList = new List<GameObject>();
-        private static Dictionary<int, Image> _backgrounds = new Dictionary<int, Image>();
-        private static Dictionary<int, TextMeshProUGUI> _foregrounds = new Dictionary<int, TextMeshProUGUI>();
-        private static Transform _container;
-        private static GlobalPool _pool;
-        private static GlobalCamera _globalCamera;
+        private readonly Transform _container;
+        private readonly GlobalPool _pool;
+        private readonly GlobalCamera _globalCamera;
+        private readonly Warehouse _warehouse;
+        private readonly Counter _counterPrefab;
 
-        public static void Init(Warehouse warehouse, GlobalPool pool, Transform container, GlobalCamera globalCamera)
+        private readonly Dictionary<BaseBuilding, Counter> _buildingsCounters = new Dictionary<BaseBuilding, Counter>();
+        private readonly Dictionary<BaseUnit, Counter> _unitsCounters = new Dictionary<BaseUnit, Counter>();
+
+        public CounterSpawner(Warehouse warehouse, GlobalPool pool, Transform container, GlobalCamera globalCamera)
         {
             _globalCamera = globalCamera;
-            _counterBackground = warehouse.counterBackground;
-            _counterForeground = warehouse.counterForeground;
+            _warehouse = warehouse;
             _container = container;
             _pool = pool;
+
+            _counterPrefab = _pool.GetPooledBehaviourPrefab(PoolObjectType.Counter).GetComponent<Counter>();
         }
         
-        public static void FillLists(List<Buildings.BaseBuilding> allBuildings)
+        public void FillLists(List<BaseBuilding> allBuildings)
         {
-            _allBuildings = new List<Buildings.BaseBuilding>(allBuildings);
-
-            foreach (Buildings.BaseBuilding building in _allBuildings)
+            foreach (BaseBuilding building in allBuildings)
             {
                 building.CountChanged += SetCounter;
                 building.TeamChanged += SetCounterColor;
 
-                GameObject counter = SpawnCounterTo(building);
-                DecomposeCounter(counter, building);
+                Counter counter = SpawnCounterTo(building);
+                _buildingsCounters.Add(building, counter);
                 
                 SetCounterColor(building);
                 SetCounter(building, (int) building.Count);
             }
-        }
-        
-        private static void DecomposeCounter(GameObject counter, Buildings.BaseBuilding building)
-        {
-            int index = building.ID.GetHashCode();
-            _foregrounds.Add(index, counter.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>());
-            _backgrounds.Add(index, counter.GetComponentInChildren<Image>());
+
+            BaseUnit.Launched += SetCounter;
+            BaseUnit.Updated += UpdateCounterPos;
+            BaseUnit.Approached += FreeCounter;
         }
 
-        private static GameObject SpawnCounterTo(Buildings.BaseBuilding building)
+        private void FreeCounter(BaseUnit unit)
         {
-            Vector3 counterPos = GetCounterPos(building);
-            GameObject counter = _pool.GetObject(PoolObjectType.Counter, counterPos, Quaternion.identity).gameObject;
-            counter.transform.SetParent(_container);
-            counter.transform.localScale = _baseCounterScale;
-            _countersList.Add(counter);
+            Counter counter = _unitsCounters[unit];
+            _pool.Free(counter);
+            _unitsCounters.Remove(unit);
+        }
+
+        private void UpdateCounterPos(BaseUnit unit)
+        {
+            Vector2 counterPos = UISystem.GetUIPosition(_globalCamera.MainCamera, unit.CounterPoint.position);
+            _unitsCounters[unit].SetAnchorPos(counterPos);
+        }
+
+        private void SetCounter(BaseUnit unit)
+        { 
+            Counter counter = _pool.Get(_counterPrefab, parent: _container);
+            int team = (int) unit.UnitInf.UnitTeam;
+            counter.SetColors(_warehouse.counterForeground[team], _warehouse.counterBackground[team]);
+            counter.SetText(Mathf.RoundToInt(unit.UnitInf.UnitCount).ToString());
+            _unitsCounters.Add(unit, counter);
+            UpdateCounterPos(unit);
+        }
+
+        public void ClearList()
+        {
+            foreach (KeyValuePair<BaseBuilding, Counter> pair in _buildingsCounters)
+            {
+                BaseBuilding building = pair.Key;
+                building.CountChanged -= SetCounter;
+                building.TeamChanged -= SetCounterColor;
+
+                Counter counter = pair.Value;
+                _pool.Free(counter);
+            }
+            
+            BaseUnit.Launched -= SetCounter;
+            BaseUnit.Updated -= UpdateCounterPos;
+            BaseUnit.Approached -= FreeCounter;
+            
+            _buildingsCounters.Clear();
+
+            foreach (Counter counter in _unitsCounters.Values)
+            {
+                _pool.Free(counter);
+            }
+            
+            _unitsCounters.Clear();
+        }
+        
+        private Counter SpawnCounterTo(BaseBuilding building)
+        {
+            Vector3 pos = building.CounterPoint.position;
+            Vector2 counterPos = UISystem.GetUIPosition(_globalCamera.MainCamera, pos);
+            Counter counter = _pool.Get(_counterPrefab, parent: _container);
+            counter.SetAnchorPos(counterPos);
             return counter;
         }
 
-        private static Vector3 GetCounterPos(Buildings.BaseBuilding building)
-        {
-            Vector3 pos = building.transform.position;
-            Vector3 screenPos = _globalCamera.GetScreenPos(pos);
-            return screenPos + _offset;
-        }
-
-        private static void SetCounterColor(Buildings.BaseBuilding building)
+        private void SetCounterColor(BaseBuilding building)
         {
             int team = (int) building.Team;
-            int index = building.ID.GetHashCode();
-            _foregrounds[index].color = _counterForeground[team];
-            _backgrounds[index].color = _counterBackground[team];
+            _buildingsCounters[building].SetColors(_warehouse.counterForeground[team], _warehouse.counterBackground[team]);
         }
 
-        private static void SetCounter(Buildings.BaseBuilding building, int value)
+        private void SetCounter(BaseBuilding building, int value)
         {
-            int index = building.ID.GetHashCode();
-            _foregrounds[index].text = value.ToString();
-        }
-
-        public static void ClearList()
-        {
-            foreach (GameObject counter in _countersList) 
-                counter.gameObject.SetActive(false);
-            
-            foreach (Buildings.BaseBuilding building in _allBuildings)
-            {
-                building.CountChanged -= SetCounter;
-                building.TeamChanged -= SetCounterColor;
-            }
-            _allBuildings.Clear();
-            _foregrounds.Clear();
-            _backgrounds.Clear();
+            _buildingsCounters[building].SetText(value.ToString());
         }
     }
 }

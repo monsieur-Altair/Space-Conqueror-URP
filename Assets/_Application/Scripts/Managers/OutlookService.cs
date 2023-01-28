@@ -33,7 +33,7 @@ namespace _Application.Scripts.Managers
         private readonly Warehouse _warehouse;
 
         private readonly Dictionary<int, List<Texture>> _allTextures = new Dictionary<int, List<Texture>>();
-        private List<Buildings.BaseBuilding> _allBuildings = new List<Buildings.BaseBuilding>();
+        private List<BaseBuilding> _allBuildings = new List<BaseBuilding>();
 
 
         public OutlookService(Warehouse warehouse)
@@ -91,13 +91,13 @@ namespace _Application.Scripts.Managers
             }
         }
 
-        private void SetOutlook(Buildings.BaseBuilding building)
+        private void SetOutlook(BaseBuilding building)
         {
             int team = (int) building.Team;
             SetOutlook(building, team);
         }
         
-        public void SetOutlook(Buildings.BaseBuilding building, int team)
+        public void SetOutlook(BaseBuilding building, int team)
         {
             BuildingType buildingType = building.BuildingType;
             building.MeshRenderer.materials = GetMaterials(buildingType, team);
@@ -133,12 +133,12 @@ namespace _Application.Scripts.Managers
             }
         }
 
-        private void SetUnitOutlook(Buildings.BaseBuilding building, BaseUnit unit)
+        private void SetUnitOutlook(BaseBuilding building, BaseUnit unit)
         {
             int team = (int) building.Team;
             //also we can add all rockets materials to list 
 
-            unit.GetComponent<Warrior>().skinnedMeshRenderer.materials = GetUnitMaterials(building.IsBuffed, team);
+            unit.SkinnedMeshRenderer.materials = GetUnitMaterials(building.IsBuffed, team);
         }
 
         private Material[] GetUnitMaterials(bool isBuffed, int team)
@@ -152,12 +152,12 @@ namespace _Application.Scripts.Managers
             return new[] {mainMaterial, secondMat};
         }
 
-        private void SetBuff(Buildings.BaseBuilding building)
+        private void SetBuff(BaseBuilding building)
         {
             SetBuffMaterial(building, _buffedBuildingMaterial);
         }
 
-        private void UnSetBuff(Buildings.BaseBuilding building)
+        private void UnSetBuff(BaseBuilding building)
         {
             SetBuffMaterial(building, _baseBuildingMaterial);
         }

@@ -27,8 +27,8 @@ namespace _Application.Scripts.Managers
 
         private void Enable()
         {
-            Units.BaseUnit.Launched += BaseOnLaunched;   
-            Units.BaseUnit.Approached += BaseOnApproached;   
+            BaseUnit.Launched += BaseOnLaunched;   
+            BaseUnit.Approached += BaseOnApproached;   
         }
 
         private void BaseOnApproached(BaseUnit unit)
@@ -39,8 +39,8 @@ namespace _Application.Scripts.Managers
 
         private void Disable(BaseUnit unit)
         {
-            _globalPool.Free(unit);
             unit.Stop();
+            _globalPool.Free(unit);
         }
 
         private void BaseOnLaunched(BaseUnit unit)

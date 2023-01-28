@@ -5,10 +5,6 @@ namespace _Application.Scripts.Units
 {
     public class Warrior : BaseUnit, IFreezable
     {
-        public SkinnedMeshRenderer skinnedMeshRenderer;
-        
-        private Buildings.BaseBuilding.UnitInf _unitInf;
-
         protected override void TargetInRange()
         {
             Ice.DeletingFreezingZone -= Unfreeze;
@@ -16,30 +12,39 @@ namespace _Application.Scripts.Units
             if(Target!=null)
                 Target.AttackedByUnit(this);
        
-            Target = null;
+            Stop();
+        }
+
+        protected override void OnUpdate()
+        {
+            base.OnUpdate();
+
+            _counterPoint.position = transform.position + Vector3.back * _radius;
+            
+            OnUpdated();
         }
 
         public void OnDisable() => 
             Ice.DeletingFreezingZone -= Unfreeze;
 
         public override void SetData(in Buildings.BaseBuilding.UnitInf unitInf) => 
-            _unitInf = unitInf;
+            UnitInf = unitInf;
 
         public override Buildings.Team GetTeam() => 
-            _unitInf.UnitTeam;
+            UnitInf.UnitTeam;
 
         protected override void SetSpeed() => 
-            Agent.speed = _unitInf.UnitSpeed;
+            Agent.speed = UnitInf.UnitSpeed;
 
         public override float CalculateAttack(Buildings.Team buildingTeam, float defence)
         {
-            if (_unitInf.UnitTeam == buildingTeam)
-                return _unitInf.UnitCount;
-            return -1.0f * _unitInf.UnitDamage / (100.0f * defence) * _unitInf.UnitCount;
+            if (UnitInf.UnitTeam == buildingTeam)
+                return UnitInf.UnitCount;
+            return -1.0f * UnitInf.UnitDamage / (100.0f * defence) * UnitInf.UnitCount;
         }
 
         public override float GetActualCount(float countAfterAttack) => 
-            countAfterAttack / (_unitInf.UnitDamage/100.0f);
+            countAfterAttack / (UnitInf.UnitDamage/100.0f);
 
         public void Freeze() => 
             Agent.isStopped = true;

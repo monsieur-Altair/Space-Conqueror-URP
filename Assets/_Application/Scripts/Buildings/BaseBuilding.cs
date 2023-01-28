@@ -4,6 +4,7 @@ using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.SavedData;
 using _Application.Scripts.Scriptables;
 using _Application.Scripts.Skills;
+using _Application.Scripts.Units;
 using DG.Tweening;
 using Pool_And_Particles;
 using UnityEngine;
@@ -34,6 +35,7 @@ namespace _Application.Scripts.Buildings
         [SerializeField] private SpriteRenderer _spriteRenderer;
         [Space, SerializeField] private MeshRenderer _meshRenderer;
         [SerializeField] private Collider _collider;
+        [SerializeField] private Transform _counterPoint;
 
         public static event Action<BaseBuilding, Team, Team> Conquered;
         public event Action<BaseBuilding, int> CountChanged;
@@ -42,8 +44,6 @@ namespace _Application.Scripts.Buildings
         public event Action<BaseBuilding> UnBuffed;
         public event Action<BaseBuilding, Units.BaseUnit> LaunchedUnit;
         
-        private static int _id;
-
         protected ScriptableService ScriptableService;
         protected ProgressService ProgressService;
         
@@ -61,8 +61,6 @@ namespace _Application.Scripts.Buildings
         private float _reducingSpeed;
         private GlobalPool _globalPool;
 
-
-        public int ID { get; private set; }
         public float BuildingsRadius { get; private set; }
         public Team Team => team;
         public BuildingType BuildingType => _buildingType;
@@ -70,6 +68,7 @@ namespace _Application.Scripts.Buildings
         public bool IsBuffed { get; private set; }
         public float Count => _count;
         public MeshRenderer MeshRenderer => _meshRenderer;
+        public Transform CounterPoint => _counterPoint;
 
 
         public struct UnitInf
@@ -100,8 +99,6 @@ namespace _Application.Scripts.Buildings
             _count = 0.0f;
             CountChanged?.Invoke(this, (int) _count);
             
-            ID = _id++;
-
             _unitInf = new UnitInf();
             
             BuildingsRadius = GetComponent<SphereCollider>().radius;
@@ -201,10 +198,8 @@ namespace _Application.Scripts.Buildings
 
             Quaternion rotation = Quaternion.LookRotation(destPos - launchPos);
 
-            Units.BaseUnit unit = _globalPool.Get(UnitPrefab, position: launchPos, rotation: rotation);
-            if(unit==null)
-                return;
-
+            BaseUnit unit = _globalPool.Get(UnitPrefab, position: launchPos, rotation: rotation);
+            
             AdjustUnit(unit);
             LaunchFromCounter();
             
@@ -222,15 +217,15 @@ namespace _Application.Scripts.Buildings
         private void AdjustUnit(Units.BaseUnit unit)
         {
             SetUnitCount();
-            LaunchedUnit?.Invoke(this, unit);
             unit.SetData(in _unitInf);
+            LaunchedUnit?.Invoke(this, unit);
         }
 
         public void AdjustUnit(Units.BaseUnit unit, float supplyCoefficient)
         {
             SetUnitCount(supplyCoefficient);
-            LaunchedUnit?.Invoke(this, unit);
             unit.SetData(in _unitInf);
+            LaunchedUnit?.Invoke(this, unit);
         }
 
         public void AttackedByUnit(Units.BaseUnit unit)
@@ -284,7 +279,7 @@ namespace _Application.Scripts.Buildings
             dest = destPos - offset * destBaseBuilding.BuildingsRadius;
         }
 
-        public void SwitchTeam(Team newTeam)
+        private void SwitchTeam(Team newTeam)
         {
             team = newTeam;
 

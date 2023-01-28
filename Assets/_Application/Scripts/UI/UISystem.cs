@@ -4,6 +4,7 @@ using _Application.Scripts.Managers;
 using _Application.Scripts.UI.Windows;
 using _Application.Scripts.UI.Windows.Tutorial;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace _Application.Scripts.UI
 {
@@ -15,25 +16,52 @@ namespace _Application.Scripts.UI
         [SerializeField] 
         private Canvas _canvas;
 
+        [SerializeField] 
+        private CanvasScaler _canvasScaler;
+
         private readonly Dictionary<Type, Window> _windows = new Dictionary<Type, Window>();
 
         private static UISystem _instance;
-        public Canvas GameCanvas => _canvas;
+        private RectTransform _canvasRect;
+        private Vector2 _refRes;
 
         public override void Init()
         {
             base.Init();
             
             _instance = this;
+
+            SetupCanvas();
             
             GetAllWindows();
             SubscribeEvents();
             ShowWindow<EmptyWindow>();
         }
 
+        private void SetupCanvas()
+        {
+            _canvasRect = _canvas.transform as RectTransform;
+
+            Rect pixelRect = _canvas.pixelRect;
+            float aspect = pixelRect.width / pixelRect.height;
+            _canvasScaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+            const float minAspect = 0.45f;
+            const float maxAspect = 0.8f;
+            _canvasScaler.matchWidthOrHeight = Mathf.Clamp01(Mathf.InverseLerp(minAspect, maxAspect, aspect));
+            _refRes = new Vector2(1242, 2208);
+            _refRes.y = _refRes.y / aspect * 9f / 16f;
+        }
+
         private void OnDestroy() => 
             UnsubscribeEvents();
 
+        public static Vector2 GetUIPosition(Camera cam, Vector3 world)
+        {
+            Vector3 viewport = cam.WorldToViewportPoint(world);
+            Vector2 screen = new Vector2(viewport.x * _instance._refRes.x, viewport.y * _instance._refRes.y);
+            return screen;
+        }
+        
         public static void ShowWindow<TWindow>() where TWindow : Window
         {
             Window window = _instance._windows[typeof(TWindow)];

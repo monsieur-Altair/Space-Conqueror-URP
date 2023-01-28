@@ -42,16 +42,18 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
             Core aiManager = new Core(coroutineRunner, aiAISkillController);
             
             UserControl userControl = AllServices.Get<UserControl>();
-            CounterSpawner.Init(warehouse, objectPool, UISystem.GetWindow<GameplayWindow>().CounterContainer, globalCamera);
-            
-            
+
+            CounterSpawner counterSpawner = new CounterSpawner(warehouse, objectPool, 
+                UISystem.GetWindow<GameplayWindow>().CounterContainer, globalCamera);
+
             GameLoopManager gameLoopManager = new GameLoopManager(AllServices.Get<LevelManager>(), 
                 new TeamManager(AllServices.Get<ProgressService>()), 
                 coroutineRunner, aiManager, objectPool, AllServices.Get<OutlookService>(), userControl,
                 AllServices.Get<ScriptableService>(),
                 AllServices.Get<ProgressService>(),
                 AllServices.Get<AudioManager>(), 
-                _coreConfig);
+                _coreConfig, 
+                counterSpawner);
             
             ProgressReaders.Add(gameLoopManager);
             ProgressWriters.Add(gameLoopManager);

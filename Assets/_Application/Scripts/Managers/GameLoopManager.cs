@@ -43,10 +43,11 @@ namespace _Application.Scripts.Managers
         private int _lastCompletedLevel;
         private bool _hasUpgradeTutorialShown;
         private readonly UnitSupervisor _unitSupervisor;
+        private CounterSpawner _counterSpawner;
 
         public GameLoopManager(LevelManager levelsManager, TeamManager teamManager, CoroutineRunner coroutineRunner, AI.Core ai,
             GlobalPool pool, OutlookService outlookService, UserControl userControl, ScriptableService scriptableService,
-            ProgressService progressService, AudioManager audioManager, CoreConfig coreConfig)
+            ProgressService progressService, AudioManager audioManager, CoreConfig coreConfig, CounterSpawner counterSpawner)
         {
             _unitSupervisor = new UnitSupervisor(pool);
             _allBuildings = new List<Buildings.BaseBuilding>();
@@ -62,6 +63,7 @@ namespace _Application.Scripts.Managers
             _scriptableService = scriptableService;
             _progressService = progressService;
             _audioManager = audioManager;
+            _counterSpawner = counterSpawner;
 
             Buildings.BaseBuilding.Conquered += _teamManager.UpdateObjectsCount;
             TeamManager.GameEnded += EndGame;
@@ -128,6 +130,7 @@ namespace _Application.Scripts.Managers
                     _userControl.Disable();
                     _userControl.InputService.BuildingsController.ClearAllSelection();
                     _unitSupervisor.DisableAll();
+                    _counterSpawner.ClearList();
                     _ai.Disable();
 
                     int currentLevelNumber = _levelsManager.CurrentLevelNumber;
@@ -194,8 +197,7 @@ namespace _Application.Scripts.Managers
             _ai.Enable();
             _outlookService.PrepareLevel(_allBuildings);
             
-            CounterSpawner.ClearList();
-            CounterSpawner.FillLists(_allBuildings);
+            _counterSpawner.FillLists(_allBuildings);
             
             Buildings.Altar.DischargeManaCount();//count = 0
             Buildings.Altar.DischargeSavedManaCount();
