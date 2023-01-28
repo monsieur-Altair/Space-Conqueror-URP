@@ -87,11 +87,11 @@ namespace _Application.Scripts.Skills
             FreeIndicator();
         }
 
-        private static Vector3 CalculateDestPos(in Vector3 launchPos, Buildings.BaseBuilding destinationPlanet)
+        private static Vector3 CalculateDestPos(in Vector3 launchPos, Buildings.BaseBuilding destination)
         {
-            Vector3 destPos = destinationPlanet.transform.position;
+            Vector3 destPos = destination.transform.position;
             Vector3 offset = (destPos - launchPos).normalized;
-            return destPos - offset * destinationPlanet.BuildingsRadius;
+            return destPos - offset * destination.BuildingsRadius;
         }
     }
 }

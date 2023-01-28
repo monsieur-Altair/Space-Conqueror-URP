@@ -15,6 +15,11 @@ namespace _Application.Scripts.Units
             Stop();
         }
 
+        protected override void SetSpeed()
+        {
+            _speed = UnitInf.UnitSpeed;
+        }
+
         protected override void OnUpdate()
         {
             base.OnUpdate();
@@ -32,10 +37,7 @@ namespace _Application.Scripts.Units
 
         public override Buildings.Team GetTeam() => 
             UnitInf.UnitTeam;
-
-        protected override void SetSpeed() => 
-            Agent.speed = UnitInf.UnitSpeed;
-
+        
         public override float CalculateAttack(Buildings.Team buildingTeam, float defence)
         {
             if (UnitInf.UnitTeam == buildingTeam)
@@ -47,9 +49,9 @@ namespace _Application.Scripts.Units
             countAfterAttack / (UnitInf.UnitDamage/100.0f);
 
         public void Freeze() => 
-            Agent.isStopped = true;
+            _canMove = false;
 
         public void Unfreeze() => 
-            Agent.isStopped = false;
+            _canMove = true;
     }
 }

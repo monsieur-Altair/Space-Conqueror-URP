@@ -5,11 +5,6 @@ using UnityEngine.AI;
 
 namespace _Application.Scripts.Units
 {
-    [RequireComponent(
-        typeof(NavMeshAgent),
-        typeof(Collider), 
-        typeof(Rigidbody))]
-    
     public abstract class BaseUnit : PooledBehaviour
     {
         public static event Action<BaseUnit> Launched = delegate { };
@@ -28,30 +23,41 @@ namespace _Application.Scripts.Units
         protected Buildings.BaseBuilding Target;
         protected abstract void TargetInRange();
         protected abstract void SetSpeed();
-        protected NavMeshAgent Agent;
 
         private Vector3 _destination;
-        private const float MinDistance = 1.0f;
+        private Transform _transform;
+        
+        protected bool _canMove = true;
+        protected float _speed = 1.0f;
+
+        private const float MinDistance = 0.1f;
         public Buildings.BaseBuilding.UnitInf UnitInf { get; protected set; }
         public Transform CounterPoint => _counterPoint;
         public SkinnedMeshRenderer SkinnedMeshRenderer => _skinnedMeshRenderer;
 
-
         private void Awake()
         {
-            Agent = GetComponent<NavMeshAgent>();
+            _transform = transform;
         }
 
         public void Update()
         {
-            if (Target != null)
+            if (Target != null && _canMove)
             {
                 OnUpdate();
 
-                float distance = Vector3.Distance(_destination, transform.position);
+                _transform.position = MoveTowards();
+                
+                float distance = Vector3.Distance(_destination, _transform.position);
                 if (distance < MinDistance) 
                     StopAndDestroy();
             }
+        }
+
+        private Vector3 MoveTowards()
+        {
+            return Vector3.MoveTowards(_transform.position, Target.transform.position, 
+                _speed * Time.deltaTime);
         }
 
         protected virtual void OnUpdate()
@@ -63,6 +69,13 @@ namespace _Application.Scripts.Units
             Updated(this);
         }
 
+        public override void OnReturnToPool()
+        {
+            base.OnReturnToPool();
+            
+            _canMove = true;
+        }
+        
         public void GoTo(Buildings.BaseBuilding destination,Vector3 destinationPos)
         {
             Target = destination;
@@ -71,8 +84,6 @@ namespace _Application.Scripts.Units
 
         public void StopAndDestroy()
         {
-            if(Agent.isActiveAndEnabled)
-                Agent.isStopped = true;
             TargetInRange();
             Approached(this);
         }
@@ -86,8 +97,6 @@ namespace _Application.Scripts.Units
         {
             _destination = destinationPos;
             SetSpeed();
-            Agent.SetDestination(destinationPos);
-            Agent.isStopped = false;
             Launched(this);
         }
     }

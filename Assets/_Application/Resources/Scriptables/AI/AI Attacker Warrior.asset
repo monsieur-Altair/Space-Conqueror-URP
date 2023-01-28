@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: AI Attacker Warrior
   m_EditorClassIdentifier: 
   damage: 150
-  speed: 4.25
+  speed: 0.94444466

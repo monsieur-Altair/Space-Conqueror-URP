@@ -27,14 +27,13 @@ namespace _Application.Scripts.Buildings
         None = 3,
     }
 
-    [RequireComponent(typeof(Collider))]//,typeof(Rigidbody))]
     public abstract class BaseBuilding : PooledBehaviour, IFreezable, IBuffed
     {
         [SerializeField] private Team team;
         [SerializeField] private BuildingType _buildingType;
         [SerializeField] private SpriteRenderer _spriteRenderer;
         [Space, SerializeField] private MeshRenderer _meshRenderer;
-        [SerializeField] private Collider _collider;
+        [SerializeField] private SphereCollider _sphereCollider;
         [SerializeField] private Transform _counterPoint;
 
         public static event Action<BaseBuilding, Team, Team> Conquered;
@@ -42,7 +41,7 @@ namespace _Application.Scripts.Buildings
         public event Action<BaseBuilding> TeamChanged;
         public event Action<BaseBuilding> Buffed;
         public event Action<BaseBuilding> UnBuffed;
-        public event Action<BaseBuilding, Units.BaseUnit> LaunchedUnit;
+        public event Action<BaseBuilding, BaseUnit> LaunchedUnit;
         
         protected ScriptableService ScriptableService;
         protected ProgressService ProgressService;
@@ -64,7 +63,7 @@ namespace _Application.Scripts.Buildings
         public float BuildingsRadius { get; private set; }
         public Team Team => team;
         public BuildingType BuildingType => _buildingType;
-        public Units.BaseUnit UnitPrefab { get; private set; }
+        public BaseUnit UnitPrefab { get; private set; }
         public bool IsBuffed { get; private set; }
         public float Count => _count;
         public MeshRenderer MeshRenderer => _meshRenderer;
@@ -89,7 +88,7 @@ namespace _Application.Scripts.Buildings
             Ice.DeletingFreezingZone -= Unfreeze;
 
         public void Construct(ScriptableService scriptableService, ProgressService progressService, 
-            Units.BaseUnit unitPrefab, GlobalPool globalPool)
+            BaseUnit unitPrefab, GlobalPool globalPool)
         {
             _globalPool = globalPool;
             UnitPrefab = unitPrefab;
@@ -101,7 +100,7 @@ namespace _Application.Scripts.Buildings
             
             _unitInf = new UnitInf();
             
-            BuildingsRadius = GetComponent<SphereCollider>().radius;
+            BuildingsRadius = _sphereCollider.radius;
 
             Team availableTeam = (team == Team.White) ? Team.Red : team;
 
@@ -214,21 +213,21 @@ namespace _Application.Scripts.Buildings
             CountChanged?.Invoke(this ,(int)_count);
         }
 
-        private void AdjustUnit(Units.BaseUnit unit)
+        private void AdjustUnit(BaseUnit unit)
         {
             SetUnitCount();
             unit.SetData(in _unitInf);
             LaunchedUnit?.Invoke(this, unit);
         }
 
-        public void AdjustUnit(Units.BaseUnit unit, float supplyCoefficient)
+        public void AdjustUnit(BaseUnit unit, float supplyCoefficient)
         {
             SetUnitCount(supplyCoefficient);
             unit.SetData(in _unitInf);
             LaunchedUnit?.Invoke(this, unit);
         }
 
-        public void AttackedByUnit(Units.BaseUnit unit)
+        public void AttackedByUnit(BaseUnit unit)
         {
             Team unitTeam = unit.GetTeam();
             float attack = unit.CalculateAttack(Team, _defense);
@@ -243,18 +242,12 @@ namespace _Application.Scripts.Buildings
             }
             CountChanged?.Invoke(this, (int)_count);
         }
-
-        public void DisableCollider()
-        {
-            _collider.enabled = false;
-        }
         
         public override void OnSpawnFromPool()
         {
             base.OnSpawnFromPool();
             
             _spriteRenderer.gameObject.SetActive(false);
-            _collider.enabled = true;
         }
 
         protected virtual void IncreaseResources()

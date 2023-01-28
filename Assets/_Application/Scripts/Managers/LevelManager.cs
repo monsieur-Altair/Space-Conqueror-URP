@@ -12,9 +12,6 @@ namespace _Application.Scripts.Managers
     public class LevelManager : MonoBehaviourService
     {
         [SerializeField] 
-        private NavMeshSurface navMeshSurfaceObj;
-        
-        [SerializeField] 
         private Level[] _levels;
 
         private readonly Vector3 _instantiatePos = new Vector3(0, 0, 0);
@@ -56,7 +53,6 @@ namespace _Application.Scripts.Managers
             _currentLevel = Instantiate(_levels[CurrentLevelNumber], _instantiatePos, Quaternion.identity);
             _currentLevel.Prepare(_globalPool, _progressService.PlayerProgress.LobbyInfo);
             _currentLevel.gameObject.SetActive(true);
-            navMeshSurfaceObj.BuildNavMesh();
             _currentLevel.transform.SetParent(transform.parent);
         }
 
@@ -70,7 +66,6 @@ namespace _Application.Scripts.Managers
             if (_currentLevel != null)
             {
                 _currentLevel.gameObject.SetActive(false);
-                Debug.Log("destroy" + _currentLevel.name);
                 Destroy(_currentLevel.gameObject);
             }
             

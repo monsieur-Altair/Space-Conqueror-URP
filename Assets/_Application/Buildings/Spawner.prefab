@@ -123,7 +123,6 @@ GameObject:
   - component: {fileID: 5735732075316091907}
   - component: {fileID: 5735732075316091906}
   - component: {fileID: 5735732075316091909}
-  - component: {fileID: -4838908423273356698}
   m_Layer: 6
   m_Name: Spawner
   m_TagString: Untagged
@@ -160,8 +159,8 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.35
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 1.1
+  m_Center: {x: 0, y: 0.39, z: 0}
 --- !u!114 &5735732075316091909
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,24 +179,8 @@ MonoBehaviour:
   _buildingType: 1
   _spriteRenderer: {fileID: 8603921938020538210}
   _meshRenderer: {fileID: 4835928673963705651}
-  _collider: {fileID: 5735732075316091906}
+  _sphereCollider: {fileID: 5735732075316091906}
   _counterPoint: {fileID: 6266002596120913994}
---- !u!54 &-4838908423273356698
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5735732075316091908}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!1001 &1294397950458755081
 PrefabInstance:
   m_ObjectHideFlags: 0

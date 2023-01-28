@@ -131,7 +131,6 @@ namespace _Application.Scripts.Managers
             
             buildingInfo.BaseBuilding = building;
             
-            building.DisableCollider();
             _outlookService.SetOutlook(building, (int)Team.Blue);
         }
 
