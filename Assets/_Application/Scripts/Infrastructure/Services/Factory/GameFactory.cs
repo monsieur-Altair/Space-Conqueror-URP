@@ -43,8 +43,7 @@ namespace _Application.Scripts.Infrastructure.Services.Factory
             
             UserControl userControl = AllServices.Get<UserControl>();
 
-            CounterSpawner counterSpawner = new CounterSpawner(warehouse, objectPool, 
-                UISystem.GetWindow<GameplayWindow>().CounterContainer, globalCamera);
+            CounterSpawner counterSpawner = new CounterSpawner(warehouse, objectPool, globalCamera);
 
             GameLoopManager gameLoopManager = new GameLoopManager(AllServices.Get<LevelManager>(), 
                 new TeamManager(AllServices.Get<ProgressService>()), 

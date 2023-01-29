@@ -45,6 +45,8 @@ namespace _Application.Scripts.UI.Windows
         private void CloseWindow()
         {
             Close();
+            
+            //_lobbyManager.SwitchBuildingsTo(true);
             UISystem.ShowWindow<LobbyWindow>();
         }
 
@@ -68,7 +70,7 @@ namespace _Application.Scripts.UI.Windows
             
             _progressService.PlayerProgress.Money -= cost;
             UpdateMoneyText();
-            _lobbyManager.UpdateBuildings(type, _payload.Index);
+            _lobbyManager.UpdateBuilding(type, _payload.Index);
             
             OnClosed();
             _payload.BuildingType = type;

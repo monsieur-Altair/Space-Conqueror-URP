@@ -43,8 +43,8 @@ namespace _Application.Scripts.Infrastructure.States
                 AllServices.Get<GlobalCamera>()));
 
 
-            _gameFactory.CreateAndRegisterMonoBeh(_coreConfig.MonoBehaviourServices.UserControl);
             _gameFactory.CreateAndRegisterMonoBeh(_coreConfig.MonoBehaviourServices.UISystem);
+            _gameFactory.CreateAndRegisterMonoBeh(_coreConfig.MonoBehaviourServices.UserControl);
         }
 
         private void RegisterMonoBehServices()

@@ -9,6 +9,7 @@ using _Application.Scripts.SavedData;
 using _Application.Scripts.UI;
 using _Application.Scripts.UI.Windows;
 using Pool_And_Particles;
+using UnityEngine;
 
 namespace _Application.Scripts.Managers
 {
@@ -43,7 +44,9 @@ namespace _Application.Scripts.Managers
         private int _lastCompletedLevel;
         private bool _hasUpgradeTutorialShown;
         private readonly UnitSupervisor _unitSupervisor;
-        private CounterSpawner _counterSpawner;
+        private Transform _counterParent;
+
+        public CounterSpawner CounterSpawner { get; }
 
         public GameLoopManager(LevelManager levelsManager, TeamManager teamManager, CoroutineRunner coroutineRunner, AI.Core ai,
             GlobalPool pool, OutlookService outlookService, UserControl userControl, ScriptableService scriptableService,
@@ -63,7 +66,8 @@ namespace _Application.Scripts.Managers
             _scriptableService = scriptableService;
             _progressService = progressService;
             _audioManager = audioManager;
-            _counterSpawner = counterSpawner;
+            CounterSpawner = counterSpawner;
+            _counterParent = UISystem.GetWindow<GameplayWindow>().CounterContainer;
 
             Buildings.BaseBuilding.Conquered += _teamManager.UpdateObjectsCount;
             TeamManager.GameEnded += EndGame;
@@ -130,7 +134,7 @@ namespace _Application.Scripts.Managers
                     _userControl.Disable();
                     _userControl.InputService.BuildingsController.ClearAllSelection();
                     _unitSupervisor.DisableAll();
-                    _counterSpawner.ClearList();
+                    CounterSpawner.ClearLists();
                     _ai.Disable();
 
                     int currentLevelNumber = _levelsManager.CurrentLevelNumber;
@@ -196,8 +200,8 @@ namespace _Application.Scripts.Managers
             _ai.Init(_allBuildings);
             _ai.Enable();
             _outlookService.PrepareLevel(_allBuildings);
-            
-            _counterSpawner.FillLists(_allBuildings);
+
+            CounterSpawner.FillLists(_allBuildings, _counterParent);
             
             Buildings.Altar.DischargeManaCount();//count = 0
             Buildings.Altar.DischargeSavedManaCount();

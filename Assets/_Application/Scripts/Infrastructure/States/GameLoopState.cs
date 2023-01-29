@@ -7,6 +7,7 @@ namespace _Application.Scripts.Infrastructure.States
     {
         private readonly StateMachine _stateMachine;
         private readonly GameLoopManager _gameLoopManager;
+        public GameLoopManager GameLoopManager => _gameLoopManager;
 
         public GameLoopState(StateMachine stateMachine, GameFactory gameFactory)
         {

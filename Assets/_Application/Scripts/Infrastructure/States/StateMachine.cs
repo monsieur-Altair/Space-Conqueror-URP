@@ -56,7 +56,7 @@ namespace _Application.Scripts.Infrastructure.States
             state.Enter(payload);
         }
 
-        private TState GetState<TState>() where TState : class, IBaseState => 
+        public TState GetState<TState>() where TState : class, IBaseState => 
             _states[typeof(TState)] as TState;
     }
 }

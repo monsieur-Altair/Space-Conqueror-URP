@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using _Application.Scripts.Buildings;
 using _Application.Scripts.Infrastructure.Services;
 using _Application.Scripts.Infrastructure.Services.Factory;
 using _Application.Scripts.Infrastructure.Services.Progress;
+using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.SavedData;
-using _Application.Scripts.Scriptables;
+using _Application.Scripts.UI;
+using _Application.Scripts.UI.Windows;
 using Pool_And_Particles;
 using UnityEngine;
 
@@ -35,6 +38,8 @@ namespace _Application.Scripts.Managers
         private GameFactory _gameFactory;
         private ProgressService _progressService;
         private OutlookService _outlookService;
+        private ScriptableService _scriptableService;
+        private CounterSpawner _counterSpawner;
         private LobbyInfo LobbyInfo => _progressService.PlayerProgress.LobbyInfo;
 
         public override void Init()
@@ -46,6 +51,7 @@ namespace _Application.Scripts.Managers
             _buildingInfos = new List<BuildingInfo>();
             _gameFactory = AllServices.Get<GameFactory>();
             _outlookService = AllServices.Get<OutlookService>();
+            _scriptableService = AllServices.Get<ScriptableService>();
 
             _gameFactory.ProgressWriters.Add(this);
 
@@ -67,16 +73,23 @@ namespace _Application.Scripts.Managers
             }
         }
         
-        public void UpdateBuildings(BuildingType newType, int index)
+        public void UpdateBuilding(BuildingType newType, int index)
         {
             if (_buildingInfos[index].BuildingType != BuildingType.None)
+            {
+                _counterSpawner.FreeCounter(_buildingInfos[index].BaseBuilding);
                 DeleteBuilding(index);
+            }
             
             CreateBuilding(newType, index);
+            _counterSpawner.SetCounter(_buildingInfos[index].BaseBuilding);
+            
+            UpdateLobbyInfo();
         }
 
-        public void OnEnter()
+        public void OnEnter(CounterSpawner counterSpawner)
         {
+            _counterSpawner = counterSpawner;
             gameObject.SetActive(true);
             
             for (int i = 0; i < MaxPlaceCount; i++) 
@@ -84,6 +97,9 @@ namespace _Application.Scripts.Managers
 
             foreach (BuildingPoint point in _buildingPoints) 
                 point.Clicked += OnPointClicked;
+            
+            Transform counterParent = UISystem.GetWindow<LobbyWindow>().CounterParent;
+            _counterSpawner.FillLists(_buildingInfos.Select(info=> info.BaseBuilding).ToList(), counterParent);
         }
 
         public void OnExit()
@@ -95,15 +111,28 @@ namespace _Application.Scripts.Managers
                 point.Clicked -= OnPointClicked;
             
             gameObject.SetActive(false);
+            
+            _counterSpawner.ClearLists();
         }
 
         public void WriteProgress(PlayerProgress playerProgress)
+        {
+            UpdateLobbyInfo();
+        }
+
+        private void UpdateLobbyInfo()
         {
             for (int i = 0; i < MaxPlaceCount; i++)
             {
                 LobbyInfo.BoughtBuilding[i] = _buildingInfos[i].BuildingType;
             }
         }
+
+        // public void SwitchBuildingsTo(bool isActive)
+        // {
+        //     foreach (BuildingInfo info in _buildingInfos) 
+        //         info.BaseBuilding.gameObject.SetActive(isActive);
+        // }
 
         private void OnPointClicked(BuildingPoint point)
         {
@@ -130,8 +159,14 @@ namespace _Application.Scripts.Managers
             building.transform.rotation = buildingPoint.rotation;
             
             buildingInfo.BaseBuilding = building;
-            
+            building.DisableCollider();
             _outlookService.SetOutlook(building, (int)Team.Blue);
+
+            float maxCount = _scriptableService.GetBuildingInfo(Team.Blue, buildingType).maxCount;
+            float buildingMaxCountCoefficient = _progressService.PlayerProgress
+                .GetAchievedUpgrade(UpgradeType.BuildingMaxCount).upgradeCoefficient;
+            building.SetCount(maxCount * buildingMaxCountCoefficient);
+            building.SetTeam(Team.Blue);
         }
 
         private void DeleteBuilding(int index)

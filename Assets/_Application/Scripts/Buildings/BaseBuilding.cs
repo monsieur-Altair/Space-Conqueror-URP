@@ -51,9 +51,7 @@ namespace _Application.Scripts.Buildings
 
         private UnitInf _unitInf;
         private bool _isFrozen;
-        
-        private float _count;
-        private float _maxCount;
+
         private float _produceCount;
         private float _produceTime;
         private float _defense;
@@ -65,7 +63,8 @@ namespace _Application.Scripts.Buildings
         public BuildingType BuildingType => _buildingType;
         public BaseUnit UnitPrefab { get; private set; }
         public bool IsBuffed { get; private set; }
-        public float Count => _count;
+        public float Count { get; private set; }
+        public float MaxCount { get; private set; }
         public MeshRenderer MeshRenderer => _meshRenderer;
         public Transform CounterPoint => _counterPoint;
 
@@ -95,8 +94,8 @@ namespace _Application.Scripts.Buildings
             ScriptableService = scriptableService;
             ProgressService = progressService;
             
-            _count = 0.0f;
-            CountChanged?.Invoke(this, (int) _count);
+            Count = 0.0f;
+            CountChanged?.Invoke(this, (int) Count);
             
             _unitInf = new UnitInf();
             
@@ -126,7 +125,7 @@ namespace _Application.Scripts.Buildings
                 : 1.0f;
             //
             
-            _maxCount = infoAboutBuilding.maxCount * buildingMaxCountCoefficient;
+            MaxCount = infoAboutBuilding.maxCount * buildingMaxCountCoefficient;
             _produceCount = infoAboutBuilding.produceCount;
             _produceTime = infoAboutBuilding.produceTime;
             _defense = infoAboutBuilding.defense * buildingDefenceCoefficient;
@@ -150,11 +149,16 @@ namespace _Application.Scripts.Buildings
 
             if (Team == Team.White)
             {
-                _count = _maxCount;
-                CountChanged?.Invoke(this, (int) _count);
+                Count = MaxCount;
+                CountChanged?.Invoke(this, (int) Count);
             }
         }
 
+        public void SetCount(float count)
+        {
+            Count = count;
+        }
+        
         public void Select(Color color)
         {
             _spriteRenderer.color = color;
@@ -207,10 +211,10 @@ namespace _Application.Scripts.Buildings
 
         public void DecreaseCounter(float value)
         {
-            _count -= value;
-            if (_count < 0.0f)
-                _count = 0.0f;
-            CountChanged?.Invoke(this ,(int)_count);
+            Count -= value;
+            if (Count < 0.0f)
+                Count = 0.0f;
+            CountChanged?.Invoke(this ,(int)Count);
         }
 
         private void AdjustUnit(BaseUnit unit)
@@ -231,16 +235,21 @@ namespace _Application.Scripts.Buildings
         {
             Team unitTeam = unit.GetTeam();
             float attack = unit.CalculateAttack(Team, _defense);
-            _count += attack;
-            if (_count < 0)
+            Count += attack;
+            if (Count < 0)
             {
                 Team oldTeam = Team;
                 Conquered?.Invoke(this, oldTeam, unitTeam);
-                _count *= -1.0f;
-                _count = unit.GetActualCount(_count);
+                Count *= -1.0f;
+                Count = unit.GetActualCount(Count);
                 SwitchTeam(unitTeam);
             }
-            CountChanged?.Invoke(this, (int)_count);
+            CountChanged?.Invoke(this, (int)Count);
+        }
+        
+        public void DisableCollider()
+        {
+            _sphereCollider.enabled = false;
         }
         
         public override void OnSpawnFromPool()
@@ -248,6 +257,7 @@ namespace _Application.Scripts.Buildings
             base.OnSpawnFromPool();
             
             _spriteRenderer.gameObject.SetActive(false);
+            _sphereCollider.enabled = true;
         }
 
         protected virtual void IncreaseResources()
@@ -255,12 +265,12 @@ namespace _Application.Scripts.Buildings
             if (_isFrozen) 
                 return;
             
-            if(_count<_maxCount)
-                _count += _produceCount / _produceTime * Time.deltaTime;
-            else if(_count>_maxCount + 0.1f) 
-                _count -= _reducingSpeed * Time.deltaTime;
+            if(Count<MaxCount)
+                Count += _produceCount / _produceTime * Time.deltaTime;
+            else if(Count>MaxCount + 0.1f) 
+                Count -= _reducingSpeed * Time.deltaTime;
             
-            CountChanged?.Invoke(this, (int) _count);
+            CountChanged?.Invoke(this, (int) Count);
         }
 
         private static void CalculateLaunchPositions(out Vector3 st, out Vector3 dest, BaseBuilding stBaseBuilding, BaseBuilding destBaseBuilding)
@@ -291,14 +301,14 @@ namespace _Application.Scripts.Buildings
 
         private void LaunchFromCounter()
         {
-            _count *= (1 - LaunchCoefficient);
-            CountChanged?.Invoke(this, (int) _count);
+            Count *= (1 - LaunchCoefficient);
+            CountChanged?.Invoke(this, (int) Count);
         }
 
         private void SetUnitCount() =>
-            _unitInf.UnitCount = _count * LaunchCoefficient;
+            _unitInf.UnitCount = Count * LaunchCoefficient;
 
         private void SetUnitCount(float supplyCoefficient) =>
-            _unitInf.UnitCount = _maxCount * supplyCoefficient;
+            _unitInf.UnitCount = MaxCount * supplyCoefficient;
     }
 }

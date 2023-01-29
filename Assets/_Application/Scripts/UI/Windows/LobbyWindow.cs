@@ -16,6 +16,11 @@ namespace _Application.Scripts.UI.Windows
         [SerializeField] 
         private Button _startGameButton;
 
+        [SerializeField] 
+        private Transform _counterParent;
+
+        public Transform CounterParent => _counterParent;
+
         private StateMachine _stateMachine;
 
 

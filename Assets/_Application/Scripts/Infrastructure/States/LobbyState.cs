@@ -22,7 +22,7 @@ namespace _Application.Scripts.Infrastructure.States
         {
             UISystem.ShowWindow<LobbyWindow>();
             
-            _lobbyManager.OnEnter();
+            _lobbyManager.OnEnter(_stateMachine.GetState<GameLoopState>().GameLoopManager.CounterSpawner);
             _lobbyManager.PointClicked += ShowWindow;
         }
 
@@ -34,8 +34,10 @@ namespace _Application.Scripts.Infrastructure.States
             UISystem.CloseWindow<LobbyWindow>();
         }
 
-        private void ShowWindow(BuildingType boughtType, int index)
+        private static void ShowWindow(BuildingType boughtType, int index)
         {
+            //_lobbyManager.SwitchBuildingsTo(false);
+            
             UISystem.CloseWindow<LobbyWindow>();
             UISystem.ShowPayloadedWindow<BuyBuildingWindow, BuyBuildingWindowPayload>(new BuyBuildingWindowPayload()
             {
