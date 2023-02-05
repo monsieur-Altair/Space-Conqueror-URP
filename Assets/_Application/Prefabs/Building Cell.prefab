@@ -289,6 +289,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8612730614072219413}
     m_Modifications:
+    - target: {fileID: 300405533468454406, guid: a7b8de0be17defc4d9ff820880321302, type: 3}
+      propertyPath: m_Transition
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3775451436213359257, guid: a7b8de0be17defc4d9ff820880321302, type: 3}
       propertyPath: m_text
       value: 'Cost
@@ -333,7 +337,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4091451783492489797, guid: a7b8de0be17defc4d9ff820880321302, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 194.7498
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 4091451783492489797, guid: a7b8de0be17defc4d9ff820880321302, type: 3}
       propertyPath: m_SizeDelta.y
@@ -386,6 +390,18 @@ PrefabInstance:
     - target: {fileID: 4091451783492489797, guid: a7b8de0be17defc4d9ff820880321302, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5450211504087420918, guid: a7b8de0be17defc4d9ff820880321302, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: a8a63401ce597844eba9af1fab97057a, type: 3}
+    - target: {fileID: 5450211504087420918, guid: a7b8de0be17defc4d9ff820880321302, type: 3}
+      propertyPath: m_Maskable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5450211504087420918, guid: a7b8de0be17defc4d9ff820880321302, type: 3}
+      propertyPath: m_PreserveAspect
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5483493251270926890, guid: a7b8de0be17defc4d9ff820880321302, type: 3}
       propertyPath: m_Name

@@ -5,5 +5,5 @@
 1. move ui from ref
 3. create building's level system
 -4. create spells (rework)
-5. remove navmesh
-7, create timer for units
+
+reworks all buttons, counter, spell icons, spell icon logic, upgrade icons

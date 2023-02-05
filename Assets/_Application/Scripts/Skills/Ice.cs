@@ -3,6 +3,7 @@ using System.Collections;
 using _Application.Scripts.Buildings;
 using _Application.Scripts.Control;
 using _Application.Scripts.Managers;
+using _Application.Scripts.Misc;
 using _Application.Scripts.Scriptables;
 using Pool_And_Particles;
 using UnityEngine;
@@ -67,7 +68,10 @@ namespace _Application.Scripts.Skills
             
             Ray ray = MainCamera.ScreenPointToRay(pos);
             if (_plane.Raycast(ray, out float distance))
-                _freezingObject.transform.position = ray.GetPoint(distance);
+            {
+                Vector3 position = ray.GetPoint(distance);
+                _freezingObject.transform.position = position.With(y: position.y -1f);
+            }
             else
                 throw new MyException("cannot calculate zone position");
             

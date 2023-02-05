@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using _Application.Scripts.Buildings;
 using _Application.Scripts.Control;
-using _Application.Scripts.Infrastructure;
 using _Application.Scripts.Infrastructure.Services;
+using _Application.Scripts.Infrastructure.Services.Scriptables;
 using _Application.Scripts.Managers;
+using _Application.Scripts.Scriptables;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,7 +26,7 @@ namespace _Application.Scripts.UI.Windows
         private TeamProgressBar _teamBar;
 
         [SerializeField] 
-        private List<Button> _skillButtons;
+        private List<SkillButton> _skillButtons;
 
         [SerializeField] 
         private Transform _counterContainer;
@@ -32,7 +34,9 @@ namespace _Application.Scripts.UI.Windows
         private SkillController _skillController;
         private CoroutineRunner _coroutineRunner;
         private LevelManager _levelManager;
-        
+        private ScriptableService _scriptableService;
+        private Mana _manaInfo;
+
         public Transform CounterContainer => _counterContainer;
 
         public override void GetDependencies()
@@ -42,14 +46,13 @@ namespace _Application.Scripts.UI.Windows
             _skillController = AllServices.Get<SkillController>();
             _coroutineRunner = AllServices.Get<CoroutineRunner>();
             _levelManager = AllServices.Get<LevelManager>();
+            _scriptableService = AllServices.Get<ScriptableService>();
+            _manaInfo = _scriptableService.GetManaInfo(Team.Blue);
 
-            foreach (Button button in _skillButtons) 
-                button.onClick.AddListener(() => { PressHandler(button); });
-
-            _skillController.Acid.CanceledSkill += ()=> UnblockButton(_skillButtons[AcidIndex]);
-            _skillController.Buff.CanceledSkill += ()=> UnblockButton(_skillButtons[BuffIndex]);
-            _skillController.Call.CanceledSkill += ()=> UnblockButton(_skillButtons[CallIndex]);
-            _skillController.Ice.CanceledSkill += ()=> UnblockButton(_skillButtons[IceIndex]);
+            _skillController.Acid.CanceledSkill += ()=> UnlockButton(_skillButtons[AcidIndex]);
+            _skillController.Buff.CanceledSkill += ()=> UnlockButton(_skillButtons[BuffIndex]);
+            _skillController.Call.CanceledSkill += ()=> UnlockButton(_skillButtons[CallIndex]);
+            _skillController.Ice.CanceledSkill += ()=> UnlockButton(_skillButtons[IceIndex]);
         }
 
         protected override void SubscribeEvents()
@@ -57,7 +60,10 @@ namespace _Application.Scripts.UI.Windows
             base.SubscribeEvents();
             
             TeamManager.TeamCountUpdated += _teamBar.FillTeamCount;
-            Buildings.Altar.ManaCountUpdated += _manaBar.FillManaCount;
+            Altar.ManaCountUpdated += _manaBar.FillManaCount;
+            
+            foreach (SkillButton skillButton in _skillButtons) 
+                skillButton.Clicked += PressHandler;
         }
 
         protected override void UnSubscribeEvents()
@@ -65,7 +71,10 @@ namespace _Application.Scripts.UI.Windows
             base.UnSubscribeEvents();
 
             TeamManager.TeamCountUpdated -= _teamBar.FillTeamCount;
-            Buildings.Altar.ManaCountUpdated -= _manaBar.FillManaCount;
+            Altar.ManaCountUpdated -= _manaBar.FillManaCount;
+            
+            foreach (SkillButton skillButton in _skillButtons) 
+                skillButton.Clicked -= PressHandler;
         }
 
         protected override void OnOpened()
@@ -73,12 +82,25 @@ namespace _Application.Scripts.UI.Windows
             base.OnOpened();
 
             ShowCertainUI();
+
+            foreach (SkillButton skillButton in _skillButtons) 
+                skillButton.OnOpened();
+            
+            _manaBar.FillManaCount(0, _manaInfo.maxCount);
+        }
+
+        protected override void OnClosed()
+        {
+            base.OnClosed();
+            
+            foreach (SkillButton skillButton in _skillButtons) 
+                skillButton.OnClosed();
         }
 
         private void ShowCertainUI()
         {
             int currentLevelNumber = _levelManager.CurrentLevelNumber;
-
+            currentLevelNumber = 5;
             switch (currentLevelNumber)
             {
                 case 0:
@@ -123,18 +145,18 @@ namespace _Application.Scripts.UI.Windows
                                                                          
         }
 
-        private void PressHandler(Button button)
+        private void PressHandler(SkillButton skillButton)
         {
             if (_skillController.IsSkillNotSelected)
             {
-                int index = _skillButtons.IndexOf(button);
-                BlockButton(button);
+                int index = _skillButtons.IndexOf(skillButton);
+                BlockButton(skillButton);
                 _coroutineRunner.StartCoroutine((SwitchWithWaiting(index)));
             }
             else
             {
                 _skillController.ClearSelectedSkill();
-                UnblockButton(button);
+                UnlockButton(skillButton);
             }
         }
 
@@ -145,16 +167,16 @@ namespace _Application.Scripts.UI.Windows
             _skillController.SetSelectedSkill(index);
         }
 
-        private static void BlockButton(Selectable button)
+        private static void BlockButton(SkillButton button)
         {
-            button.image.color = Color.red;
-            button.enabled = false;
+            button.Mask.color = new Color(0.58f,0,0.06f,0.47f);
+            button.Button.interactable = false;
         }
 
-        private static void UnblockButton(Selectable button)
+        private static void UnlockButton(SkillButton button)
         {
-            button.enabled = true;
-            button.image.color = Color.white;
+            button.Mask.color = new Color(0.58f,0,0.06f,0.0f);
+            button.Button.interactable = true;
         }
     }
 }

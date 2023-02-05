@@ -195,6 +195,10 @@ namespace _Application.Scripts.Managers
         private IEnumerator StartGameplay()
         {
             ClearLists();
+            
+            Buildings.Altar.DischargeManaCount();//count = 0
+            Buildings.Altar.DischargeSavedManaCount();
+            
             yield return _coroutineRunner.StartCoroutine(_levelsManager.CreateLevel());
             PrepareLevel();
             _ai.Init(_allBuildings);
@@ -203,8 +207,6 @@ namespace _Application.Scripts.Managers
 
             CounterSpawner.FillLists(_allBuildings, _counterParent);
             
-            Buildings.Altar.DischargeManaCount();//count = 0
-            Buildings.Altar.DischargeSavedManaCount();
             
             _userControl.Reload();
             _userControl.Enable();

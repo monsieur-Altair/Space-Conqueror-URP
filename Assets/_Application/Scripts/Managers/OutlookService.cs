@@ -119,7 +119,8 @@ namespace _Application.Scripts.Managers
                     };
                     Material roofMat = new Material(_baseRoofMaterial)
                     {
-                        mainTexture = _allTextures[RoofHash][team]
+                        mainTexture = _allTextures[RoofHash][team],
+                        color = GetColor(team),
                     };
                     return new[] {roofMat, flagSpawnerMat, _baseBuildingMaterial, _baseBuildingMaterial};
                 case BuildingType.Attacker:
@@ -132,6 +133,9 @@ namespace _Application.Scripts.Managers
                     throw new ArgumentOutOfRangeException(nameof(buildingType), buildingType, null);
             }
         }
+
+        private static Color GetColor(int team) => 
+            team == (int)Team.Red ? new Color(0.7f,0.7f,0.7f) : Color.white;
 
         private void SetUnitOutlook(BaseBuilding building, BaseUnit unit)
         {

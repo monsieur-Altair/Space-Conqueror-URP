@@ -2,12 +2,13 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UI.ProceduralImage;
 
 namespace _Application.Scripts.UI
 {
     public class Counter : PooledBehaviour
     {
-        [SerializeField] private Image _backImage;
+        [SerializeField] private ProceduralImage _backImage;
         [SerializeField] private TextMeshProUGUI _tmp;
         [SerializeField] private RectTransform _rectTransform;
 

@@ -267,34 +267,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7448764740245009271}
     m_Modifications:
-    - target: {fileID: 2095392840336830678, guid: 76576ad1ba3826644a14698c86b197b0, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2095392840336830678, guid: 76576ad1ba3826644a14698c86b197b0, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4031693988888540785, guid: 76576ad1ba3826644a14698c86b197b0, type: 3}
       propertyPath: m_Name
       value: Add_Button
       objectReference: {fileID: 0}
-    - target: {fileID: 4572208610372173227, guid: 76576ad1ba3826644a14698c86b197b0, type: 3}
-      propertyPath: m_fontSize
-      value: 151.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 4572208610372173227, guid: 76576ad1ba3826644a14698c86b197b0, type: 3}
-      propertyPath: m_fontAsset
-      value: 
-      objectReference: {fileID: 11400000, guid: 8955df5563449a44fb5e0120b205f66d, type: 2}
-    - target: {fileID: 4572208610372173227, guid: 76576ad1ba3826644a14698c86b197b0, type: 3}
-      propertyPath: m_fontSizeBase
-      value: 151.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 4572208610372173227, guid: 76576ad1ba3826644a14698c86b197b0, type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: -7677551805903908336, guid: 8955df5563449a44fb5e0120b205f66d, type: 2}
     - target: {fileID: 5781513578453889458, guid: 76576ad1ba3826644a14698c86b197b0, type: 3}
       propertyPath: m_Pivot.x
       value: 1

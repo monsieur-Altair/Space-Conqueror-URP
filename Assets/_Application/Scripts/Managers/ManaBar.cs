@@ -1,19 +1,20 @@
+using TMPro;
 using UnityEngine;
-using Image = UnityEngine.UI.Image;
+using UnityEngine.UI.ProceduralImage;
 
 namespace _Application.Scripts.Managers
 {
     public class ManaBar : MonoBehaviour
     {
-        private const int FillPosition = 0;
-        
         [SerializeField]
-        private Image _fill;
-        
-        private void Awake() => 
-            _fill = transform.GetChild(FillPosition).GetComponent<Image>();
+        private ProceduralImage _fill;
 
-        public void FillManaCount(float manaCount, int max) => 
+        [SerializeField] private TextMeshProUGUI _manaText;
+        
+        public void FillManaCount(float manaCount, int max)
+        {
             _fill.fillAmount = manaCount / max;
+            _manaText.text= $"{Mathf.Round(manaCount)}/{max}";
+        }
     }
 }
